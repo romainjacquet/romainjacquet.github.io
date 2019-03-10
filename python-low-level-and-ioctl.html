@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en" itemscope itemtype="http://schema.org/Person">
+<head>
+            <meta charset="utf-8">
+        <!-- Site Meta Data -->
+        <title>Python low-level and ioctl</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="Romain JACQUET">
+
+        <link rel="shortcut icon" href="">
+
+        <!-- schema.org -->
+        <meta itemprop="name" content="Deep in the system">
+        <meta itemprop="image" content="">
+        <meta itemprop="description" content="">
+
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel='stylesheet' type='text/css'>
+        <!-- Style Meta Data -->
+        <link rel="stylesheet" href="romainjacquet.github.io/theme/css/style.css" type="text/css"/>
+        <link rel="stylesheet" href="romainjacquet.github.io/theme/css/pygments.css" type="text/css"/>
+
+        <!-- Feed Meta Data -->
+            <link href="romainjacquet.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate"
+                  title="Deep in the system ATOM Feed"/>
+
+        <!-- Twitter Feed -->
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:image" content="">
+
+    <meta name="twitter:creator" content="">
+    <meta name="twitter:url" content="romainjacquet.github.io/python-low-level-and-ioctl.html">
+    <meta name="twitter:title" content="Deep in the system ~ Python low-level and ioctl">
+    <meta name="twitter:description" content="playing with ioctl in Python">
+
+    <!-- Facebook Meta Data -->
+    <meta property="og:title" content="Deep in the system ~ Python low-level and ioctl"/>
+    <meta property="og:description" content="playing with ioctl in Python"/>
+    <meta property="og:image" content=""/>
+</head>
+
+<body>
+<!-- Sidebar -->
+<aside>
+    <!--<center><a href="romainjacquet.github.io"><img id="avatar" src=""></a></center>-->
+    <h1>Deep in the system</h1>
+        <p>Unix, sysadmin, devops, CI/CD</p>
+    <br>
+
+
+    <nav class="nav">
+        <ul class="list-bare">
+
+                <li><a class="nav__link" href="">Blog entry</a></li>
+
+                <li><a class="nav__link" href="romainjacquet.github.io/pages/about.html">About</a></li>
+
+        </ul>
+    </nav>
+
+    <p class="social">
+                <a href="https://www.linkedin.com/in/jacquet-romain-493049141/?locale=en_US" target="_blank"><img
+                        src="romainjacquet.github.io/theme/images/icons/linkedin.png"></a>
+                <a href="https://github.com/romainjacquet" target="_blank"><img
+                        src="romainjacquet.github.io/theme/images/icons/github.png"></a>
+            <a href="romainjacquet.github.io/feeds/all.atom.xml" rel="alternate">
+                <img src="romainjacquet.github.io/theme/images/icons/rss.png"></a>
+    </p>
+
+        <h2>Categories</h2>
+        <ul class="navbar">
+                <li class="active"><a
+                        href="romainjacquet.github.io/category/development-python.html">development, python</a></li>
+                <li><a
+                        href="romainjacquet.github.io/category/sysadmin-supervision.html">sysadmin, supervision</a></li>
+        </ul>
+
+        <h2 class="blog_roll_link"><br/>BLOGROLLS</h2>
+        <ul class="navbar">
+                <li><a href="http://getpelican.com/">Pelican</a></li>
+                <li><a href="http://python.org/">Python.org</a></li>
+                <li><a href="http://jinja.pocoo.org/">Jinja2</a></li>
+        </ul>
+
+</aside>
+
+<!-- Content -->
+<article>
+    <section id="content">
+        <article>
+            <h2 class="post_title post_detail"><a href="romainjacquet.github.io/python-low-level-and-ioctl.html" rel="bookmark"
+                                                  title="Permalink to Python low-level and ioctl">Python low-level and ioctl</a></h2>
+            <div class="entry-content blog-post">
+                <p>I'm using Python since 2006 and I still discovered gems inside. Yesterday I
+need to read the DVB card status to find if the acquisition is fine. The status
+is provided by the DVB driver which is a set a of kernel modules. The DVB Card
+status could be read using the <a href="https://www.linuxtv.org/docs/dvbapi/DVB_Frontend_API.html">DVB API</a> of the kernel. Using old-style C and
+<a href="https://linux.die.net/man/2/ioctl">ioctl</a> function , this could be achieved using this lines:</p>
+<div class="highlight"><pre><span></span><span class="n">fe_status_t</span> <span class="n">my_status</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="n">ret</span> <span class="o">=</span> <span class="n">ioctl</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">FE_READ_STATUS</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">my_status</span><span class="p">);</span>
+</pre></div>
+
+
+<p>It works. But my software is written in Python and I don't want to write a
+binding. C-binding is possible but painful compared of writing pure Python. How
+to translate this code into Python? Official documentation talks about <a href="https://docs.python.org/2/library/fcntl.html">fcntl
+module</a> but the description of the usage is not simple. I try this code in
+Python:</p>
+<div class="highlight"><pre><span></span><span class="c1"># f previously open</span>
+
+<span class="n">ret_status</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="n">fcntl</span><span class="o">.</span><span class="n">ioctl</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="mh">0x69</span><span class="p">,</span> <span class="n">ret_status</span><span class="p">)</span>
+</pre></div>
+
+
+<p>My first attempt failed, resulting in an exception "Operation not permitted". Hum, wait a minute I remembered that ioctl system call is unique among all drivers. I looked more carefully the definition of FE_READ_STATUS in the kernel headers in the file ./include/linux/dvb/frontend.h .</p>
+<div class="highlight"><pre><span></span><span class="cp">#define FE_READ_STATUS                   _IOR(&#39;o&#39;, 69, fe_status_t)</span>
+</pre></div>
+
+
+<p>_IOR is a macro in the kernel to create unique IOCTL number. I didn't understand all the logic behind. Using a C program I successfully display the real number of the IOCTL FE_READ_STATUS.</p>
+<div class="highlight"><pre><span></span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;REAL VALUE %08x</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">FE_READ_STATUS</span><span class="p">);</span>
+</pre></div>
+
+
+<p>And the final function to get status is now easy:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">is_dvb_locked</span><span class="p">(</span><span class="n">adapter_name</span><span class="p">):</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span> <span class="p">(</span><span class="n">adapter_name</span><span class="p">,</span> <span class="s2">&quot;rw&quot;</span><span class="p">)</span>
+    <span class="n">ret_status</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">fcntl</span><span class="o">.</span><span class="n">ioctl</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="mh">0x80046f45</span><span class="p">,</span> <span class="n">ret_status</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">ret_status</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="k">print</span> <span class="s2">&quot;locked </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">value</span> <span class="o">&amp;</span> <span class="mh">0x10</span> <span class="o">==</span> <span class="mh">0x10</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s2">&quot;Unknown status </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">err</span>
+</pre></div>
+
+
+<p>Definitely Python is "batteries included" and even for low-level Python could do the job. See <a href="https://www.python.org/dev/peps/pep-0206/">PEP 206</a> for more information about "batteries included".</p>
+            </div>
+            <div class="post_list">
+                <span>By </span>
+                <a href="romainjacquet.github.io/author/romain-jacquet.html">@Romain JACQUET</a>
+                <span> in </span>
+                <span class="post_category"><a href="romainjacquet.github.io/category/development-python.html" rel="bookmark"
+                                               title="Permalink to development, python">[ development, python ]</a></span>
+                <span class="post_date">jeu. 21 février 2019</span>
+                <div><span>Tags : </span>
+                </div>
+
+                <div class="entry-social">
+                    <span class="twitter"><a target="_blank" rel="nofollow"
+                                             onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=400,width=700');return false;"
+                                             title="Twitter"
+                                             href="https://twitter.com/share?url=romainjacquet.github.io/python-low-level-and-ioctl.html&text=Python low-level and ioctl&via="><img
+                            src="romainjacquet.github.io/theme/images/icons/twitter-s.png"></a></span>
+
+                    <span class="gplus"><a target="_blank" title="Google +"
+                                           href="https://plus.google.com/share?url=romainjacquet.github.io/python-low-level-and-ioctl.html&hl=fr"
+                                           rel="nofollow"
+                                           onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=650');return false;"><img
+                            src="romainjacquet.github.io/theme/images/icons/google-s.png"></a></span>
+
+                    <span class="facebook"><a target="_blank" title="Facebook" rel="nofollow"
+                                              onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=500,width=700');return false;"
+                                              href="https://www.facebook.com/sharer.php?u=romainjacquet.github.io/python-low-level-and-ioctl.html&t=Python low-level and ioctl"><img
+                            src="romainjacquet.github.io/theme/images/icons/facebook-s.png"></a></span>
+
+                    <a target="_blank" title="Linkedin"
+                       href="https://www.linkedin.com/shareArticle?mini=true&url=romainjacquet.github.io/python-low-level-and-ioctl.html&title=Python low-level and ioctl"
+                       rel="nofollow"
+                       onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=650');return false;"><img
+                            src="romainjacquet.github.io/theme/images/icons/linkedin-s.png"></a>
+
+                    <span class="mail"><a
+                            href="mailto:?subject=Python low-level and ioctl&amp;body=Viens découvrir un article à propos de [Python low-level and ioctl] sur le site de Romain JACQUET. romainjacquet.github.io/python-low-level-and-ioctl.html"
+                            title="Share by Email" target="_blank"><img
+                            src="romainjacquet.github.io/theme/images/icons/mail-s.png"></a></span>
+                </div>
+            </div>
+        </article>
+    </section>
+</article>
+
+<!-- Footer -->
+    <footer>
+        <p>
+            Blog powered by <a href="http://getpelican.com/">Pelican</a>,
+            which takes great advantage of <a href="http://python.org">Python</a>.
+            Theme <a href="https://github.com/parbhat/pelican-blue">Pelican-Blue</a> by <a
+                href="https://parbhatpuri.com/">@parbhat</a>.
+        </p>
+    </footer>
+
+
+</body>
+</html>

@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en" itemscope itemtype="http://schema.org/Person">
+<head>
+            <meta charset="utf-8">
+        <!-- Site Meta Data -->
+        <title>Zabbix Agent on centos 7.3 (1/2)</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="Romain JACQUET">
+
+        <link rel="shortcut icon" href="">
+
+        <!-- schema.org -->
+        <meta itemprop="name" content="Deep in the system">
+        <meta itemprop="image" content="">
+        <meta itemprop="description" content="">
+
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel='stylesheet' type='text/css'>
+        <!-- Style Meta Data -->
+        <link rel="stylesheet" href="romainjacquet.github.io/theme/css/style.css" type="text/css"/>
+        <link rel="stylesheet" href="romainjacquet.github.io/theme/css/pygments.css" type="text/css"/>
+
+        <!-- Feed Meta Data -->
+            <link href="romainjacquet.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate"
+                  title="Deep in the system ATOM Feed"/>
+
+        <!-- Twitter Feed -->
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:image" content="">
+
+    <meta name="twitter:creator" content="">
+    <meta name="twitter:url" content="romainjacquet.github.io/zabbix-agent-on-centos-73-12.html">
+    <meta name="twitter:title" content="Deep in the system ~ Zabbix Agent on centos 7.3 (1/2)">
+    <meta name="twitter:description" content="installing zabbix on CentOS 7.3">
+
+    <!-- Facebook Meta Data -->
+    <meta property="og:title" content="Deep in the system ~ Zabbix Agent on centos 7.3 (1/2)"/>
+    <meta property="og:description" content="installing zabbix on CentOS 7.3"/>
+    <meta property="og:image" content=""/>
+</head>
+
+<body>
+<!-- Sidebar -->
+<aside>
+    <!--<center><a href="romainjacquet.github.io"><img id="avatar" src=""></a></center>-->
+    <h1>Deep in the system</h1>
+        <p>Unix, sysadmin, devops, CI/CD</p>
+    <br>
+
+
+    <nav class="nav">
+        <ul class="list-bare">
+
+                <li><a class="nav__link" href="">Blog entry</a></li>
+
+                <li><a class="nav__link" href="romainjacquet.github.io/pages/about.html">About</a></li>
+
+        </ul>
+    </nav>
+
+    <p class="social">
+                <a href="https://www.linkedin.com/in/jacquet-romain-493049141/?locale=en_US" target="_blank"><img
+                        src="romainjacquet.github.io/theme/images/icons/linkedin.png"></a>
+                <a href="https://github.com/romainjacquet" target="_blank"><img
+                        src="romainjacquet.github.io/theme/images/icons/github.png"></a>
+            <a href="romainjacquet.github.io/feeds/all.atom.xml" rel="alternate">
+                <img src="romainjacquet.github.io/theme/images/icons/rss.png"></a>
+    </p>
+
+        <h2>Categories</h2>
+        <ul class="navbar">
+                <li><a
+                        href="romainjacquet.github.io/category/development-python.html">development, python</a></li>
+                <li class="active"><a
+                        href="romainjacquet.github.io/category/sysadmin-supervision.html">sysadmin, supervision</a></li>
+        </ul>
+
+        <h2 class="blog_roll_link"><br/>BLOGROLLS</h2>
+        <ul class="navbar">
+                <li><a href="http://getpelican.com/">Pelican</a></li>
+                <li><a href="http://python.org/">Python.org</a></li>
+                <li><a href="http://jinja.pocoo.org/">Jinja2</a></li>
+        </ul>
+
+</aside>
+
+<!-- Content -->
+<article>
+    <section id="content">
+        <article>
+            <h2 class="post_title post_detail"><a href="romainjacquet.github.io/zabbix-agent-on-centos-73-12.html" rel="bookmark"
+                                                  title="Permalink to Zabbix Agent on centos 7.3 (1/2)">Zabbix Agent on centos 7.3 (1/2)</a></h2>
+            <div class="entry-content blog-post">
+                <p>I was working on a simple and unrisky admin task: connecting a server to our
+monitoring system (<a href="https://www.zabbix.com/">zabbix</a>). A perfect no-brainer to
+finish the week. The server is a CentOS 7.3 and has been installed in old-style
+with no configuration management :-(. I grab  the last version of the Zabbix
+agent on the Internet and install it.</p>
+<div class="highlight"><pre><span></span>wget https://repo.zabbix.com/zabbix/4.0/rhel/7/x86_64/zabbix-agent-4.0.3-1.el7.x86_64.rpm
+rpm -i zabbix-agent-4.0.3-1.el7.x86_64.rpm
+systemctl daemon-reload
+systemctl start zabbix-agent
+</pre></div>
+
+
+<p>Things didn't go as expected. Zabbix agent was not running. I discover a mismatch between pid file declared in Zabbix configuration and the one .</p>
+<div class="highlight"><pre><span></span> egrep pid /etc/zabbix/zabbix_agentd.conf 
+<span class="c1"># PidFile=/tmp/zabbix_agentd.pid</span>
+<span class="nv">PidFile</span><span class="o">=</span>/var/run/zabbix/zabbix_agentd.pid
+ egrep pid /usr/lib/systemd/system/zabbix-agent.service 
+<span class="nv">PIDFile</span><span class="o">=</span>/run/zabbix/zabbix_agentd.pid
+</pre></div>
+
+
+<p>I fix it by customizing the systemd unit and set the correct path for the PID file.</p>
+<div class="highlight"><pre><span></span>cp /usr/lib/systemd/system/zabbix-agent.service /etc/systemd/system
+sed -i s<span class="p">|</span>/run<span class="p">|</span>/var/run<span class="p">|</span> /etc/systemd/system/zabbix-agent.service
+systemctl restart zabbix-agent
+</pre></div>
+
+
+<p>Arg! It still do not work.</p>
+<div class="highlight"><pre><span></span>journalctl -u zabbix-agent
+<span class="o">[</span>...<span class="o">]</span>
+<span class="m">24518</span>:20190308:160332.924 using configuration file: /etc/zabbix/zabbix_agentd.conf
+ <span class="m">24518</span>:20190308:160332.924 cannot <span class="nb">set</span> resource limit: <span class="o">[</span><span class="m">13</span><span class="o">]</span> Permission denied
+ <span class="m">24518</span>:20190308:160332.924 cannot disable core dump, exiting...
+</pre></div>
+
+
+<p>What? Why Zabbix want disable the core dump. Are they so confident that the
+software never crashed? :-) Anyway. I checked ulimit: fine. I finally found a
+relevant entry in the SELinux log:</p>
+<div class="highlight"><pre><span></span><span class="nv">type</span><span class="o">=</span>AVC <span class="nv">msg</span><span class="o">=</span>audit<span class="o">(</span><span class="m">1552057474</span>.427:23308<span class="o">)</span>: avc:  denied  <span class="o">{</span> setrlimit <span class="o">}</span> <span class="k">for</span>  <span class="nv">pid</span><span class="o">=</span><span class="m">24560</span> <span class="nv">comm</span><span class="o">=</span><span class="s2">&quot;zabbix_agentd&quot;</span> <span class="nv">scontext</span><span class="o">=</span>system_u:system_r:zabbix_agent_t:s0 <span class="nv">tcontext</span><span class="o">=</span>system_u:system_r:zabbix_agent_t:s0 <span class="nv">tclass</span><span class="o">=</span>process
+<span class="nv">type</span><span class="o">=</span>SYSCALL <span class="nv">msg</span><span class="o">=</span>audit<span class="o">(</span><span class="m">1552057474</span>.427:23308<span class="o">)</span>: <span class="nv">arch</span><span class="o">=</span>c000003e <span class="nv">syscall</span><span class="o">=</span><span class="m">160</span> <span class="nv">success</span><span class="o">=</span>no <span class="nv">exit</span><span class="o">=</span>-13 <span class="nv">a0</span><span class="o">=</span><span class="m">4</span> <span class="nv">a1</span><span class="o">=</span>7ffc3c5ff9b0 <span class="nv">a2</span><span class="o">=</span><span class="m">0</span> <span class="nv">a3</span><span class="o">=</span><span class="m">8</span> <span class="nv">items</span><span class="o">=</span><span class="m">0</span> <span class="nv">ppid</span><span class="o">=</span><span class="m">24559</span> <span class="nv">pid</span><span class="o">=</span><span class="m">24560</span> <span class="nv">auid</span><span class="o">=</span><span class="m">4294967295</span> <span class="nv">uid</span><span class="o">=</span><span class="m">996</span> <span class="nv">gid</span><span class="o">=</span><span class="m">992</span> <span class="nv">euid</span><span class="o">=</span><span class="m">996</span> <span class="nv">suid</span><span class="o">=</span><span class="m">996</span> <span class="nv">fsuid</span><span class="o">=</span><span class="m">996</span> <span class="nv">egid</span><span class="o">=</span><span class="m">992</span> <span class="nv">sgid</span><span class="o">=</span><span class="m">992</span> <span class="nv">fsgid</span><span class="o">=</span><span class="m">992</span> <span class="nv">tty</span><span class="o">=(</span>none<span class="o">)</span> <span class="nv">ses</span><span class="o">=</span><span class="m">4294967295</span> <span class="nv">comm</span><span class="o">=</span><span class="s2">&quot;zabbix_agentd&quot;</span> <span class="nv">exe</span><span class="o">=</span><span class="s2">&quot;/usr/sbin/zabbix_agentd&quot;</span> <span class="nv">subj</span><span class="o">=</span>system_u:system_r:zabbix_agent_t:s0 <span class="nv">key</span><span class="o">=(</span>null<span class="o">)</span>
+</pre></div>
+
+
+<p>SELinux rules are not known as readable and user friendly. So I choose to
+disabled SELinux. It is acceptable for an internal server. I edit the file in
+/etc and reboot. It took a very long time that alert me that something goes
+wrong. I went to the WMWare console and discovered the failure:
+<img alt="Alt Text" src="romainjacquet.github.io/images/SELinuxfailed.PNG"></p>
+            </div>
+            <div class="post_list">
+                <span>By </span>
+                <a href="romainjacquet.github.io/author/romain-jacquet.html">@Romain JACQUET</a>
+                <span> in </span>
+                <span class="post_category"><a href="romainjacquet.github.io/category/sysadmin-supervision.html" rel="bookmark"
+                                               title="Permalink to sysadmin, supervision">[ sysadmin, supervision ]</a></span>
+                <span class="post_date">ven. 08 mars 2019</span>
+                <div><span>Tags : </span>
+                </div>
+
+                <div class="entry-social">
+                    <span class="twitter"><a target="_blank" rel="nofollow"
+                                             onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=400,width=700');return false;"
+                                             title="Twitter"
+                                             href="https://twitter.com/share?url=romainjacquet.github.io/zabbix-agent-on-centos-73-12.html&text=Zabbix Agent on centos 7.3 (1/2)&via="><img
+                            src="romainjacquet.github.io/theme/images/icons/twitter-s.png"></a></span>
+
+                    <span class="gplus"><a target="_blank" title="Google +"
+                                           href="https://plus.google.com/share?url=romainjacquet.github.io/zabbix-agent-on-centos-73-12.html&hl=fr"
+                                           rel="nofollow"
+                                           onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=650');return false;"><img
+                            src="romainjacquet.github.io/theme/images/icons/google-s.png"></a></span>
+
+                    <span class="facebook"><a target="_blank" title="Facebook" rel="nofollow"
+                                              onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=500,width=700');return false;"
+                                              href="https://www.facebook.com/sharer.php?u=romainjacquet.github.io/zabbix-agent-on-centos-73-12.html&t=Zabbix Agent on centos 7.3 (1/2)"><img
+                            src="romainjacquet.github.io/theme/images/icons/facebook-s.png"></a></span>
+
+                    <a target="_blank" title="Linkedin"
+                       href="https://www.linkedin.com/shareArticle?mini=true&url=romainjacquet.github.io/zabbix-agent-on-centos-73-12.html&title=Zabbix Agent on centos 7.3 (1/2)"
+                       rel="nofollow"
+                       onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=650');return false;"><img
+                            src="romainjacquet.github.io/theme/images/icons/linkedin-s.png"></a>
+
+                    <span class="mail"><a
+                            href="mailto:?subject=Zabbix Agent on centos 7.3 (1/2)&amp;body=Viens découvrir un article à propos de [Zabbix Agent on centos 7.3 (1/2)] sur le site de Romain JACQUET. romainjacquet.github.io/zabbix-agent-on-centos-73-12.html"
+                            title="Share by Email" target="_blank"><img
+                            src="romainjacquet.github.io/theme/images/icons/mail-s.png"></a></span>
+                </div>
+            </div>
+        </article>
+    </section>
+</article>
+
+<!-- Footer -->
+    <footer>
+        <p>
+            Blog powered by <a href="http://getpelican.com/">Pelican</a>,
+            which takes great advantage of <a href="http://python.org">Python</a>.
+            Theme <a href="https://github.com/parbhat/pelican-blue">Pelican-Blue</a> by <a
+                href="https://parbhatpuri.com/">@parbhat</a>.
+        </p>
+    </footer>
+
+
+</body>
+</html>

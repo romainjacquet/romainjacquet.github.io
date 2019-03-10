@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Deep in the system - sysadmin, supervision</title><link href="romainjacquet.github.io/" rel="alternate"></link><link href="romainjacquet.github.io/feeds/sysadmin-supervision.atom.xml" rel="self"></link><id>romainjacquet.github.io/</id><updated>2019-03-08T16:00:00+01:00</updated><entry><title>Zabbix Agent on centos 7.3 (1/2)</title><link href="romainjacquet.github.io/zabbix-agent-on-centos-73-12.html" rel="alternate"></link><published>2019-03-08T16:00:00+01:00</published><updated>2019-03-08T16:00:00+01:00</updated><author><name>Romain JACQUET</name></author><id>tag:None,2019-03-08:romainjacquet.github.io/zabbix-agent-on-centos-73-12.html</id><summary type="html">&lt;p&gt;installing zabbix on CentOS 7.3&lt;/p&gt;</summary><content type="html">&lt;p&gt;I was working on a simple and unrisky admin task: connecting a server to our
+monitoring system (&lt;a href="https://www.zabbix.com/"&gt;zabbix&lt;/a&gt;). A perfect no-brainer to
+finish the week. The server is a CentOS 7.3 and has been installed in old-style
+with no configuration management :-(. I grab  the last version of the Zabbix
+agent on the Internet and install it.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;wget https://repo.zabbix.com/zabbix/4.0/rhel/7/x86_64/zabbix-agent-4.0.3-1.el7.x86_64.rpm
+rpm -i zabbix-agent-4.0.3-1.el7.x86_64.rpm
+systemctl daemon-reload
+systemctl start zabbix-agent
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Things didn't go as expected. Zabbix agent was not running. I discover a mismatch between pid file declared in Zabbix configuration and the one .&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt; egrep pid /etc/zabbix/zabbix_agentd.conf 
+&lt;span class="c1"&gt;# PidFile=/tmp/zabbix_agentd.pid&lt;/span&gt;
+&lt;span class="nv"&gt;PidFile&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/var/run/zabbix/zabbix_agentd.pid
+ egrep pid /usr/lib/systemd/system/zabbix-agent.service 
+&lt;span class="nv"&gt;PIDFile&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/run/zabbix/zabbix_agentd.pid
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;I fix it by customizing the systemd unit and set the correct path for the PID file.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;cp /usr/lib/systemd/system/zabbix-agent.service /etc/systemd/system
+sed -i s&lt;span class="p"&gt;|&lt;/span&gt;/run&lt;span class="p"&gt;|&lt;/span&gt;/var/run&lt;span class="p"&gt;|&lt;/span&gt; /etc/systemd/system/zabbix-agent.service
+systemctl restart zabbix-agent
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Arg! It still do not work.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;journalctl -u zabbix-agent
+&lt;span class="o"&gt;[&lt;/span&gt;...&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="m"&gt;24518&lt;/span&gt;:20190308:160332.924 using configuration file: /etc/zabbix/zabbix_agentd.conf
+ &lt;span class="m"&gt;24518&lt;/span&gt;:20190308:160332.924 cannot &lt;span class="nb"&gt;set&lt;/span&gt; resource limit: &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;13&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; Permission denied
+ &lt;span class="m"&gt;24518&lt;/span&gt;:20190308:160332.924 cannot disable core dump, exiting...
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;What? Why Zabbix want disable the core dump. Are they so confident that the
+software never crashed? :-) Anyway. I checked ulimit: fine. I finally found a
+relevant entry in the SELinux log:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nv"&gt;type&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;AVC &lt;span class="nv"&gt;msg&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;audit&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1552057474&lt;/span&gt;.427:23308&lt;span class="o"&gt;)&lt;/span&gt;: avc:  denied  &lt;span class="o"&gt;{&lt;/span&gt; setrlimit &lt;span class="o"&gt;}&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt;  &lt;span class="nv"&gt;pid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;24560&lt;/span&gt; &lt;span class="nv"&gt;comm&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;zabbix_agentd&amp;quot;&lt;/span&gt; &lt;span class="nv"&gt;scontext&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;system_u:system_r:zabbix_agent_t:s0 &lt;span class="nv"&gt;tcontext&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;system_u:system_r:zabbix_agent_t:s0 &lt;span class="nv"&gt;tclass&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;process
+&lt;span class="nv"&gt;type&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;SYSCALL &lt;span class="nv"&gt;msg&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;audit&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1552057474&lt;/span&gt;.427:23308&lt;span class="o"&gt;)&lt;/span&gt;: &lt;span class="nv"&gt;arch&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;c000003e &lt;span class="nv"&gt;syscall&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;160&lt;/span&gt; &lt;span class="nv"&gt;success&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;no &lt;span class="nv"&gt;exit&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-13 &lt;span class="nv"&gt;a0&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt; &lt;span class="nv"&gt;a1&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;7ffc3c5ff9b0 &lt;span class="nv"&gt;a2&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="nv"&gt;a3&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;8&lt;/span&gt; &lt;span class="nv"&gt;items&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="nv"&gt;ppid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;24559&lt;/span&gt; &lt;span class="nv"&gt;pid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;24560&lt;/span&gt; &lt;span class="nv"&gt;auid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4294967295&lt;/span&gt; &lt;span class="nv"&gt;uid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;996&lt;/span&gt; &lt;span class="nv"&gt;gid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;992&lt;/span&gt; &lt;span class="nv"&gt;euid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;996&lt;/span&gt; &lt;span class="nv"&gt;suid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;996&lt;/span&gt; &lt;span class="nv"&gt;fsuid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;996&lt;/span&gt; &lt;span class="nv"&gt;egid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;992&lt;/span&gt; &lt;span class="nv"&gt;sgid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;992&lt;/span&gt; &lt;span class="nv"&gt;fsgid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;992&lt;/span&gt; &lt;span class="nv"&gt;tty&lt;/span&gt;&lt;span class="o"&gt;=(&lt;/span&gt;none&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="nv"&gt;ses&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4294967295&lt;/span&gt; &lt;span class="nv"&gt;comm&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;zabbix_agentd&amp;quot;&lt;/span&gt; &lt;span class="nv"&gt;exe&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/usr/sbin/zabbix_agentd&amp;quot;&lt;/span&gt; &lt;span class="nv"&gt;subj&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;system_u:system_r:zabbix_agent_t:s0 &lt;span class="nv"&gt;key&lt;/span&gt;&lt;span class="o"&gt;=(&lt;/span&gt;null&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;SELinux rules are not known as readable and user friendly. So I choose to
+disabled SELinux. It is acceptable for an internal server. I edit the file in
+/etc and reboot. It took a very long time that alert me that something goes
+wrong. I went to the WMWare console and discovered the failure:
+&lt;img alt="Alt Text" src="romainjacquet.github.io/images/SELinuxfailed.PNG"&gt;&lt;/p&gt;</content></entry></feed>
