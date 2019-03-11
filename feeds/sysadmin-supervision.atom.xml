@@ -1,5 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Deep in the system - sysadmin, supervision</title><link href="/" rel="alternate"></link><link href="/feeds/sysadmin-supervision.atom.xml" rel="self"></link><id>/</id><updated>2019-03-08T16:00:00+01:00</updated><entry><title>Zabbix Agent on centos 7.3 (1/2)</title><link href="/zabbix-agent-on-centos-73-12.html" rel="alternate"></link><published>2019-03-08T16:00:00+01:00</published><updated>2019-03-08T16:00:00+01:00</updated><author><name>Romain JACQUET</name></author><id>tag:None,2019-03-08:/zabbix-agent-on-centos-73-12.html</id><summary type="html">&lt;p&gt;installing zabbix on CentOS 7.3&lt;/p&gt;</summary><content type="html">&lt;p&gt;I was working on a simple and unrisky admin task: connecting a server to our
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Deep in the system - sysadmin, supervision</title><link href="/" rel="alternate"></link><link href="/feeds/sysadmin-supervision.atom.xml" rel="self"></link><id>/</id><updated>2019-03-11T19:00:00+01:00</updated><entry><title>Zabbix Agent on centos 7.3 (2/2)</title><link href="/zabbix-agent-on-centos-73-22.html" rel="alternate"></link><published>2019-03-11T19:00:00+01:00</published><updated>2019-03-11T19:00:00+01:00</updated><author><name>Romain JACQUET</name></author><id>tag:None,2019-03-11:/zabbix-agent-on-centos-73-22.html</id><summary type="html">&lt;p&gt;installing zabbix on CentOS 7.3 (2/2)&lt;/p&gt;</summary><content type="html">&lt;p&gt;I finished the previous post with a catastrophic situation: the VM didn't boot.
+I read on the internet that adding "selinux=0" on the kernel command line could fix it.
+Disabling SELinux from the kernel command line is interesting because SELinux is disabled
+at the early beginning of the boot process. So event if you have a broken configuration of
+SELinux, you can bypass it and boot.
+Below is the official definition of the kernel argument:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt; selinux=        [SELINUX] Disable or enable SELinux at boot time.
+                        Format: { &amp;quot;0&amp;quot; | &amp;quot;1&amp;quot; }
+                        See security/selinux/Kconfig help text.
+                        0 -- disable.
+                        1 -- enable.
+                        Default value is set via kernel config option.
+                        If enabled at boot time, /selinux/disable can be used
+                        later to disable prior to initial policy load.
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;I reboot the server and edit the command line to append "selinux=0".
+I checked the content of /etc/selinux.config:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;# This file controls the state of SELinux on the system.
+# SELINUX= can take one of these three values:
+#     enforcing - SELinux security policy is enforced.
+#     permissive - SELinux prints warnings instead of enforcing.
+#     disabled - No SELinux policy is loaded.
+SELINUX=enforcing
+# SELINUXTYPE= can take one of three two values:
+#     targeted - Targeted processes are protected,
+#     minimum - Modification of targeted policy. Only selected processes are protected.
+#     mls - Multi Level Security protection.
+SELINUXTYPE=disabled
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Damn it! SELINUXTYPE contains invalid value. This is the cause of the boot failure. After
+replacing SELINUX=enforcing by SELINUX=disabled and SELINUXTYPE=disabled by SELINUXTYPE=targeted, boot is fine.&lt;/p&gt;
+&lt;h2&gt;final note&lt;/h2&gt;
+&lt;p&gt;A better solution is available to fix and respect SELinux:
+&lt;a href="https://www.mangeek.com/2017/03/using-zabbix-3-2-with-centos-and-selinux/"&gt;Man geek Zabbix and SeLinux&lt;/a&gt;
+It uses the python utils &lt;a href="https://github.com/SELinuxProject/selinux/tree/master/python/audit2allow"&gt;audit2allow&lt;/a&gt; 
+which is part of the SELinux project. Other people says that just upgrading the SELinux policy solved the problem
+but I didn't take the risk.&lt;/p&gt;</content></entry><entry><title>Zabbix Agent on centos 7.3 (1/2)</title><link href="/zabbix-agent-on-centos-73-12.html" rel="alternate"></link><published>2019-03-08T16:00:00+01:00</published><updated>2019-03-08T16:00:00+01:00</updated><author><name>Romain JACQUET</name></author><id>tag:None,2019-03-08:/zabbix-agent-on-centos-73-12.html</id><summary type="html">&lt;p&gt;installing zabbix on CentOS 7.3&lt;/p&gt;</summary><content type="html">&lt;p&gt;I was working on a simple and unrisky admin task: connecting a server to our
 monitoring system (&lt;a href="https://www.zabbix.com/"&gt;zabbix&lt;/a&gt;). A perfect no-brainer to
 finish the week. The server is a CentOS 7.3 and has been installed in old-style
 with no configuration management :-(. I grab  the last version of the Zabbix
@@ -49,4 +89,4 @@ disabled SELinux. It is acceptable for an internal server. I edit the file in
 /etc and reboot. It took a very long time that alert me that something goes
 wrong. I went to the WMWare console and discovered the failure:
 &lt;img alt="Alt Text" src="/images/SELinuxfailed.PNG"&gt;&lt;/p&gt;
-&lt;p&gt;It was supposed to be a no-brainer, not a total failure!&lt;/p&gt;</content></entry></feed>
+&lt;p&gt;It was supposed to be a no-brainer, not a &lt;strong&gt;complete&lt;/strong&gt; failure! Solution at the next post.&lt;/p&gt;</content></entry></feed>
