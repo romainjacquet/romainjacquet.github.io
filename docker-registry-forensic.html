@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en" itemscope itemtype="http://schema.org/Person">
+<head>
+            <meta charset="utf-8">
+        <!-- Site Meta Data -->
+        <title>Docker registry forensic</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="Romain JACQUET">
+
+        <link rel="shortcut icon" href="">
+
+        <!-- schema.org -->
+        <meta itemprop="name" content="Deep in the system">
+        <meta itemprop="image" content="">
+        <meta itemprop="description" content="">
+
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel='stylesheet' type='text/css'>
+        <!-- Style Meta Data -->
+        <link rel="stylesheet" href="/theme/css/style.css" type="text/css"/>
+        <link rel="stylesheet" href="/theme/css/pygments.css" type="text/css"/>
+
+        <!-- Feed Meta Data -->
+
+        <!-- Twitter Feed -->
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:image" content="">
+
+    <meta name="twitter:creator" content="">
+    <meta name="twitter:url" content="/docker-registry-forensic.html">
+    <meta name="twitter:title" content="Deep in the system ~ Docker registry forensic">
+    <meta name="twitter:description" content="forensic into the docker registry">
+
+    <!-- Facebook Meta Data -->
+    <meta property="og:title" content="Deep in the system ~ Docker registry forensic"/>
+    <meta property="og:description" content="forensic into the docker registry"/>
+    <meta property="og:image" content=""/>
+</head>
+
+<body>
+<!-- Sidebar -->
+<aside>
+    <!--<center><a href=""><img id="avatar" src=""></a></center>-->
+    <h1>Deep in the system</h1>
+        <p>Unix, sysadmin, devops, CI/CD</p>
+    <br>
+
+
+    <nav class="nav">
+        <ul class="list-bare">
+
+                <li><a class="nav__link" href="/">Blog entry</a></li>
+
+                <li><a class="nav__link" href="/pages/about.html">About</a></li>
+
+        </ul>
+    </nav>
+
+    <p class="social">
+                <a href="https://www.linkedin.com/in/jacquet-romain-493049141/?locale=en_US" target="_blank"><img
+                        src="/theme/images/icons/linkedin.png"></a>
+                <a href="https://github.com/romainjacquet" target="_blank"><img
+                        src="/theme/images/icons/github.png"></a>
+    </p>
+
+        <h2>Categories</h2>
+        <ul class="navbar">
+                <li class="active"><a
+                        href="/category/container-docker-deletion-images-registry.html">container, docker, deletion, images, registry</a></li>
+                <li><a
+                        href="/category/development-python.html">development, python</a></li>
+                <li><a
+                        href="/category/sysadmin-supervision.html">sysadmin, supervision</a></li>
+        </ul>
+
+        <h2 class="blog_roll_link"><br/>BLOGROLLS</h2>
+        <ul class="navbar">
+                <li><a href="http://getpelican.com/">Pelican</a></li>
+                <li><a href="http://python.org/">Python.org</a></li>
+                <li><a href="http://jinja.pocoo.org/">Jinja2</a></li>
+        </ul>
+
+</aside>
+
+<!-- Content -->
+<article>
+    <section id="content">
+        <article>
+            <h2 class="post_title post_detail"><a href="/docker-registry-forensic.html" rel="bookmark"
+                                                  title="Permalink to Docker registry forensic">Docker registry forensic</a></h2>
+            <div class="entry-content blog-post">
+                <p>I had to debug in our container registry because something unclear happend. At office
+we are using the [Docker registry v2.6.0]
+(https://github.com/docker/distribution/releases/tag/v2.6.0) to host
+hundred of repositories. An user has complained about a missing image. The
+image has been pushed, but it is no longer here... <code>Docker pull</code> command
+failed.  Our docker registry is running in docker container and
+all the logs are in <code>docker logs</code>, no persistence :-(. 
+Even worse there is absolutely no supervision of the service. I started to
+extract the relevant logs from the docker daemon. </p>
+<div class="highlight"><pre><span></span>docker logs <span class="k">$(</span>docker ps<span class="p">|</span>grep <span class="s2">&quot;registry:&quot;</span><span class="p">|</span> tr -s <span class="s2">&quot; &quot;</span> <span class="p">|</span> cut -f <span class="m">1</span> -d <span class="s2">&quot; &quot;</span><span class="k">)</span> <span class="p">|</span>grep <span class="s2">&quot;my-container&quot;</span> <span class="p">|</span> grep <span class="s2">&quot;1.0.1&quot;</span> &gt; /tmp/logs.txt
+</pre></div>
+
+
+<p>When looking at the logs, I found interesting patterns <code>filesystem.PutContent</code>
+and <code>filesystem.Delete</code>. This patterns come from the docker storage driver.
+Next step is to catch the deletion, this could be achieved by grepping
+the HTTP DELETE message.</p>
+<div class="highlight"><pre><span></span><span class="c1"># egrep DELETE my-service-1.0.1.txt </span>
+<span class="nv">time</span><span class="o">=</span><span class="s2">&quot;2019-03-05T10:19:55.904910006Z&quot;</span> <span class="nv">level</span><span class="o">=</span>debug <span class="nv">msg</span><span class="o">=</span><span class="s2">&quot;filesystem.GetContent(\&quot;/docker/registry/v2/repositories/corp/my-service/_manifests/tags/1.0.1/current/link\&quot;)&quot;</span> go.version<span class="o">=</span>go1.7.6 http.request.host<span class="o">=</span><span class="s2">&quot;corp-ssa-docker-registry:5000&quot;</span> http.request.id<span class="o">=</span>3313e9de-d9cf-4696-8b3b-7c09ca22904e http.request.method<span class="o">=</span>DELETE http.request.remoteaddr<span class="o">=</span><span class="s2">&quot;10.0.0.2:56942&quot;</span> http.request.uri<span class="o">=</span><span class="s2">&quot;/v2/corp/my-service/manifests/sha256:640f61c7fa1bceda97c3105d20417695cd9ff29b32d4dada932bab950748c092&quot;</span> http.request.useragent<span class="o">=</span><span class="s2">&quot;python-requests/2.4.3 CPython/3.4.2 Linux/3.10.0-514.el7.x86_64&quot;</span> instance.id<span class="o">=</span>8a995190-de4b-48a4-bbc7-0757bb249e2f <span class="nv">service</span><span class="o">=</span>registry trace.duration<span class="o">=</span><span class="m">9</span>.581796ms trace.file<span class="o">=</span><span class="s2">&quot;/go/src/github.com/docker/distribution/registry/storage/driver/base/base.go&quot;</span> trace.func<span class="o">=</span><span class="s2">&quot;github.com/docker/distribution/registry/storage/driver/base.(*Base).GetContent&quot;</span> trace.id<span class="o">=</span>80e22948-8fd7-4f1e-8330-7da907ae5f30 trace.line<span class="o">=</span><span class="m">82</span> vars.name<span class="o">=</span><span class="s2">&quot;corp/my-service&quot;</span> vars.reference<span class="o">=</span><span class="s2">&quot;sha256:640f61c7fa1bceda97c3105d20417695cd9ff29b32d4dada932bab950748c092&quot;</span> <span class="nv">version</span><span class="o">=</span>v2.6.2 
+
+<span class="nv">time</span><span class="o">=</span><span class="s2">&quot;2019-03-05T10:19:55.905819262Z&quot;</span> <span class="nv">level</span><span class="o">=</span>debug <span class="nv">msg</span><span class="o">=</span><span class="s2">&quot;filesystem.Delete(\&quot;/docker/registry/v2/repositories/corp/my-service/_manifests/tags/1.0.1\&quot;)&quot;</span> go.version<span class="o">=</span>go1.7.6 http.request.host<span class="o">=</span><span class="s2">&quot;corp-ssa-docker-registry:5000&quot;</span> http.request.id<span class="o">=</span>3313e9de-d9cf-4696-8b3b-7c09ca22904e http.request.method<span class="o">=</span>DELETE http.request.remoteaddr<span class="o">=</span><span class="s2">&quot;10.0.0.2:56942&quot;</span> http.request.uri<span class="o">=</span><span class="s2">&quot;/v2/corp/my-service/manifests/sha256:640f61c7fa1bceda97c3105d20417695cd9ff29b32d4dada932bab950748c092&quot;</span> http.request.useragent<span class="o">=</span><span class="s2">&quot;python-requests/2.4.3 CPython/3.4.2 Linux/3.10.0-514.el7.x86_64&quot;</span> instance.id<span class="o">=</span>8a995190-de4b-48a4-bbc7-0757bb249e2f <span class="nv">service</span><span class="o">=</span>registry trace.duration<span class="o">=</span><span class="m">760</span>.721µs trace.file<span class="o">=</span><span class="s2">&quot;/go/src/github.com/docker/distribution/registry/storage/driver/base/base.go&quot;</span> trace.func<span class="o">=</span><span class="s2">&quot;github.com/docker/distribution/registry/storage/driver/base.(*Base).Delete&quot;</span> trace.id<span class="o">=</span>d61e5938-5da2-4e85-bfd0-e26cc2c3fbab trace.line<span class="o">=</span><span class="m">177</span> vars.name<span class="o">=</span><span class="s2">&quot;corp/my-service&quot;</span> vars.reference<span class="o">=</span><span class="s2">&quot;sha256:640f61c7fa1bceda97c3105d20417695cd9ff29b32d4dada932bab950748c092&quot;</span> <span class="nv">version</span><span class="o">=</span>v2.6.2 
+</pre></div>
+
+
+<p>Second line of the output tell the truth! The deletion has been done by
+10.0.0.2 at 10:19 and it is probably a Python script because the user agent is
+<strong>python-requests</strong>. So do not be afraid of going inside docker registry logs,
+forensic is possible. But I would
+expect to find an easier solution with <a href="https://github.com/kwk/docker-registry-frontend">docker
+frontend</a>.  Unfortunately this
+project has not been updated since July 6th, 2017. It is written in
+<a href="https://en.wikipedia.org/wiki/AngularJS">AngularJS</a>, it may be a problem to
+find new contributor, because
+<a href="https://en.wikipedia.org/wiki/Angular_(web_framework)">Angular</a> has been
+rewritten with the version 2.x. I hope docker-registry-frontend will find a
+honorable successor or at least new maintener.</p>
+            </div>
+            <div class="post_list">
+                <span>By </span>
+                <a href="/author/romain-jacquet.html">@Romain JACQUET</a>
+                <span> in </span>
+                <span class="post_category"><a href="/category/container-docker-deletion-images-registry.html" rel="bookmark"
+                                               title="Permalink to container, docker, deletion, images, registry">[ container, docker, deletion, images, registry ]</a></span>
+                <span class="post_date">mer. 13 mars 2019</span>
+                <div><span>Tags : </span>
+                </div>
+
+                <div class="entry-social">
+                    <span class="twitter"><a target="_blank" rel="nofollow"
+                                             onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=400,width=700');return false;"
+                                             title="Twitter"
+                                             href="https://twitter.com/share?url=/docker-registry-forensic.html&text=Docker registry forensic&via="><img
+                            src="/theme/images/icons/twitter-s.png"></a></span>
+
+                    <span class="gplus"><a target="_blank" title="Google +"
+                                           href="https://plus.google.com/share?url=/docker-registry-forensic.html&hl=fr"
+                                           rel="nofollow"
+                                           onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=650');return false;"><img
+                            src="/theme/images/icons/google-s.png"></a></span>
+
+                    <span class="facebook"><a target="_blank" title="Facebook" rel="nofollow"
+                                              onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=500,width=700');return false;"
+                                              href="https://www.facebook.com/sharer.php?u=/docker-registry-forensic.html&t=Docker registry forensic"><img
+                            src="/theme/images/icons/facebook-s.png"></a></span>
+
+                    <a target="_blank" title="Linkedin"
+                       href="https://www.linkedin.com/shareArticle?mini=true&url=/docker-registry-forensic.html&title=Docker registry forensic"
+                       rel="nofollow"
+                       onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=650');return false;"><img
+                            src="/theme/images/icons/linkedin-s.png"></a>
+
+                    <span class="mail"><a
+                            href="mailto:?subject=Docker registry forensic&amp;body=Viens découvrir un article à propos de [Docker registry forensic] sur le site de Romain JACQUET. /docker-registry-forensic.html"
+                            title="Share by Email" target="_blank"><img
+                            src="/theme/images/icons/mail-s.png"></a></span>
+                </div>
+            </div>
+        </article>
+    </section>
+</article>
+
+<!-- Footer -->
+    <footer>
+        <p>
+            Blog powered by <a href="http://getpelican.com/">Pelican</a>,
+            which takes great advantage of <a href="http://python.org">Python</a>.
+            Theme <a href="https://github.com/parbhat/pelican-blue">Pelican-Blue</a> by <a
+                href="https://parbhatpuri.com/">@parbhat</a>.
+        </p>
+    </footer>
+
+
+</body>
+</html>
