@@ -21,6 +21,8 @@
         <link rel="stylesheet" href="/theme/css/pygments.css" type="text/css"/>
 
         <!-- Feed Meta Data -->
+            <link href="/feeds/all.atom.xml" type="application/atom+xml" rel="alternate"
+                  title="Deep in the system ATOM Feed"/>
 
         <!-- Twitter Feed -->
         <meta name="twitter:card" content="summary">
@@ -53,6 +55,7 @@
                 <li><a class="nav__link" href="/">Blog entry</a></li>
 
                 <li><a class="nav__link" href="/pages/about.html">About</a></li>
+                <li><a class="nav__link" href="/pages/links.html">Links</a></li>
 
         </ul>
     </nav>
@@ -64,18 +67,18 @@
                         src="/theme/images/icons/github.png"></a>
                 <a href="mailto:romainjacquet@free.fr" target="_blank"><img
                         src="/theme/images/icons/mail.png"></a>
+            <a href="/feeds/all.atom.xml" rel="alternate">
+                <img src="/theme/images/icons/rss.png"></a>
     </p>
 
         <h2>Categories</h2>
         <ul class="navbar">
                 <li class="active"><a
-                        href="/category/container-docker-deletion-images-registry.html">container, docker, deletion, images, registry</a></li>
+                        href="/category/cicd.html">ci/cd</a></li>
                 <li><a
-                        href="/category/development-python.html">development, python</a></li>
+                        href="/category/development.html">development</a></li>
                 <li><a
-                        href="/category/sysadmin-dns-centos.html">sysadmin, dns, centos</a></li>
-                <li><a
-                        href="/category/sysadmin-supervision.html">sysadmin, supervision</a></li>
+                        href="/category/sysadmin.html">sysadmin</a></li>
         </ul>
 
         <h2 class="blog_roll_link"><br/>BLOGROLLS</h2>
@@ -100,9 +103,9 @@ we are using the <a href="https://github.com/docker/distribution/releases/tag/v2
 hundred of repositories. An user has complained about a missing image. The
 image has been pushed, but it is no longer here... <code>Docker pull</code> command
 failed.  Our docker registry is running in docker container and
-all the logs are in <code>docker logs</code>, no persistence :-(. 
+all the logs are in <code>docker logs</code>, no persistence :-(.
 Even worse there is absolutely no supervision of the service. I started to
-extract the relevant logs from the docker daemon. </p>
+extract the relevant logs from the docker daemon.</p>
 <div class="highlight"><pre><span></span>docker logs <span class="k">$(</span>docker ps<span class="p">|</span>grep <span class="s2">&quot;registry:&quot;</span><span class="p">|</span> tr -s <span class="s2">&quot; &quot;</span> <span class="p">|</span> cut -f <span class="m">1</span> -d <span class="s2">&quot; &quot;</span><span class="k">)</span> <span class="p">|</span>grep <span class="s2">&quot;my-container&quot;</span> <span class="p">|</span> grep <span class="s2">&quot;1.0.1&quot;</span> &gt; /tmp/logs.txt
 </pre></div>
 
@@ -111,10 +114,10 @@ extract the relevant logs from the docker daemon. </p>
 and <code>filesystem.Delete</code>. This patterns come from the docker storage driver.
 Next step is to catch the deletion, this could be achieved by grepping
 the HTTP DELETE message.</p>
-<div class="highlight"><pre><span></span><span class="c1"># egrep DELETE my-service-1.0.1.txt </span>
-<span class="nv">time</span><span class="o">=</span><span class="s2">&quot;2019-03-05T10:19:55.904910006Z&quot;</span> <span class="nv">level</span><span class="o">=</span>debug <span class="nv">msg</span><span class="o">=</span><span class="s2">&quot;filesystem.GetContent(\&quot;/docker/registry/v2/repositories/corp/my-service/_manifests/tags/1.0.1/current/link\&quot;)&quot;</span> go.version<span class="o">=</span>go1.7.6 http.request.host<span class="o">=</span><span class="s2">&quot;corp-ssa-docker-registry:5000&quot;</span> http.request.id<span class="o">=</span>3313e9de-d9cf-4696-8b3b-7c09ca22904e http.request.method<span class="o">=</span>DELETE http.request.remoteaddr<span class="o">=</span><span class="s2">&quot;10.0.0.2:56942&quot;</span> http.request.uri<span class="o">=</span><span class="s2">&quot;/v2/corp/my-service/manifests/sha256:640f61c7fa1bceda97c3105d20417695cd9ff29b32d4dada932bab950748c092&quot;</span> http.request.useragent<span class="o">=</span><span class="s2">&quot;python-requests/2.4.3 CPython/3.4.2 Linux/3.10.0-514.el7.x86_64&quot;</span> instance.id<span class="o">=</span>8a995190-de4b-48a4-bbc7-0757bb249e2f <span class="nv">service</span><span class="o">=</span>registry trace.duration<span class="o">=</span><span class="m">9</span>.581796ms trace.file<span class="o">=</span><span class="s2">&quot;/go/src/github.com/docker/distribution/registry/storage/driver/base/base.go&quot;</span> trace.func<span class="o">=</span><span class="s2">&quot;github.com/docker/distribution/registry/storage/driver/base.(*Base).GetContent&quot;</span> trace.id<span class="o">=</span>80e22948-8fd7-4f1e-8330-7da907ae5f30 trace.line<span class="o">=</span><span class="m">82</span> vars.name<span class="o">=</span><span class="s2">&quot;corp/my-service&quot;</span> vars.reference<span class="o">=</span><span class="s2">&quot;sha256:640f61c7fa1bceda97c3105d20417695cd9ff29b32d4dada932bab950748c092&quot;</span> <span class="nv">version</span><span class="o">=</span>v2.6.2 
+<div class="highlight"><pre><span></span><span class="c1"># egrep DELETE my-service-1.0.1.txt</span>
+<span class="nv">time</span><span class="o">=</span><span class="s2">&quot;2019-03-05T10:19:55.904910006Z&quot;</span> <span class="nv">level</span><span class="o">=</span>debug <span class="nv">msg</span><span class="o">=</span><span class="s2">&quot;filesystem.GetContent(\&quot;/docker/registry/v2/repositories/corp/my-service/_manifests/tags/1.0.1/current/link\&quot;)&quot;</span> go.version<span class="o">=</span>go1.7.6 http.request.host<span class="o">=</span><span class="s2">&quot;corp-ssa-docker-registry:5000&quot;</span> http.request.id<span class="o">=</span>3313e9de-d9cf-4696-8b3b-7c09ca22904e http.request.method<span class="o">=</span>DELETE http.request.remoteaddr<span class="o">=</span><span class="s2">&quot;10.0.0.2:56942&quot;</span> http.request.uri<span class="o">=</span><span class="s2">&quot;/v2/corp/my-service/manifests/sha256:640f61c7fa1bceda97c3105d20417695cd9ff29b32d4dada932bab950748c092&quot;</span> http.request.useragent<span class="o">=</span><span class="s2">&quot;python-requests/2.4.3 CPython/3.4.2 Linux/3.10.0-514.el7.x86_64&quot;</span> instance.id<span class="o">=</span>8a995190-de4b-48a4-bbc7-0757bb249e2f <span class="nv">service</span><span class="o">=</span>registry trace.duration<span class="o">=</span><span class="m">9</span>.581796ms trace.file<span class="o">=</span><span class="s2">&quot;/go/src/github.com/docker/distribution/registry/storage/driver/base/base.go&quot;</span> trace.func<span class="o">=</span><span class="s2">&quot;github.com/docker/distribution/registry/storage/driver/base.(*Base).GetContent&quot;</span> trace.id<span class="o">=</span>80e22948-8fd7-4f1e-8330-7da907ae5f30 trace.line<span class="o">=</span><span class="m">82</span> vars.name<span class="o">=</span><span class="s2">&quot;corp/my-service&quot;</span> vars.reference<span class="o">=</span><span class="s2">&quot;sha256:640f61c7fa1bceda97c3105d20417695cd9ff29b32d4dada932bab950748c092&quot;</span> <span class="nv">version</span><span class="o">=</span>v2.6.2
 
-<span class="nv">time</span><span class="o">=</span><span class="s2">&quot;2019-03-05T10:19:55.905819262Z&quot;</span> <span class="nv">level</span><span class="o">=</span>debug <span class="nv">msg</span><span class="o">=</span><span class="s2">&quot;filesystem.Delete(\&quot;/docker/registry/v2/repositories/corp/my-service/_manifests/tags/1.0.1\&quot;)&quot;</span> go.version<span class="o">=</span>go1.7.6 http.request.host<span class="o">=</span><span class="s2">&quot;corp-ssa-docker-registry:5000&quot;</span> http.request.id<span class="o">=</span>3313e9de-d9cf-4696-8b3b-7c09ca22904e http.request.method<span class="o">=</span>DELETE http.request.remoteaddr<span class="o">=</span><span class="s2">&quot;10.0.0.2:56942&quot;</span> http.request.uri<span class="o">=</span><span class="s2">&quot;/v2/corp/my-service/manifests/sha256:640f61c7fa1bceda97c3105d20417695cd9ff29b32d4dada932bab950748c092&quot;</span> http.request.useragent<span class="o">=</span><span class="s2">&quot;python-requests/2.4.3 CPython/3.4.2 Linux/3.10.0-514.el7.x86_64&quot;</span> instance.id<span class="o">=</span>8a995190-de4b-48a4-bbc7-0757bb249e2f <span class="nv">service</span><span class="o">=</span>registry trace.duration<span class="o">=</span><span class="m">760</span>.721µs trace.file<span class="o">=</span><span class="s2">&quot;/go/src/github.com/docker/distribution/registry/storage/driver/base/base.go&quot;</span> trace.func<span class="o">=</span><span class="s2">&quot;github.com/docker/distribution/registry/storage/driver/base.(*Base).Delete&quot;</span> trace.id<span class="o">=</span>d61e5938-5da2-4e85-bfd0-e26cc2c3fbab trace.line<span class="o">=</span><span class="m">177</span> vars.name<span class="o">=</span><span class="s2">&quot;corp/my-service&quot;</span> vars.reference<span class="o">=</span><span class="s2">&quot;sha256:640f61c7fa1bceda97c3105d20417695cd9ff29b32d4dada932bab950748c092&quot;</span> <span class="nv">version</span><span class="o">=</span>v2.6.2 
+<span class="nv">time</span><span class="o">=</span><span class="s2">&quot;2019-03-05T10:19:55.905819262Z&quot;</span> <span class="nv">level</span><span class="o">=</span>debug <span class="nv">msg</span><span class="o">=</span><span class="s2">&quot;filesystem.Delete(\&quot;/docker/registry/v2/repositories/corp/my-service/_manifests/tags/1.0.1\&quot;)&quot;</span> go.version<span class="o">=</span>go1.7.6 http.request.host<span class="o">=</span><span class="s2">&quot;corp-ssa-docker-registry:5000&quot;</span> http.request.id<span class="o">=</span>3313e9de-d9cf-4696-8b3b-7c09ca22904e http.request.method<span class="o">=</span>DELETE http.request.remoteaddr<span class="o">=</span><span class="s2">&quot;10.0.0.2:56942&quot;</span> http.request.uri<span class="o">=</span><span class="s2">&quot;/v2/corp/my-service/manifests/sha256:640f61c7fa1bceda97c3105d20417695cd9ff29b32d4dada932bab950748c092&quot;</span> http.request.useragent<span class="o">=</span><span class="s2">&quot;python-requests/2.4.3 CPython/3.4.2 Linux/3.10.0-514.el7.x86_64&quot;</span> instance.id<span class="o">=</span>8a995190-de4b-48a4-bbc7-0757bb249e2f <span class="nv">service</span><span class="o">=</span>registry trace.duration<span class="o">=</span><span class="m">760</span>.721µs trace.file<span class="o">=</span><span class="s2">&quot;/go/src/github.com/docker/distribution/registry/storage/driver/base/base.go&quot;</span> trace.func<span class="o">=</span><span class="s2">&quot;github.com/docker/distribution/registry/storage/driver/base.(*Base).Delete&quot;</span> trace.id<span class="o">=</span>d61e5938-5da2-4e85-bfd0-e26cc2c3fbab trace.line<span class="o">=</span><span class="m">177</span> vars.name<span class="o">=</span><span class="s2">&quot;corp/my-service&quot;</span> vars.reference<span class="o">=</span><span class="s2">&quot;sha256:640f61c7fa1bceda97c3105d20417695cd9ff29b32d4dada932bab950748c092&quot;</span> <span class="nv">version</span><span class="o">=</span>v2.6.2
 </pre></div>
 
 
@@ -135,8 +138,8 @@ honorable successor or at least new maintener.</p>
                 <span>By </span>
                 <a href="/author/romain-jacquet.html">@Romain JACQUET</a>
                 <span> in </span>
-                <span class="post_category"><a href="/category/container-docker-deletion-images-registry.html" rel="bookmark"
-                                               title="Permalink to container, docker, deletion, images, registry">[ container, docker, deletion, images, registry ]</a></span>
+                <span class="post_category"><a href="/category/cicd.html" rel="bookmark"
+                                               title="Permalink to ci/cd">[ ci/cd ]</a></span>
                 <span class="post_date">mer. 13 mars 2019</span>
                 <div><span>Tags : </span>
                 </div>
