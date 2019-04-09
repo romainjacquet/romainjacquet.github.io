@@ -1,5 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Deep in the system</title><link href="https://romainjacquet.github.io/" rel="alternate"></link><link href="https://romainjacquet.github.io/feeds/all.atom.xml" rel="self"></link><id>https://romainjacquet.github.io/</id><updated>2019-03-28T22:13:00+01:00</updated><entry><title>DNS resolution with CentOS</title><link href="https://romainjacquet.github.io/dns-resolution-with-centos.html" rel="alternate"></link><published>2019-03-28T22:13:00+01:00</published><updated>2019-03-28T22:13:00+01:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-03-28:/dns-resolution-with-centos.html</id><summary type="html">&lt;p&gt;don't put more than three entries in your DNS&lt;/p&gt;</summary><content type="html">&lt;p&gt;I was trying to fix an issue on a server that use &lt;a href="https://mesosphere.github.io/mesos-dns/"&gt;mesos-dns&lt;/a&gt;.
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Deep in the system</title><link href="https://romainjacquet.github.io/" rel="alternate"></link><link href="https://romainjacquet.github.io/feeds/all.atom.xml" rel="self"></link><id>https://romainjacquet.github.io/</id><updated>2019-04-09T21:00:00+02:00</updated><entry><title>java import static</title><link href="https://romainjacquet.github.io/java-import-static.html" rel="alternate"></link><published>2019-04-09T21:00:00+02:00</published><updated>2019-04-09T21:00:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-04-09:/java-import-static.html</id><summary type="html">&lt;p&gt;java import static&lt;/p&gt;</summary><content type="html">&lt;p&gt;This post is about Java philosophy and feature introduction in language.
+Those days I develop a software piece in Java. Yeah, that is painfull
+for a Python user like me. I have a basic level in Java. 
+I can write Java code but I'm still thinking as it was Java 1.4.
+While browsing a modern source code, I discovered the 
+&lt;a href="https://docs.oracle.com/javase/1.5.0/docs/guide/language/static-import.html"&gt;&lt;code&gt;import static&lt;/code&gt; keyword&lt;/a&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;import static&lt;/span&gt; &lt;span class="nn"&gt;java.lang.Math.E&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+
+&lt;span class="kt"&gt;double&lt;/span&gt; &lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;E&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="mf"&gt;0.1&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Before Java 1.5 and &lt;code&gt;import static&lt;/code&gt;, Java could only import packages or class. Now Java can import static members: functions or constants. 
+The official documentation give two reasons:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;avoid to declare local copies of constants;&lt;/li&gt;
+&lt;li&gt;avoid inheritance abuse (Constant interface anti-pattern);&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;local copies&lt;/h3&gt;
+&lt;p&gt;I agree that local copies of constant are not a good idea for the maintenance. In the future you may want to
+change the constant, and having a copy is the best way to forget to modify the copy. Also having two constant
+for the same value has no sense.&lt;/p&gt;
+&lt;h3&gt;constant factorization&lt;/h3&gt;
+&lt;p&gt;I discovered that some java developers
+ &lt;strong&gt;use interface and inheritance to factorize constant usage!&lt;/strong&gt; This method is now 
+ officially discouraged and the &lt;a href="https://en.wikipedia.org/wiki/Constant_interface"&gt;anti-pattern Constant interface&lt;/a&gt; is on wikipedia.&lt;/p&gt;
+&lt;p&gt;Why not importing the class and use a qualified constant?
+In addition, direct import of member could lead to &lt;a href="https://stackoverflow.com/questions/22903542/what-is-namespace-pollution?noredirect=1&amp;amp;lq=1"&gt;name space pollution&lt;/a&gt;. For java designer use qualified code is boilerplate code. Boilerplate is the word used in the
+&lt;a href="https://docs.oracle.com/javase/1.5.0/docs/guide/language/static-import.html"&gt;changelog&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;In my opinion this feature is absolutely useless. Except under particular circumstances, I don't see any added-value.
+And why do they chose to add the static keyword? The compiler could do that for you.
+This example show us how the community and usage can change the langage. I'm quite
+sure that if the Constant interface haven't been used, the &lt;code&gt;import static&lt;/code&gt; keyword wouldn't exist.&lt;/p&gt;</content></entry><entry><title>DNS resolution with CentOS</title><link href="https://romainjacquet.github.io/dns-resolution-with-centos.html" rel="alternate"></link><published>2019-03-28T22:13:00+01:00</published><updated>2019-03-28T22:13:00+01:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-03-28:/dns-resolution-with-centos.html</id><summary type="html">&lt;p&gt;don't put more than three entries in your DNS&lt;/p&gt;</summary><content type="html">&lt;p&gt;I was trying to fix an issue on a server that use &lt;a href="https://mesosphere.github.io/mesos-dns/"&gt;mesos-dns&lt;/a&gt;.
 I discovered a CentOS host with this strange configuration in &lt;code&gt;/etc/resolv.conf&lt;/code&gt;:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;# Generated by NetworkManager
 search mycorp.corp
