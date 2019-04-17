@@ -1,5 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Deep in the system - sysadmin</title><link href="https://romainjacquet.github.io/" rel="alternate"></link><link href="https://romainjacquet.github.io/feeds/sysadmin.atom.xml" rel="self"></link><id>https://romainjacquet.github.io/</id><updated>2019-03-28T22:13:00+01:00</updated><entry><title>DNS resolution with CentOS</title><link href="https://romainjacquet.github.io/dns-resolution-with-centos.html" rel="alternate"></link><published>2019-03-28T22:13:00+01:00</published><updated>2019-03-28T22:13:00+01:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-03-28:/dns-resolution-with-centos.html</id><summary type="html">&lt;p&gt;don't put more than three entries in your DNS&lt;/p&gt;</summary><content type="html">&lt;p&gt;I was trying to fix an issue on a server that use &lt;a href="https://mesosphere.github.io/mesos-dns/"&gt;mesos-dns&lt;/a&gt;.
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Deep in the system - sysadmin</title><link href="https://romainjacquet.github.io/" rel="alternate"></link><link href="https://romainjacquet.github.io/feeds/sysadmin.atom.xml" rel="self"></link><id>https://romainjacquet.github.io/</id><updated>2019-04-17T21:50:00+02:00</updated><entry><title>Fix mixed-language UI in firefox</title><link href="https://romainjacquet.github.io/fix-mixed-language-ui-in-firefox.html" rel="alternate"></link><published>2019-04-17T21:50:00+02:00</published><updated>2019-04-17T21:50:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-04-17:/fix-mixed-language-ui-in-firefox.html</id><summary type="html">&lt;p&gt;firefox language problem&lt;/p&gt;</summary><content type="html">&lt;p&gt;My company is using an &lt;a href="https://en.wikipedia.org/wiki/Enterprise_resource_planning"&gt;ERP&lt;/a&gt;
+ and everyone must use it to report monthly activity.
+Doing this report has always been a true non-user-friendly experience. It is a
+web portal written in &lt;a href="https://en.wikipedia.org/wiki/ASP.NET"&gt;ASP.net&lt;/a&gt; as the aspx
+extension of the pages demonstrates. The most annoying problem is a mix of french
+and english in the interface.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Date format is english style (MM/DD/YYYY) and not french style (DD/MM/YYYY)&lt;/li&gt;
+&lt;li&gt;Calendar displays weeks that begins the Sunday instead of Monday&lt;/li&gt;
+&lt;li&gt;Labels are in french in the interface&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img alt="EN calendar and french labels" src="https://romainjacquet.github.io/images/bad_calendar.PNG"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="EN dates and french labels" src="https://romainjacquet.github.io/images/bad_date.PNG"&gt;&lt;/p&gt;
+&lt;p&gt;My first idea was that the website have a bug. But testing on Chrome shows that
+it works! I launched a debug session with Firefox and find a wrong header: 
+&lt;code&gt;Accept-Language:en-US,fr-FR;q=0.7,en;q=0.3&lt;/code&gt;.
+The &lt;a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language"&gt;Accept-Language header&lt;/a&gt;
+ is sent by the browser to define the language of the session. The value of this header depends on
+ the firefox settings language (Settings &amp;gt; Options &amp;gt; Language). In my case it was EN-US. I
+ changed to &lt;code&gt;fr-fr&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="EN dates and french labels" src="https://romainjacquet.github.io/images/default_language.PNG"&gt;&lt;/p&gt;
+&lt;p&gt;After restarting Firefox it works. But it clearly shows that the label of the application
+are agnostic to the header &lt;code&gt;Accept-Language&lt;/code&gt; and had cause this strange mix. This is 
+not a proper way of programming. Firefox version is &lt;a href="https://support.mozilla.org/en-US/products/firefox-enterprise"&gt;Firefox entreprise&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="EN dates and french labels" src="https://romainjacquet.github.io/images/firefox_version.PNG"&gt;&lt;/p&gt;
+&lt;p&gt;Why do the IT guys provide a default installation with
+a locale EN-US? It is possible to customize the installer and provide
+a per locale installer. You just have to use the switch &lt;code&gt;lang=&lt;/code&gt; in  the 
+msi installer (&lt;a href="https://support.mozilla.org/en-US/kb/deploy-firefox-msi-installers#w_configuration-options"&gt;official documentation&lt;/a&gt;)...&lt;/p&gt;</content></entry><entry><title>DNS resolution with CentOS</title><link href="https://romainjacquet.github.io/dns-resolution-with-centos.html" rel="alternate"></link><published>2019-03-28T22:13:00+01:00</published><updated>2019-03-28T22:13:00+01:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-03-28:/dns-resolution-with-centos.html</id><summary type="html">&lt;p&gt;don't put more than three entries in your DNS&lt;/p&gt;</summary><content type="html">&lt;p&gt;I was trying to fix an issue on a server that use &lt;a href="https://mesosphere.github.io/mesos-dns/"&gt;mesos-dns&lt;/a&gt;.
 I discovered a CentOS host with this strange configuration in &lt;code&gt;/etc/resolv.conf&lt;/code&gt;:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;# Generated by NetworkManager
 search mycorp.corp
