@@ -1,5 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Deep in the system</title><link href="https://romainjacquet.github.io/" rel="alternate"></link><link href="https://romainjacquet.github.io/feeds/all.atom.xml" rel="self"></link><id>https://romainjacquet.github.io/</id><updated>2019-04-17T21:50:00+02:00</updated><entry><title>Fix mixed-language UI in firefox</title><link href="https://romainjacquet.github.io/fix-mixed-language-ui-in-firefox.html" rel="alternate"></link><published>2019-04-17T21:50:00+02:00</published><updated>2019-04-17T21:50:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-04-17:/fix-mixed-language-ui-in-firefox.html</id><summary type="html">&lt;p&gt;firefox language problem&lt;/p&gt;</summary><content type="html">&lt;p&gt;My company is using an &lt;a href="https://en.wikipedia.org/wiki/Enterprise_resource_planning"&gt;ERP&lt;/a&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Deep in the system</title><link href="https://romainjacquet.github.io/" rel="alternate"></link><link href="https://romainjacquet.github.io/feeds/all.atom.xml" rel="self"></link><id>https://romainjacquet.github.io/</id><updated>2019-04-24T20:13:00+02:00</updated><entry><title>Branch indexing failure in Jenkins</title><link href="https://romainjacquet.github.io/branch-indexing-failure-in-jenkins.html" rel="alternate"></link><published>2019-04-24T20:13:00+02:00</published><updated>2019-04-24T20:13:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-04-24:/branch-indexing-failure-in-jenkins.html</id><summary type="html">&lt;p&gt;corrupted git config files lead to branch indexing failure&lt;/p&gt;</summary><content type="html">&lt;p&gt;As usual, CI/CD anomalies are always a source for blogging. And also a 
+way of improving the reliability of the CI system. A user
+has complained of Jenkins branch indexing failure. The branch indexing is a feature of
+&lt;a href="https://jenkins.io/doc/book/pipeline/multibranch/"&gt;Multibranch pipeline&lt;/a&gt; that discover new branches
+and delete old branches. 
+Instead of index branches, the user got a fancy java stack :-). &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;java.lang.IllegalArgumentException: Repository config file /home/jenkins/caches/git-46ca6ff4bea60131b71f18bc70a1dd5f/.git/config invalid Cannot read file /home/jenkins/caches/git-46ca6ff4bea60131b71f18bc70a1dd5f/.git/config
+    at org.eclipse.jgit.lib.BaseRepositoryBuilder.loadConfig(BaseRepositoryBuilder.java:687)
+    at org.eclipse.jgit.lib.BaseRepositoryBuilder.getConfig(BaseRepositoryBuilder.java:662)
+    at org.eclipse.jgit.lib.BaseRepositoryBuilder.guessWorkTreeOrFail(BaseRepositoryBuilder.java:698)
+    at org.eclipse.jgit.lib.BaseRepositoryBuilder.setupWorkTree(BaseRepositoryBuilder.java:628)
+    at org.eclipse.jgit.lib.BaseRepositoryBuilder.setup(BaseRepositoryBuilder.java:557)
+    at org.eclipse.jgit.storage.file.FileRepositoryBuilder.build(FileRepositoryBuilder.java:92)
+    at org.eclipse.jgit.storage.file.FileRepositoryBuilder.create(FileRepositoryBuilder.java:111)
+    at org.jenkinsci.plugins.gitclient.CliGitAPIImpl.getRepository(CliGitAPIImpl.java:2336)
+    at hudson.plugins.git.GitAPI.getRepository(GitAPI.java:269)
+    at jenkins.plugins.git.AbstractGitSCMSource.retrieve(AbstractGitSCMSource.java:234)
+    at jenkins.scm.api.SCMSource.fetch(SCMSource.java:148)
+    at jenkins.branch.MultiBranchProject.computeChildren(MultiBranchProject.java:294)
+    at com.cloudbees.hudson.plugins.folder.computed.ComputedFolder.updateChildren(ComputedFolder.java:157)
+    at com.cloudbees.hudson.plugins.folder.computed.FolderComputation.run(FolderComputation.java:122)
+    at hudson.model.ResourceController.execute(ResourceController.java:98)
+    at hudson.model.Executor.run(Executor.java:404)
+Finished: FAILURE
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Checking the config file shows a corruption. This file is a classic git file that you 
+have when you clone a repository. &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;    url = ssh://user@tuleap/repo.git
+[remote &amp;quot;origin&amp;quot;]
+    url = ssh://user@tuleap/repo.git
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The first line shoud be included in a remote
+section. Having two remote sections in git is common but not for CI usage.
+I wrote a script to detect broken config:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="ch"&gt;#!/bin/bash&lt;/span&gt;
+
+&lt;span class="nv"&gt;GIT_CONFIG_FILES&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;find /home/jenkins/caches -mindepth &lt;span class="m"&gt;3&lt;/span&gt; -maxdepth &lt;span class="m"&gt;3&lt;/span&gt; -name config&lt;span class="k"&gt;)&lt;/span&gt;
+&lt;span class="nv"&gt;i&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;
+&lt;span class="k"&gt;for&lt;/span&gt; f in &lt;span class="nv"&gt;$GIT_CONFIG_FILES&lt;/span&gt; &lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="k"&gt;do&lt;/span&gt;
+        &lt;span class="nv"&gt;FIRST_LINE&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;head -n &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="nv"&gt;$f&lt;/span&gt;&lt;span class="k"&gt;)&lt;/span&gt;
+        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="nv"&gt;$FIRST_LINE&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; !&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;[core]&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="p"&gt;;&lt;/span&gt;
+        &lt;span class="k"&gt;then&lt;/span&gt;
+                &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;------------------------------------------------------&amp;quot;&lt;/span&gt;
+                &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Suspicious config file &lt;/span&gt;&lt;span class="nv"&gt;$f&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
+                head &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="nv"&gt;$f&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
+                &lt;span class="nv"&gt;i&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;$((&lt;/span&gt;i+1&lt;span class="k"&gt;))&lt;/span&gt;
+        &lt;span class="k"&gt;fi&lt;/span&gt;
+&lt;span class="k"&gt;done&lt;/span&gt;
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Found &lt;/span&gt;&lt;span class="nv"&gt;$i&lt;/span&gt;&lt;span class="s2"&gt; suspicious files&amp;quot;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Fixing the file is easy.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Add the missing lines by reading the beginning of the file in a fresh clone;&lt;/li&gt;
+&lt;li&gt;Remove the first line which is obviously invalid;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The correct config file is:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;[core]&lt;/span&gt;
+    &lt;span class="na"&gt;repositoryformatversion&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;0&lt;/span&gt;
+&lt;span class="s"&gt;    filemode = true&lt;/span&gt;
+&lt;span class="s"&gt;    bare = false&lt;/span&gt;
+&lt;span class="s"&gt;    logallrefupdates = true&lt;/span&gt;
+&lt;span class="k"&gt;[remote &amp;quot;origin&amp;quot;]&lt;/span&gt;
+    &lt;span class="na"&gt;url&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;ssh://user@tuleap/repo.git&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;I'm still wondering who has corrupted the files. The strange thing is that 
+JGIT is visible in  the stack even if my job was supposed to use the git client 
+configuration. &lt;/p&gt;</content></entry><entry><title>Fix mixed-language UI in firefox</title><link href="https://romainjacquet.github.io/fix-mixed-language-ui-in-firefox.html" rel="alternate"></link><published>2019-04-17T21:50:00+02:00</published><updated>2019-04-17T21:50:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-04-17:/fix-mixed-language-ui-in-firefox.html</id><summary type="html">&lt;p&gt;firefox language problem&lt;/p&gt;</summary><content type="html">&lt;p&gt;My company is using an &lt;a href="https://en.wikipedia.org/wiki/Enterprise_resource_planning"&gt;ERP&lt;/a&gt;
  and everyone must use it to report monthly activity.
 Doing this report has always been a true non-user-friendly experience. It is a
 web portal written in &lt;a href="https://en.wikipedia.org/wiki/ASP.NET"&gt;ASP.net&lt;/a&gt; as the aspx
