@@ -1,5 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Deep in the system</title><link href="https://romainjacquet.github.io/" rel="alternate"></link><link href="https://romainjacquet.github.io/feeds/all.atom.xml" rel="self"></link><id>https://romainjacquet.github.io/</id><updated>2019-04-24T20:13:00+02:00</updated><entry><title>Branch indexing failure in Jenkins</title><link href="https://romainjacquet.github.io/branch-indexing-failure-in-jenkins.html" rel="alternate"></link><published>2019-04-24T20:13:00+02:00</published><updated>2019-04-24T20:13:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-04-24:/branch-indexing-failure-in-jenkins.html</id><summary type="html">&lt;p&gt;corrupted git config files lead to branch indexing failure&lt;/p&gt;</summary><content type="html">&lt;p&gt;As usual, CI/CD anomalies are always a source for blogging. And also a 
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Deep in the system</title><link href="https://romainjacquet.github.io/" rel="alternate"></link><link href="https://romainjacquet.github.io/feeds/all.atom.xml" rel="self"></link><id>https://romainjacquet.github.io/</id><updated>2019-05-04T19:11:00+02:00</updated><entry><title>M.2 speed on Intel H97</title><link href="https://romainjacquet.github.io/m2-speed-on-intel-h97.html" rel="alternate"></link><published>2019-05-04T19:11:00+02:00</published><updated>2019-05-04T19:11:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-05-04:/m2-speed-on-intel-h97.html</id><summary type="html">&lt;p&gt;discover the real speed of M2 interface whith H97&lt;/p&gt;</summary><content type="html">&lt;p&gt;I bought my personnal computer at the end of 2014. This is really old in the modern world and today
+booting my Ubuntu is not fast.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;switch on the power button&lt;/li&gt;
+&lt;li&gt;15s after I saw the grub menu&lt;/li&gt;
+&lt;li&gt;1 minute and 15s after I got the login screen&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I admit it is not catastrophic, but I can have a better user experience :-). I also noticed
+that Firefox took 9s to start. So I decided to upgrade.
+First I added 8Gb of DDR3 1600 Mhz. And decided to use &lt;a href="https://en.wikipedia.org/wiki/M.2"&gt;M.2&lt;/a&gt; &lt;a href="https://en.wikipedia.org/wiki/Solid-state_drive"&gt;SSD&lt;/a&gt; disk instead of
+my old SATA disk.&lt;/p&gt;
+&lt;p&gt;Before buying the new disk I try to find the supported PCI revision and speed
+of my M.2 connector. With ga-h97-d3h mobo, I checked the layout in the user manual
+and it is really unclear.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="ga-h97-d3h layout" src="https://romainjacquet.github.io/images/ga-h97-d3h-layout.png"&gt;&lt;/p&gt;
+&lt;p&gt;M.2 is just an interface. The user manual says that it is socket 3 and type M. So we
+know that it is for SSD (SATA or PCIE) with up to four &lt;a href="https://en.wikipedia.org/wiki/PCI_Express#Lane"&gt;lanes&lt;/a&gt;. The lanes are bidirectionnal signaling
+pairs used to carry data. As you expect, the more lanes you get the faster is your disk.
+On the diagram the left part is the PCIe area and there is no link to the M.2 in the right part.
+The other question is the supported revision. This mobo can support up to PCIe revision 3.0 
+but  all the PCIe buses on the mobo doesn't support 3.0.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="ga-h97-d3h pcie revision" src="https://romainjacquet.github.io/images/pcie-revision.png"&gt;&lt;/p&gt;
+&lt;p&gt;Internet has some posts about the PCIE support of GA-H97-D3H but no clear answer.&lt;/p&gt;
+&lt;h1&gt;Installation&lt;/h1&gt;
+&lt;p&gt;Booting on M.2 was relatively new thing when H97 chipset was created. But I haven't seen 
+any difficulty except that I had to upgrade the BIOS to install F7 version (&lt;a href="https://www.gigabyte.com/Press/News/1358"&gt;according to Gybabyte announcement&lt;/a&gt;
+)).
+ Before the F6 version you can use nvme disk but you cannot boot it. I reinstalled my Ubuntu.
+ I didn't record the installation time but it seems really fast.
+With the lspci option, I checked the speed:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# lspci |grep -i nvme&lt;/span&gt;
+&lt;span class="m"&gt;02&lt;/span&gt;:00.0 Non-Volatile memory controller: Samsung Electronics Co Ltd NVMe SSD Controller SM961/PM961
+lspci -vvv -s &lt;span class="m"&gt;02&lt;/span&gt;:00.0&lt;span class="p"&gt;|&lt;/span&gt;grep LnkCap
+        LnkCap: Port &lt;span class="c1"&gt;#0, Speed 8GT/s, Width x4, ASPM L1, Exit Latency L0s unlimited, L1 &amp;lt;64us&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Great! I got four lanes (Width x4) for my new disk.&lt;/p&gt;
+&lt;h1&gt;Final benchmark&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;switch on the power button&lt;/li&gt;
+&lt;li&gt;10s after I saw the grub menu&lt;/li&gt;
+&lt;li&gt;25s after I got the login screen (&lt;strong&gt;more than three time faster!&lt;/strong&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Now Ubuntu's desktop is really reactive. If you have the same mobo, or an H97-based mobo
+do not hesitate to upgrade.&lt;/p&gt;</content></entry><entry><title>Branch indexing failure in Jenkins</title><link href="https://romainjacquet.github.io/branch-indexing-failure-in-jenkins.html" rel="alternate"></link><published>2019-04-24T20:13:00+02:00</published><updated>2019-04-24T20:13:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-04-24:/branch-indexing-failure-in-jenkins.html</id><summary type="html">&lt;p&gt;corrupted git config files lead to branch indexing failure&lt;/p&gt;</summary><content type="html">&lt;p&gt;As usual, CI/CD anomalies are always a source for blogging. And also a 
 way of improving the reliability of the CI system. A user
 has complained of Jenkins branch indexing failure. The branch indexing is a feature of
 &lt;a href="https://jenkins.io/doc/book/pipeline/multibranch/"&gt;Multibranch pipeline&lt;/a&gt; that discover new branches

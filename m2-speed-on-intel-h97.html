@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en" itemscope itemtype="http://schema.org/Person">
+<head>
+            <meta charset="utf-8">
+        <!-- Site Meta Data -->
+        <title>M.2 speed on Intel H97</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="Romain JACQUET">
+
+        <link rel="shortcut icon" href="">
+
+        <!-- schema.org -->
+        <meta itemprop="name" content="Deep in the system">
+        <meta itemprop="image" content="">
+        <meta itemprop="description" content="">
+
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel='stylesheet' type='text/css'>
+        <!-- Style Meta Data -->
+        <link rel="stylesheet" href="https://romainjacquet.github.io/theme/css/style.css" type="text/css"/>
+        <link rel="stylesheet" href="https://romainjacquet.github.io/theme/css/pygments.css" type="text/css"/>
+
+        <!-- Feed Meta Data -->
+            <link href="https://romainjacquet.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate"
+                  title="Deep in the system ATOM Feed"/>
+
+        <!-- Twitter Feed -->
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:image" content="">
+
+    <meta name="twitter:creator" content="">
+    <meta name="twitter:url" content="https://romainjacquet.github.io/m2-speed-on-intel-h97.html">
+    <meta name="twitter:title" content="Deep in the system ~ M.2 speed on Intel H97">
+    <meta name="twitter:description" content="discover the real speed of M2 interface whith H97">
+
+    <!-- Facebook Meta Data -->
+    <meta property="og:title" content="Deep in the system ~ M.2 speed on Intel H97"/>
+    <meta property="og:description" content="discover the real speed of M2 interface whith H97"/>
+    <meta property="og:image" content=""/>
+</head>
+
+<body>
+<!-- Sidebar -->
+<aside>
+    <!--<center><a href="https://romainjacquet.github.io"><img id="avatar" src=""></a></center>-->
+    <h1>Deep in the system</h1>
+        <p>Unix, sysadmin, devops, CI/CD</p>
+    <br>
+
+
+    <nav class="nav">
+        <ul class="list-bare">
+
+                <li><a class="nav__link" href="/">Blog entry</a></li>
+
+                <li><a class="nav__link" href="https://romainjacquet.github.io/pages/about.html">About</a></li>
+                <li><a class="nav__link" href="https://romainjacquet.github.io/pages/links.html">Links</a></li>
+
+        </ul>
+    </nav>
+
+    <p class="social">
+                <a href="https://www.linkedin.com/in/jacquet-romain-493049141/?locale=en_US" target="_blank"><img
+                        src="https://romainjacquet.github.io/theme/images/icons/linkedin.png"></a>
+                <a href="https://github.com/romainjacquet" target="_blank"><img
+                        src="https://romainjacquet.github.io/theme/images/icons/github.png"></a>
+                <a href="mailto:romainjacquet@free.fr" target="_blank"><img
+                        src="https://romainjacquet.github.io/theme/images/icons/mail.png"></a>
+            <a href="https://romainjacquet.github.io/feeds/all.atom.xml" rel="alternate">
+                <img src="https://romainjacquet.github.io/theme/images/icons/rss.png"></a>
+    </p>
+
+        <h2>Categories</h2>
+        <ul class="navbar">
+                <li><a
+                        href="https://romainjacquet.github.io/category/cicd.html">ci/cd</a></li>
+                <li><a
+                        href="https://romainjacquet.github.io/category/development.html">development</a></li>
+                <li class="active"><a
+                        href="https://romainjacquet.github.io/category/sysadmin.html">sysadmin</a></li>
+        </ul>
+
+        <h2 class="blog_roll_link"><br/>BLOGROLLS</h2>
+        <ul class="navbar">
+                <li><a href="http://getpelican.com/">Pelican</a></li>
+                <li><a href="http://python.org/">Python.org</a></li>
+                <li><a href="http://jinja.pocoo.org/">Jinja2</a></li>
+        </ul>
+
+</aside>
+
+<!-- Content -->
+<article>
+    <section id="content">
+        <article>
+            <h2 class="post_title post_detail"><a href="https://romainjacquet.github.io/m2-speed-on-intel-h97.html" rel="bookmark"
+                                                  title="Permalink to M.2 speed on Intel H97">M.2 speed on Intel H97</a></h2>
+            <div class="entry-content blog-post">
+                <p>I bought my personnal computer at the end of 2014. This is really old in the modern world and today
+booting my Ubuntu is not fast.</p>
+<ul>
+<li>switch on the power button</li>
+<li>15s after I saw the grub menu</li>
+<li>1 minute and 15s after I got the login screen</li>
+</ul>
+<p>I admit it is not catastrophic, but I can have a better user experience :-). I also noticed
+that Firefox took 9s to start. So I decided to upgrade.
+First I added 8Gb of DDR3 1600 Mhz. And decided to use <a href="https://en.wikipedia.org/wiki/M.2">M.2</a> <a href="https://en.wikipedia.org/wiki/Solid-state_drive">SSD</a> disk instead of
+my old SATA disk.</p>
+<p>Before buying the new disk I try to find the supported PCI revision and speed
+of my M.2 connector. With ga-h97-d3h mobo, I checked the layout in the user manual
+and it is really unclear.</p>
+<p><img alt="ga-h97-d3h layout" src="https://romainjacquet.github.io/images/ga-h97-d3h-layout.png"></p>
+<p>M.2 is just an interface. The user manual says that it is socket 3 and type M. So we
+know that it is for SSD (SATA or PCIE) with up to four <a href="https://en.wikipedia.org/wiki/PCI_Express#Lane">lanes</a>. The lanes are bidirectionnal signaling
+pairs used to carry data. As you expect, the more lanes you get the faster is your disk.
+On the diagram the left part is the PCIe area and there is no link to the M.2 in the right part.
+The other question is the supported revision. This mobo can support up to PCIe revision 3.0 
+but  all the PCIe buses on the mobo doesn't support 3.0.</p>
+<p><img alt="ga-h97-d3h pcie revision" src="https://romainjacquet.github.io/images/pcie-revision.png"></p>
+<p>Internet has some posts about the PCIE support of GA-H97-D3H but no clear answer.</p>
+<h1>Installation</h1>
+<p>Booting on M.2 was relatively new thing when H97 chipset was created. But I haven't seen 
+any difficulty except that I had to upgrade the BIOS to install F7 version (<a href="https://www.gigabyte.com/Press/News/1358">according to Gybabyte announcement</a>
+)).
+ Before the F6 version you can use nvme disk but you cannot boot it. I reinstalled my Ubuntu.
+ I didn't record the installation time but it seems really fast.
+With the lspci option, I checked the speed:</p>
+<div class="highlight"><pre><span></span><span class="c1"># lspci |grep -i nvme</span>
+<span class="m">02</span>:00.0 Non-Volatile memory controller: Samsung Electronics Co Ltd NVMe SSD Controller SM961/PM961
+lspci -vvv -s <span class="m">02</span>:00.0<span class="p">|</span>grep LnkCap
+        LnkCap: Port <span class="c1">#0, Speed 8GT/s, Width x4, ASPM L1, Exit Latency L0s unlimited, L1 &lt;64us</span>
+</pre></div>
+
+
+<p>Great! I got four lanes (Width x4) for my new disk.</p>
+<h1>Final benchmark</h1>
+<ul>
+<li>switch on the power button</li>
+<li>10s after I saw the grub menu</li>
+<li>25s after I got the login screen (<strong>more than three time faster!</strong>)</li>
+</ul>
+<p>Now Ubuntu's desktop is really reactive. If you have the same mobo, or an H97-based mobo
+do not hesitate to upgrade.</p>
+            </div>
+            <div class="post_list">
+                <span>By </span>
+                <a href="https://romainjacquet.github.io/author/romain-jacquet.html">@Romain JACQUET</a>
+                <span> in </span>
+                <span class="post_category"><a href="https://romainjacquet.github.io/category/sysadmin.html" rel="bookmark"
+                                               title="Permalink to sysadmin">[ sysadmin ]</a></span>
+                <span class="post_date">sam. 04 mai 2019</span>
+                <div><span>Tags : </span>
+                </div>
+
+                <div class="entry-social">
+                    <span class="twitter"><a target="_blank" rel="nofollow"
+                                             onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=400,width=700');return false;"
+                                             title="Twitter"
+                                             href="https://twitter.com/share?url=https://romainjacquet.github.io/m2-speed-on-intel-h97.html&text=M.2 speed on Intel H97&via="><img
+                            src="https://romainjacquet.github.io/theme/images/icons/twitter-s.png"></a></span>
+
+                    <span class="gplus"><a target="_blank" title="Google +"
+                                           href="https://plus.google.com/share?url=https://romainjacquet.github.io/m2-speed-on-intel-h97.html&hl=fr"
+                                           rel="nofollow"
+                                           onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=650');return false;"><img
+                            src="https://romainjacquet.github.io/theme/images/icons/google-s.png"></a></span>
+
+                    <span class="facebook"><a target="_blank" title="Facebook" rel="nofollow"
+                                              onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=500,width=700');return false;"
+                                              href="https://www.facebook.com/sharer.php?u=https://romainjacquet.github.io/m2-speed-on-intel-h97.html&t=M.2 speed on Intel H97"><img
+                            src="https://romainjacquet.github.io/theme/images/icons/facebook-s.png"></a></span>
+
+                    <a target="_blank" title="Linkedin"
+                       href="https://www.linkedin.com/shareArticle?mini=true&url=https://romainjacquet.github.io/m2-speed-on-intel-h97.html&title=M.2 speed on Intel H97"
+                       rel="nofollow"
+                       onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=650');return false;"><img
+                            src="https://romainjacquet.github.io/theme/images/icons/linkedin-s.png"></a>
+
+                    <span class="mail"><a
+                            href="mailto:?subject=M.2 speed on Intel H97&amp;body=Viens découvrir un article à propos de [M.2 speed on Intel H97] sur le site de Romain JACQUET. https://romainjacquet.github.io/m2-speed-on-intel-h97.html"
+                            title="Share by Email" target="_blank"><img
+                            src="https://romainjacquet.github.io/theme/images/icons/mail-s.png"></a></span>
+                </div>
+            </div>
+        </article>
+    </section>
+</article>
+
+<!-- Footer -->
+    <footer>
+        <p>
+            Blog powered by <a href="http://getpelican.com/">Pelican</a>,
+            which takes great advantage of <a href="http://python.org">Python</a>.
+            Theme <a href="https://github.com/parbhat/pelican-blue">Pelican-Blue</a> by <a
+                href="https://parbhatpuri.com/">@parbhat</a>.
+        </p>
+    </footer>
+
+
+</body>
+</html>
