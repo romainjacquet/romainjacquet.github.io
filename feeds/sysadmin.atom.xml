@@ -1,5 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Deep in the system - sysadmin</title><link href="https://romainjacquet.github.io/" rel="alternate"></link><link href="https://romainjacquet.github.io/feeds/sysadmin.atom.xml" rel="self"></link><id>https://romainjacquet.github.io/</id><updated>2019-05-04T19:11:00+02:00</updated><entry><title>M.2 speed on Intel H97</title><link href="https://romainjacquet.github.io/m2-speed-on-intel-h97.html" rel="alternate"></link><published>2019-05-04T19:11:00+02:00</published><updated>2019-05-04T19:11:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-05-04:/m2-speed-on-intel-h97.html</id><summary type="html">&lt;p&gt;discover the real speed of M2 interface whith H97&lt;/p&gt;</summary><content type="html">&lt;p&gt;I bought my personnal computer at the end of 2014. This is really old in the modern world and today
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Deep in the system - sysadmin</title><link href="https://romainjacquet.github.io/" rel="alternate"></link><link href="https://romainjacquet.github.io/feeds/sysadmin.atom.xml" rel="self"></link><id>https://romainjacquet.github.io/</id><updated>2019-05-24T18:13:00+02:00</updated><entry><title>Fix Filezilla import SSH key problem</title><link href="https://romainjacquet.github.io/fix-filezilla-import-ssh-key-problem.html" rel="alternate"></link><published>2019-05-24T18:13:00+02:00</published><updated>2019-05-24T18:13:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-05-24:/fix-filezilla-import-ssh-key-problem.html</id><summary type="html">&lt;p&gt;filezilla only support PKCS...&lt;/p&gt;</summary><content type="html">&lt;p&gt;I'm always surprized how long users can suffer from IT problem before asking for help.
+One employee of my company told me that it has problem with a ssh key. It uses its
+key to copy with scp and it works. But he cannot use &lt;a href="https://filezilla-project.org/"&gt;Filezilla&lt;/a&gt;.
+Filezilla refuses the key without any warning.
+I try to use Filezilla with a newly-generated key and I successfully connect to a test server.
+So the problem comes from the key.
+Let's have a look to the keys. Both keys looks correct and contains correct header and footer:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;-----BEGIN RSA PRIVATE KEY-----
+&lt;span class="o"&gt;[&lt;/span&gt;...&lt;span class="o"&gt;]&lt;/span&gt;
+-----END RSA PRIVATE KEY-----
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;But openssl failed to check to suspicious key:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;% openssl rsa -check -in suspiciouskey_id                               
+RSA key ok
+&lt;span class="m"&gt;140634506504080&lt;/span&gt;:error:0D0680A8:asn1 encoding routines:ASN1_CHECK_TLEN:wrong tag:tasn_dec.c:1199:
+&lt;span class="m"&gt;140634506504080&lt;/span&gt;:error:0D06C03A:asn1 encoding routines:ASN1_D2I_EX_PRIMITIVE:nested asn1 error:tasn_dec.c:767:
+&lt;span class="m"&gt;140634506504080&lt;/span&gt;:error:0D08303A:asn1 encoding routines:ASN1_TEMPLATE_NOEXP_D2I:nested asn1 error:tasn_dec.c:699:Field&lt;span class="o"&gt;=&lt;/span&gt;n, &lt;span class="nv"&gt;Type&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;RSA
+&lt;span class="m"&gt;140634506504080&lt;/span&gt;:error:04093004:rsa routines:OLD_RSA_PRIV_DECODE:RSA lib:rsa_ameth.c:121:
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;A deeper inspection show that the key contains extra data:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;% openssl asn1parse &amp;lt; suspiciouskey_id 
+    &lt;span class="m"&gt;0&lt;/span&gt;:d&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;  &lt;span class="nv"&gt;hl&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt; &lt;span class="nv"&gt;l&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1214&lt;/span&gt; cons: SEQUENCE          
+    &lt;span class="m"&gt;4&lt;/span&gt;:d&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;  &lt;span class="nv"&gt;hl&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt; &lt;span class="nv"&gt;l&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;   &lt;span class="m"&gt;1&lt;/span&gt; prim: INTEGER           :00
+    &lt;span class="m"&gt;7&lt;/span&gt;:d&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;  &lt;span class="nv"&gt;hl&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt; &lt;span class="nv"&gt;l&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;  &lt;span class="m"&gt;13&lt;/span&gt; cons: SEQUENCE          
+    &lt;span class="m"&gt;9&lt;/span&gt;:d&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;  &lt;span class="nv"&gt;hl&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt; &lt;span class="nv"&gt;l&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;   &lt;span class="m"&gt;9&lt;/span&gt; prim: OBJECT            :rsaEncryption
+   &lt;span class="m"&gt;20&lt;/span&gt;:d&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;  &lt;span class="nv"&gt;hl&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt; &lt;span class="nv"&gt;l&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;   &lt;span class="m"&gt;0&lt;/span&gt; prim: NULL              
+   &lt;span class="m"&gt;22&lt;/span&gt;:d&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;  &lt;span class="nv"&gt;hl&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt; &lt;span class="nv"&gt;l&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1192&lt;/span&gt; prim: OCTET STRING      &lt;span class="o"&gt;[&lt;/span&gt;HEX DUMP&lt;span class="o"&gt;]&lt;/span&gt;:..
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;A normal key looks like:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;  openssl asn1parse &amp;lt; good_id 
+    &lt;span class="m"&gt;0&lt;/span&gt;:d&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;  &lt;span class="nv"&gt;hl&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt; &lt;span class="nv"&gt;l&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1189&lt;/span&gt; cons: SEQUENCE          
+    &lt;span class="m"&gt;4&lt;/span&gt;:d&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;  &lt;span class="nv"&gt;hl&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt; &lt;span class="nv"&gt;l&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;   &lt;span class="m"&gt;1&lt;/span&gt; prim: INTEGER           :00
+    &lt;span class="m"&gt;7&lt;/span&gt;:d&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;  &lt;span class="nv"&gt;hl&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt; &lt;span class="nv"&gt;l&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;257&lt;/span&gt; prim: INTEGER           :XXXYYYYY
+  &lt;span class="m"&gt;268&lt;/span&gt;:d&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;  &lt;span class="nv"&gt;hl&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt; &lt;span class="nv"&gt;l&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;   &lt;span class="m"&gt;3&lt;/span&gt; prim: INTEGER           :010001
+  &lt;span class="m"&gt;273&lt;/span&gt;:d&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;  &lt;span class="nv"&gt;hl&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt; &lt;span class="nv"&gt;l&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;256&lt;/span&gt; prim: INTEGER           :XXXXXYYY
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;In fact, this is not a simple key as you can generate with &lt;a href="http://man7.org/linux/man-pages/man1/ssh-keygen.1.html"&gt;ssh-keygen&lt;/a&gt;.
+This key contains extra information because it's a &lt;a href="https://en.wikipedia.org/wiki/PKCS_8"&gt;PKCS#8&lt;/a&gt;.
+By default, ssh-keygen generates a &lt;a href="https://en.wikipedia.org/wiki/PKCS_1"&gt;PKCS#1&lt;/a&gt;. So
+I try to convert the key:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;openssl rsa -in suspiciouskey -out newkey
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;It works!!!
+Why the original key was in PKCS#8 format? Did the sysadmin use the ssh-keygen switch &lt;code&gt;-m PKCS8&lt;/code&gt;? 
+SCP is probably smart enough to extract the key from PKCS#8 but Filezilla can't (at least with 3.42.1)&lt;/p&gt;</content></entry><entry><title>M.2 speed on Intel H97</title><link href="https://romainjacquet.github.io/m2-speed-on-intel-h97.html" rel="alternate"></link><published>2019-05-04T19:11:00+02:00</published><updated>2019-05-04T19:11:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-05-04:/m2-speed-on-intel-h97.html</id><summary type="html">&lt;p&gt;discover the real speed of M2 interface whith H97&lt;/p&gt;</summary><content type="html">&lt;p&gt;I bought my personnal computer at the end of 2014. This is really old in the modern world and today
 booting my Ubuntu is not fast.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;switch on the power button&lt;/li&gt;
