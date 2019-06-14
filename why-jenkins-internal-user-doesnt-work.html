@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en" itemscope itemtype="http://schema.org/Person">
+<head>
+            <meta charset="utf-8">
+        <!-- Site Meta Data -->
+        <title>Why Jenkins internal user doesn't work?</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="Romain JACQUET">
+
+        <link rel="shortcut icon" href="">
+
+        <!-- schema.org -->
+        <meta itemprop="name" content="Deep in the system">
+        <meta itemprop="image" content="">
+        <meta itemprop="description" content="">
+
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel='stylesheet' type='text/css'>
+        <!-- Style Meta Data -->
+        <link rel="stylesheet" href="https://romainjacquet.github.io/theme/css/style.css" type="text/css"/>
+        <link rel="stylesheet" href="https://romainjacquet.github.io/theme/css/pygments.css" type="text/css"/>
+
+        <!-- Feed Meta Data -->
+            <link href="https://romainjacquet.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate"
+                  title="Deep in the system ATOM Feed"/>
+
+        <!-- Twitter Feed -->
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:image" content="">
+
+    <meta name="twitter:creator" content="">
+    <meta name="twitter:url" content="https://romainjacquet.github.io/why-jenkins-internal-user-doesnt-work.html">
+    <meta name="twitter:title" content="Deep in the system ~ Why Jenkins internal user doesn't work?">
+    <meta name="twitter:description" content="Discover how jenkins mix the local users and the Active Directory users">
+
+    <!-- Facebook Meta Data -->
+    <meta property="og:title" content="Deep in the system ~ Why Jenkins internal user doesn't work?"/>
+    <meta property="og:description" content="Discover how jenkins mix the local users and the Active Directory users"/>
+    <meta property="og:image" content=""/>
+</head>
+
+<body>
+<!-- Sidebar -->
+<aside>
+    <!--<center><a href="https://romainjacquet.github.io"><img id="avatar" src=""></a></center>-->
+    <h1>Deep in the system</h1>
+        <p>Unix, sysadmin, devops, CI/CD</p>
+    <br>
+
+
+    <nav class="nav">
+        <ul class="list-bare">
+
+                <li><a class="nav__link" href="/">Blog entry</a></li>
+
+                <li><a class="nav__link" href="https://romainjacquet.github.io/pages/about.html">About</a></li>
+                <li><a class="nav__link" href="https://romainjacquet.github.io/pages/links.html">Links</a></li>
+
+        </ul>
+    </nav>
+
+    <p class="social">
+                <a href="https://www.linkedin.com/in/jacquet-romain-493049141/?locale=en_US" target="_blank"><img
+                        src="https://romainjacquet.github.io/theme/images/icons/linkedin.png"></a>
+                <a href="https://github.com/romainjacquet" target="_blank"><img
+                        src="https://romainjacquet.github.io/theme/images/icons/github.png"></a>
+                <a href="mailto:romainjacquet@free.fr" target="_blank"><img
+                        src="https://romainjacquet.github.io/theme/images/icons/mail.png"></a>
+            <a href="https://romainjacquet.github.io/feeds/all.atom.xml" rel="alternate">
+                <img src="https://romainjacquet.github.io/theme/images/icons/rss.png"></a>
+    </p>
+
+        <h2>Categories</h2>
+        <ul class="navbar">
+                <li class="active"><a
+                        href="https://romainjacquet.github.io/category/cicd.html">ci/cd</a></li>
+                <li><a
+                        href="https://romainjacquet.github.io/category/development.html">development</a></li>
+                <li><a
+                        href="https://romainjacquet.github.io/category/sysadmin.html">sysadmin</a></li>
+        </ul>
+
+        <h2 class="blog_roll_link"><br/>BLOGROLLS</h2>
+        <ul class="navbar">
+                <li><a href="http://getpelican.com/">Pelican</a></li>
+                <li><a href="http://python.org/">Python.org</a></li>
+                <li><a href="http://jinja.pocoo.org/">Jinja2</a></li>
+        </ul>
+
+</aside>
+
+<!-- Content -->
+<article>
+    <section id="content">
+        <article>
+            <h2 class="post_title post_detail"><a href="https://romainjacquet.github.io/why-jenkins-internal-user-doesnt-work.html" rel="bookmark"
+                                                  title="Permalink to Why Jenkins internal user doesn't work?">Why Jenkins internal user doesn't work?</a></h2>
+            <div class="entry-content blog-post">
+                <p>Jenkins has a very popular <a href="https://github.com/jenkinsci/active-directory-plugin">Active directory plugin</a>
+ to use Active Directory for authentication.
+Before the version 2.5, if you lost connectivy to your Active Directory you were stuck.
+The only solution was to temporary disable security. 2.5 version bring a feature called
+<strong>fall-back user</strong>. I wasn't able to use it, probably because I didn't understand how
+the feature works.
+So as one of <a href="https://www.amazon.jobs/en/principles">Amazon's principle</a> says: it's time to dive deep!</p>
+<p>The feature was developped after this improvement <a href="https://issues.jenkins-ci.org/browse/JENKINS-39065">39065</a>.
+The issue has been fixed by a nice <a href="https://github.com/jenkinsci/active-directory-plugin/commit/61feb0c3df6d1979a981e04a41d52337f7343007">commit</a> of <a href="https://github.com/fbelzunc">Felix Belzunce Arcos</a>.
+At first glance, we can see:</p>
+<ul>
+<li>an interesting call to updatePasswordInJenkinsInternalDatabase. This method of 
+  ActiveDirectoryUnixAuthenticationProvider.java is called by <code>retrieveUser</code>. It means that each
+  time you authenticate a user, the password in internal database
+  is updated if it is the internal user .</li>
+<li>if the <code>retrieveUser</code> catch a <code>javax.naming.NamingException</code> jenkins try to authenticate
+  the user against the internal database.</li>
+</ul>
+<p>When starting a fresh Jenkins installation we get empty folder users:</p>
+<div class="highlight"><pre><span></span><span class="c1"># ls -l /var/lib/jenkins/users/</span>
+total <span class="m">0</span>
+</pre></div>
+
+
+<p>My jenkins instance is configured to have a fall-back user (thebestuser). 
+After first login:</p>
+<div class="highlight"><pre><span></span><span class="c1"># ls -l /var/lib/jenkins/users/</span>
+total <span class="m">4</span>
+drwx------. <span class="m">2</span> jenkins jenkins  <span class="m">24</span> <span class="m">14</span> juin  <span class="m">12</span>:01 thebestuser_2536622897412429280
+-rw-r--r--. <span class="m">1</span> jenkins jenkins <span class="m">319</span> <span class="m">14</span> juin  <span class="m">12</span>:01 users.xml
+</pre></div>
+
+
+<p>Look at the content:</p>
+<div class="highlight"><pre><span></span><span class="c1"># grep -A 1 -B 1 password /var/lib/jenkins/users/hebestuser_2536622897412429280/config.xml </span>
+    &lt;hudson.security.HudsonPrivateSecurityRealm_-Details&gt;
+      &lt;passwordHash&gt;#jbcrypt:<span class="nv">$2</span>a<span class="nv">$10$WZsuWs</span>.45fdsfsc6d6q465d4sq64fs6q/45dsqdqWSDSDRG&lt;/passwordHash&gt;
+    &lt;/hudson.security.HudsonPrivateSecurityRealm_-Details&gt;
+</pre></div>
+
+
+<p>So Jenkins users database is just XML files on the disk.
+I try to simulate the connexion loss by a simple iptable rules.</p>
+<div class="highlight"><pre><span></span>firewall-cmd --direct --add-rule ipv4 filter OUTPUT <span class="m">0</span> -p tcp -m tcp --dport<span class="o">=</span><span class="m">389</span> -j DROP
+</pre></div>
+
+
+<p>I tested it but it failed! Here is an extract of the jenkins.log</p>
+<div class="highlight"><pre><span></span>juin 14, 2019 12:17:29 PM hudson.plugins.active_directory.ActiveDirectorySecurityRealm$DescriptorImpl bind
+AVERTISSEMENT: Failed to bind to 172.30.4.10:389
+javax.naming.CommunicationException: 172.30.4.10:389 [Root exception is java.net.SocketTimeoutException: connect timed out]
+        at com.sun.jndi.ldap.Connection.&lt;init&gt;(Connection.java:228)
+        at com.sun.jndi.ldap.LdapClient.&lt;init&gt;(LdapClient.java:137)
+        at com.sun.jndi.ldap.LdapClient.getInstance(LdapClient.java:1609)
+        at com.sun.jndi.ldap.LdapCtx.connect(LdapCtx.java:2749)
+        at com.sun.jndi.ldap.LdapCtx.&lt;init&gt;(LdapCtx.java:319)
+        at com.sun.jndi.ldap.LdapCtxFactory.getUsingURL(LdapCtxFactory.java:192)
+        at com.sun.jndi.ldap.LdapCtxFactory.getLdapCtxInstance(LdapCtxFactory.java:151)
+        at hudson.plugins.active_directory.ActiveDirectorySecurityRealm$DescriptorImpl.bind(ActiveDirectorySecurityRealm.java:668)
+        at hudson.plugins.active_directory.ActiveDirectorySecurityRealm$DescriptorImpl.bind(ActiveDirectorySecurityRealm.java:599)
+        at hudson.plugins.active_directory.ActiveDirectoryUnixAuthenticationProvider$1.call(ActiveDirectoryUnixAuthenticationProvider.java:359)
+        at hudson.plugins.active_directory.ActiveDirectoryUnixAuthenticationProvider$1.call(ActiveDirectoryUnixAuthenticationProvider.java:342)
+        at com.google.common.cache.LocalCache$LocalManualCache$1.load(LocalCache.java:4767)
+        at com.google.common.cache.LocalCache$LoadingValueReference.loadFuture(LocalCache.java:3568)
+</pre></div>
+
+
+<p>It doesn't work because the LDAP layer throws a CommunicationException not a Naming Exception.
+Jenkins improvement to come?</p>
+            </div>
+            <div class="post_list">
+                <span>By </span>
+                <a href="https://romainjacquet.github.io/author/romain-jacquet.html">@Romain JACQUET</a>
+                <span> in </span>
+                <span class="post_category"><a href="https://romainjacquet.github.io/category/cicd.html" rel="bookmark"
+                                               title="Permalink to ci/cd">[ ci/cd ]</a></span>
+                <span class="post_date">ven. 14 juin 2019</span>
+                <div><span>Tags : </span>
+                </div>
+
+                <div class="entry-social">
+                    <span class="twitter"><a target="_blank" rel="nofollow"
+                                             onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=400,width=700');return false;"
+                                             title="Twitter"
+                                             href="https://twitter.com/share?url=https://romainjacquet.github.io/why-jenkins-internal-user-doesnt-work.html&text=Why Jenkins internal user doesn't work?&via="><img
+                            src="https://romainjacquet.github.io/theme/images/icons/twitter-s.png"></a></span>
+
+                    <span class="gplus"><a target="_blank" title="Google +"
+                                           href="https://plus.google.com/share?url=https://romainjacquet.github.io/why-jenkins-internal-user-doesnt-work.html&hl=fr"
+                                           rel="nofollow"
+                                           onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=650');return false;"><img
+                            src="https://romainjacquet.github.io/theme/images/icons/google-s.png"></a></span>
+
+                    <span class="facebook"><a target="_blank" title="Facebook" rel="nofollow"
+                                              onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=500,width=700');return false;"
+                                              href="https://www.facebook.com/sharer.php?u=https://romainjacquet.github.io/why-jenkins-internal-user-doesnt-work.html&t=Why Jenkins internal user doesn't work?"><img
+                            src="https://romainjacquet.github.io/theme/images/icons/facebook-s.png"></a></span>
+
+                    <a target="_blank" title="Linkedin"
+                       href="https://www.linkedin.com/shareArticle?mini=true&url=https://romainjacquet.github.io/why-jenkins-internal-user-doesnt-work.html&title=Why Jenkins internal user doesn't work?"
+                       rel="nofollow"
+                       onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=650');return false;"><img
+                            src="https://romainjacquet.github.io/theme/images/icons/linkedin-s.png"></a>
+
+                    <span class="mail"><a
+                            href="mailto:?subject=Why Jenkins internal user doesn't work?&amp;body=Viens découvrir un article à propos de [Why Jenkins internal user doesn't work?] sur le site de Romain JACQUET. https://romainjacquet.github.io/why-jenkins-internal-user-doesnt-work.html"
+                            title="Share by Email" target="_blank"><img
+                            src="https://romainjacquet.github.io/theme/images/icons/mail-s.png"></a></span>
+                </div>
+            </div>
+        </article>
+    </section>
+</article>
+
+<!-- Footer -->
+    <footer>
+        <p>
+            Blog powered by <a href="http://getpelican.com/">Pelican</a>,
+            which takes great advantage of <a href="http://python.org">Python</a>.
+            Theme <a href="https://github.com/parbhat/pelican-blue">Pelican-Blue</a> by <a
+                href="https://parbhatpuri.com/">@parbhat</a>.
+        </p>
+    </footer>
+
+
+</body>
+</html>

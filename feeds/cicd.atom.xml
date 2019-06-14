@@ -1,5 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Deep in the system - ci/cd</title><link href="https://romainjacquet.github.io/" rel="alternate"></link><link href="https://romainjacquet.github.io/feeds/cicd.atom.xml" rel="self"></link><id>https://romainjacquet.github.io/</id><updated>2019-04-24T20:13:00+02:00</updated><entry><title>Branch indexing failure in Jenkins</title><link href="https://romainjacquet.github.io/branch-indexing-failure-in-jenkins.html" rel="alternate"></link><published>2019-04-24T20:13:00+02:00</published><updated>2019-04-24T20:13:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-04-24:/branch-indexing-failure-in-jenkins.html</id><summary type="html">&lt;p&gt;corrupted git config files lead to branch indexing failure&lt;/p&gt;</summary><content type="html">&lt;p&gt;As usual, CI/CD anomalies are always a source for blogging. And also a 
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Deep in the system - ci/cd</title><link href="https://romainjacquet.github.io/" rel="alternate"></link><link href="https://romainjacquet.github.io/feeds/cicd.atom.xml" rel="self"></link><id>https://romainjacquet.github.io/</id><updated>2019-06-14T19:59:00+02:00</updated><entry><title>Why Jenkins internal user doesn't work?</title><link href="https://romainjacquet.github.io/why-jenkins-internal-user-doesnt-work.html" rel="alternate"></link><published>2019-06-14T19:59:00+02:00</published><updated>2019-06-14T19:59:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-06-14:/why-jenkins-internal-user-doesnt-work.html</id><summary type="html">&lt;p&gt;Discover how jenkins mix the local users and the Active Directory users&lt;/p&gt;</summary><content type="html">&lt;p&gt;Jenkins has a very popular &lt;a href="https://github.com/jenkinsci/active-directory-plugin"&gt;Active directory plugin&lt;/a&gt;
+ to use Active Directory for authentication.
+Before the version 2.5, if you lost connectivy to your Active Directory you were stuck.
+The only solution was to temporary disable security. 2.5 version bring a feature called
+&lt;strong&gt;fall-back user&lt;/strong&gt;. I wasn't able to use it, probably because I didn't understand how
+the feature works.
+So as one of &lt;a href="https://www.amazon.jobs/en/principles"&gt;Amazon's principle&lt;/a&gt; says: it's time to dive deep!&lt;/p&gt;
+&lt;p&gt;The feature was developped after this improvement &lt;a href="https://issues.jenkins-ci.org/browse/JENKINS-39065"&gt;39065&lt;/a&gt;.
+The issue has been fixed by a nice &lt;a href="https://github.com/jenkinsci/active-directory-plugin/commit/61feb0c3df6d1979a981e04a41d52337f7343007"&gt;commit&lt;/a&gt; of &lt;a href="https://github.com/fbelzunc"&gt;Felix Belzunce Arcos&lt;/a&gt;.
+At first glance, we can see:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;an interesting call to updatePasswordInJenkinsInternalDatabase. This method of 
+  ActiveDirectoryUnixAuthenticationProvider.java is called by &lt;code&gt;retrieveUser&lt;/code&gt;. It means that each
+  time you authenticate a user, the password in internal database
+  is updated if it is the internal user .&lt;/li&gt;
+&lt;li&gt;if the &lt;code&gt;retrieveUser&lt;/code&gt; catch a &lt;code&gt;javax.naming.NamingException&lt;/code&gt; jenkins try to authenticate
+  the user against the internal database.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;When starting a fresh Jenkins installation we get empty folder users:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# ls -l /var/lib/jenkins/users/&lt;/span&gt;
+total &lt;span class="m"&gt;0&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;My jenkins instance is configured to have a fall-back user (thebestuser). 
+After first login:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# ls -l /var/lib/jenkins/users/&lt;/span&gt;
+total &lt;span class="m"&gt;4&lt;/span&gt;
+drwx------. &lt;span class="m"&gt;2&lt;/span&gt; jenkins jenkins  &lt;span class="m"&gt;24&lt;/span&gt; &lt;span class="m"&gt;14&lt;/span&gt; juin  &lt;span class="m"&gt;12&lt;/span&gt;:01 thebestuser_2536622897412429280
+-rw-r--r--. &lt;span class="m"&gt;1&lt;/span&gt; jenkins jenkins &lt;span class="m"&gt;319&lt;/span&gt; &lt;span class="m"&gt;14&lt;/span&gt; juin  &lt;span class="m"&gt;12&lt;/span&gt;:01 users.xml
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Look at the content:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# grep -A 1 -B 1 password /var/lib/jenkins/users/hebestuser_2536622897412429280/config.xml &lt;/span&gt;
+    &amp;lt;hudson.security.HudsonPrivateSecurityRealm_-Details&amp;gt;
+      &amp;lt;passwordHash&amp;gt;#jbcrypt:&lt;span class="nv"&gt;$2&lt;/span&gt;a&lt;span class="nv"&gt;$10$WZsuWs&lt;/span&gt;.45fdsfsc6d6q465d4sq64fs6q/45dsqdqWSDSDRG&amp;lt;/passwordHash&amp;gt;
+    &amp;lt;/hudson.security.HudsonPrivateSecurityRealm_-Details&amp;gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;So Jenkins users database is just XML files on the disk.
+I try to simulate the connexion loss by a simple iptable rules.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;firewall-cmd --direct --add-rule ipv4 filter OUTPUT &lt;span class="m"&gt;0&lt;/span&gt; -p tcp -m tcp --dport&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;389&lt;/span&gt; -j DROP
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;I tested it but it failed! Here is an extract of the jenkins.log&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;juin 14, 2019 12:17:29 PM hudson.plugins.active_directory.ActiveDirectorySecurityRealm$DescriptorImpl bind
+AVERTISSEMENT: Failed to bind to 172.30.4.10:389
+javax.naming.CommunicationException: 172.30.4.10:389 [Root exception is java.net.SocketTimeoutException: connect timed out]
+        at com.sun.jndi.ldap.Connection.&amp;lt;init&amp;gt;(Connection.java:228)
+        at com.sun.jndi.ldap.LdapClient.&amp;lt;init&amp;gt;(LdapClient.java:137)
+        at com.sun.jndi.ldap.LdapClient.getInstance(LdapClient.java:1609)
+        at com.sun.jndi.ldap.LdapCtx.connect(LdapCtx.java:2749)
+        at com.sun.jndi.ldap.LdapCtx.&amp;lt;init&amp;gt;(LdapCtx.java:319)
+        at com.sun.jndi.ldap.LdapCtxFactory.getUsingURL(LdapCtxFactory.java:192)
+        at com.sun.jndi.ldap.LdapCtxFactory.getLdapCtxInstance(LdapCtxFactory.java:151)
+        at hudson.plugins.active_directory.ActiveDirectorySecurityRealm$DescriptorImpl.bind(ActiveDirectorySecurityRealm.java:668)
+        at hudson.plugins.active_directory.ActiveDirectorySecurityRealm$DescriptorImpl.bind(ActiveDirectorySecurityRealm.java:599)
+        at hudson.plugins.active_directory.ActiveDirectoryUnixAuthenticationProvider$1.call(ActiveDirectoryUnixAuthenticationProvider.java:359)
+        at hudson.plugins.active_directory.ActiveDirectoryUnixAuthenticationProvider$1.call(ActiveDirectoryUnixAuthenticationProvider.java:342)
+        at com.google.common.cache.LocalCache$LocalManualCache$1.load(LocalCache.java:4767)
+        at com.google.common.cache.LocalCache$LoadingValueReference.loadFuture(LocalCache.java:3568)
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;It doesn't work because the LDAP layer throws a CommunicationException not a Naming Exception.
+Jenkins improvement to come?&lt;/p&gt;</content></entry><entry><title>Branch indexing failure in Jenkins</title><link href="https://romainjacquet.github.io/branch-indexing-failure-in-jenkins.html" rel="alternate"></link><published>2019-04-24T20:13:00+02:00</published><updated>2019-04-24T20:13:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-04-24:/branch-indexing-failure-in-jenkins.html</id><summary type="html">&lt;p&gt;corrupted git config files lead to branch indexing failure&lt;/p&gt;</summary><content type="html">&lt;p&gt;As usual, CI/CD anomalies are always a source for blogging. And also a 
 way of improving the reliability of the CI system. A user
 has complained of Jenkins branch indexing failure. The branch indexing is a feature of
 &lt;a href="https://jenkins.io/doc/book/pipeline/multibranch/"&gt;Multibranch pipeline&lt;/a&gt; that discover new branches
