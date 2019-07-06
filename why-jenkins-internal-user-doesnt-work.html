@@ -145,22 +145,22 @@ I try to simulate the connexion loss by a simple iptable rules.</p>
 
 
 <p>I tested it but it failed! Here is an extract of the jenkins.log</p>
-<div class="highlight"><pre><span></span>juin 14, 2019 12:17:29 PM hudson.plugins.active_directory.ActiveDirectorySecurityRealm$DescriptorImpl bind
-AVERTISSEMENT: Failed to bind to 172.30.4.10:389
-javax.naming.CommunicationException: 172.30.4.10:389 [Root exception is java.net.SocketTimeoutException: connect timed out]
-        at com.sun.jndi.ldap.Connection.&lt;init&gt;(Connection.java:228)
-        at com.sun.jndi.ldap.LdapClient.&lt;init&gt;(LdapClient.java:137)
-        at com.sun.jndi.ldap.LdapClient.getInstance(LdapClient.java:1609)
-        at com.sun.jndi.ldap.LdapCtx.connect(LdapCtx.java:2749)
-        at com.sun.jndi.ldap.LdapCtx.&lt;init&gt;(LdapCtx.java:319)
-        at com.sun.jndi.ldap.LdapCtxFactory.getUsingURL(LdapCtxFactory.java:192)
-        at com.sun.jndi.ldap.LdapCtxFactory.getLdapCtxInstance(LdapCtxFactory.java:151)
-        at hudson.plugins.active_directory.ActiveDirectorySecurityRealm$DescriptorImpl.bind(ActiveDirectorySecurityRealm.java:668)
-        at hudson.plugins.active_directory.ActiveDirectorySecurityRealm$DescriptorImpl.bind(ActiveDirectorySecurityRealm.java:599)
-        at hudson.plugins.active_directory.ActiveDirectoryUnixAuthenticationProvider$1.call(ActiveDirectoryUnixAuthenticationProvider.java:359)
-        at hudson.plugins.active_directory.ActiveDirectoryUnixAuthenticationProvider$1.call(ActiveDirectoryUnixAuthenticationProvider.java:342)
-        at com.google.common.cache.LocalCache$LocalManualCache$1.load(LocalCache.java:4767)
-        at com.google.common.cache.LocalCache$LoadingValueReference.loadFuture(LocalCache.java:3568)
+<div class="highlight"><pre><span></span><span class="nv">juin</span> <span class="mi">14</span>, <span class="mi">2019</span> <span class="mi">12</span>:<span class="mi">17</span>:<span class="mi">29</span> <span class="nv">PM</span> <span class="nv">hudson</span>.<span class="nv">plugins</span>.<span class="nv">active_directory</span>.<span class="nv">ActiveDirectorySecurityRealm</span><span class="mh">$De</span><span class="nv">scriptorImpl</span> <span class="nv">bind</span>
+<span class="nv">AVERTISSEMENT</span>: <span class="nv">Failed</span> <span class="nv">to</span> <span class="nv">bind</span> <span class="nv">to</span> <span class="mi">172</span>.<span class="mi">30</span>.<span class="mi">4</span>.<span class="mi">10</span>:<span class="mi">389</span>
+<span class="nv">javax</span>.<span class="nv">naming</span>.<span class="nv">CommunicationException</span>: <span class="mi">172</span>.<span class="mi">30</span>.<span class="mi">4</span>.<span class="mi">10</span>:<span class="mi">389</span> [<span class="nv">Root</span> <span class="nv">exception</span> <span class="nv">is</span> <span class="nv">java</span>.<span class="nv">net</span>.<span class="nv">SocketTimeoutException</span>: <span class="k">connect</span> <span class="nv">timed</span> <span class="nv">out</span>]
+        <span class="nv">at</span> <span class="nv">com</span>.<span class="nv">sun</span>.<span class="nv">jndi</span>.<span class="nv">ldap</span>.<span class="nv">Connection</span>.<span class="o">&lt;</span><span class="nv">init</span><span class="o">&gt;</span><span class="ss">(</span><span class="nv">Connection</span>.<span class="nv">java</span>:<span class="mi">228</span><span class="ss">)</span>
+        <span class="nv">at</span> <span class="nv">com</span>.<span class="nv">sun</span>.<span class="nv">jndi</span>.<span class="nv">ldap</span>.<span class="nv">LdapClient</span>.<span class="o">&lt;</span><span class="nv">init</span><span class="o">&gt;</span><span class="ss">(</span><span class="nv">LdapClient</span>.<span class="nv">java</span>:<span class="mi">137</span><span class="ss">)</span>
+        <span class="nv">at</span> <span class="nv">com</span>.<span class="nv">sun</span>.<span class="nv">jndi</span>.<span class="nv">ldap</span>.<span class="nv">LdapClient</span>.<span class="nv">getInstance</span><span class="ss">(</span><span class="nv">LdapClient</span>.<span class="nv">java</span>:<span class="mi">1609</span><span class="ss">)</span>
+        <span class="nv">at</span> <span class="nv">com</span>.<span class="nv">sun</span>.<span class="nv">jndi</span>.<span class="nv">ldap</span>.<span class="nv">LdapCtx</span>.<span class="k">connect</span><span class="ss">(</span><span class="nv">LdapCtx</span>.<span class="nv">java</span>:<span class="mi">2749</span><span class="ss">)</span>
+        <span class="nv">at</span> <span class="nv">com</span>.<span class="nv">sun</span>.<span class="nv">jndi</span>.<span class="nv">ldap</span>.<span class="nv">LdapCtx</span>.<span class="o">&lt;</span><span class="nv">init</span><span class="o">&gt;</span><span class="ss">(</span><span class="nv">LdapCtx</span>.<span class="nv">java</span>:<span class="mi">319</span><span class="ss">)</span>
+        <span class="nv">at</span> <span class="nv">com</span>.<span class="nv">sun</span>.<span class="nv">jndi</span>.<span class="nv">ldap</span>.<span class="nv">LdapCtxFactory</span>.<span class="nv">getUsingURL</span><span class="ss">(</span><span class="nv">LdapCtxFactory</span>.<span class="nv">java</span>:<span class="mi">192</span><span class="ss">)</span>
+        <span class="nv">at</span> <span class="nv">com</span>.<span class="nv">sun</span>.<span class="nv">jndi</span>.<span class="nv">ldap</span>.<span class="nv">LdapCtxFactory</span>.<span class="nv">getLdapCtxInstance</span><span class="ss">(</span><span class="nv">LdapCtxFactory</span>.<span class="nv">java</span>:<span class="mi">151</span><span class="ss">)</span>
+        <span class="nv">at</span> <span class="nv">hudson</span>.<span class="nv">plugins</span>.<span class="nv">active_directory</span>.<span class="nv">ActiveDirectorySecurityRealm</span><span class="mh">$De</span><span class="nv">scriptorImpl</span>.<span class="nv">bind</span><span class="ss">(</span><span class="nv">ActiveDirectorySecurityRealm</span>.<span class="nv">java</span>:<span class="mi">668</span><span class="ss">)</span>
+        <span class="nv">at</span> <span class="nv">hudson</span>.<span class="nv">plugins</span>.<span class="nv">active_directory</span>.<span class="nv">ActiveDirectorySecurityRealm</span><span class="mh">$De</span><span class="nv">scriptorImpl</span>.<span class="nv">bind</span><span class="ss">(</span><span class="nv">ActiveDirectorySecurityRealm</span>.<span class="nv">java</span>:<span class="mi">599</span><span class="ss">)</span>
+        <span class="nv">at</span> <span class="nv">hudson</span>.<span class="nv">plugins</span>.<span class="nv">active_directory</span>.<span class="nv">ActiveDirectoryUnixAuthenticationProvider</span><span class="mh">$1</span>.<span class="nv">call</span><span class="ss">(</span><span class="nv">ActiveDirectoryUnixAuthenticationProvider</span>.<span class="nv">java</span>:<span class="mi">359</span><span class="ss">)</span>
+        <span class="nv">at</span> <span class="nv">hudson</span>.<span class="nv">plugins</span>.<span class="nv">active_directory</span>.<span class="nv">ActiveDirectoryUnixAuthenticationProvider</span><span class="mh">$1</span>.<span class="nv">call</span><span class="ss">(</span><span class="nv">ActiveDirectoryUnixAuthenticationProvider</span>.<span class="nv">java</span>:<span class="mi">342</span><span class="ss">)</span>
+        <span class="nv">at</span> <span class="nv">com</span>.<span class="nv">google</span>.<span class="nv">common</span>.<span class="nv">cache</span>.<span class="nv">LocalCache</span>$<span class="nv">LocalManualCache</span><span class="mh">$1</span>.<span class="nv">load</span><span class="ss">(</span><span class="nv">LocalCache</span>.<span class="nv">java</span>:<span class="mi">4767</span><span class="ss">)</span>
+        <span class="nv">at</span> <span class="nv">com</span>.<span class="nv">google</span>.<span class="nv">common</span>.<span class="nv">cache</span>.<span class="nv">LocalCache</span>$<span class="nv">LoadingValueReference</span>.<span class="nv">loadFuture</span><span class="ss">(</span><span class="nv">LocalCache</span>.<span class="nv">java</span>:<span class="mi">3568</span><span class="ss">)</span>
 </pre></div>
 
 
@@ -214,10 +214,9 @@ Jenkins improvement to come?</p>
 <!-- Footer -->
     <footer>
         <p>
-            Blog powered by <a href="http://getpelican.com/">Pelican</a>,
-            which takes great advantage of <a href="http://python.org">Python</a>.
-            Theme <a href="https://github.com/parbhat/pelican-blue">Pelican-Blue</a> by <a
-                href="https://parbhatpuri.com/">@parbhat</a>.
+            <a href="http://getpelican.com/">Pelican</a> theme
+            based on <a href="https://github.com/parbhat/pelican-blue">Pelican-Blue</a> by <a
+                href="https://parbhatpuri.com/">@parbhat</a> with minor changes.
         </p>
     </footer>
 

@@ -131,26 +131,27 @@ To be resilient in this faulty context, my advises are:</p>
 <li><strong>write playbooks that can use a mirror repository</strong>.
  If you are using an additionnal repository (in my case
  <code>http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo</code>)
-this can be done by using a variable with
+this can be done by using a variable
 containing the URL of the mirror. If the main repository is not 
 working, change the variable to use a mirror.</li>
-<li><strong>Setup a good monitoring</strong> of the required services and dependencies of your application. In my case,
- monitoring the jenkins repository health sounds weird as it is an official repository and we
-expect that it is always up and running. Monitoring could give you an exact situation of the repository
-health: never broken, sometimes broken, always up. If your monitoring system detect illness of the
- service, do not plan an installation, but wait for better condition.</li>
-<li><strong>Regularly run your playbooks</strong>. Debugging
- installation is an important skill. To be good in debugging install you must troubleshoot installation
- failures!</li>
+<li><strong>Setup a good monitoring of the required services and dependencies</strong> of your application. In my case,
+ monitoring the jenkins repository sounds weird as it is an official repository and we
+expect that it is always up and running. But dependencies could also be LDAP or DNS services.
+Monitoring give you an exact situation of the service
+health: never broken, sometimes broken, always up. If your monitoring system detect failures of the
+ service, do not plan an installation but wait for better condition.</li>
+<li><strong>Regularly run your playbooks</strong>. If you don't regularly run your playbooks, you don't see problems
+. You just posptone the troubleshooting phase. At the end, you have to fix all bug at once. This
+is harder than steadily doing small fixes.</li>
 <li><strong>Write the most reliable playbook possible</strong>. Catch the errors and if possible retry the command. It is
-sometimes impossible with some ansible modules because they don't allow to specify neither timeout
+ impossible with some ansible modules because they don't allow to specify neither timeout
  option nor retries option.</li>
-<li><strong>Do not forget to backup</strong> the running hosts even if you are using infra-as-code. Because if
+<li><strong>Do not forget to backup the running hosts</strong> even if you are using infra-as-code. Because if
  your playbook fails you will be happy to restore a backup.</li>
 </ul>
 <p>Systems using infra-as-code are really cool. But in case of network
-or internet failure, remember that you may be trapped with <strong>no
-possiblity to installation</strong>. This is important especially if you are running on-premises servers.</p>
+ issue or moving dependencies, you may be trapped with <strong>no
+possiblity to install</strong>. Furthermore if you are running on-premises servers.</p>
             </div>
             <div class="post_list">
                 <span>By </span>
@@ -199,10 +200,9 @@ possiblity to installation</strong>. This is important especially if you are run
 <!-- Footer -->
     <footer>
         <p>
-            Blog powered by <a href="http://getpelican.com/">Pelican</a>,
-            which takes great advantage of <a href="http://python.org">Python</a>.
-            Theme <a href="https://github.com/parbhat/pelican-blue">Pelican-Blue</a> by <a
-                href="https://parbhatpuri.com/">@parbhat</a>.
+            <a href="http://getpelican.com/">Pelican</a> theme
+            based on <a href="https://github.com/parbhat/pelican-blue">Pelican-Blue</a> by <a
+                href="https://parbhatpuri.com/">@parbhat</a> with minor changes.
         </p>
     </footer>
 
