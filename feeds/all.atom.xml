@@ -1,5 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Deep in the system</title><link href="https://romainjacquet.github.io/" rel="alternate"></link><link href="https://romainjacquet.github.io/feeds/all.atom.xml" rel="self"></link><id>https://romainjacquet.github.io/</id><updated>2019-07-05T21:00:00+02:00</updated><entry><title>Reliability and infrastructure-as-code</title><link href="https://romainjacquet.github.io/reliability-and-infrastructure-as-code.html" rel="alternate"></link><published>2019-07-05T21:00:00+02:00</published><updated>2019-07-05T21:00:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-07-05:/reliability-and-infrastructure-as-code.html</id><summary type="html">&lt;p&gt;Infra-as-code required a stable environment&lt;/p&gt;</summary><content type="html">&lt;p&gt;I like using &lt;a href="https://www.ansible.com/"&gt;ansible&lt;/a&gt;, because it provides a reproductible way to
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Deep in the system</title><link href="https://romainjacquet.github.io/" rel="alternate"></link><link href="https://romainjacquet.github.io/feeds/all.atom.xml" rel="self"></link><id>https://romainjacquet.github.io/</id><updated>2019-08-08T22:01:00+02:00</updated><entry><title>Public tendering is decreasing efficiency of the industrials</title><link href="https://romainjacquet.github.io/public-tendering-is-decreasing-efficiency-of-the-industrials.html" rel="alternate"></link><published>2019-08-08T22:01:00+02:00</published><updated>2019-08-08T22:01:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-08-08:/public-tendering-is-decreasing-efficiency-of-the-industrials.html</id><summary type="html">&lt;p&gt;how public tendering process slow down productivity&lt;/p&gt;</summary><content type="html">&lt;p&gt;Last weeks news were not very good for &lt;a href="https://en.wikipedia.org/wiki/Thales_Alenia_Space"&gt;Thales Alenia Space&lt;/a&gt;. The french media Latribune publish
+an article revealing a &lt;a href="https://www.latribune.fr/entreprises-finance/industrie/aeronautique-defense/pourquoi-thales-alenia-space-pourrait-decrocher-de-l-orbite-geostationnaire-823824.html"&gt;incoming redundancy plan&lt;/a&gt;.
+The article points out the lack in R&amp;amp;D investment at Thales Alenia Space. In my opinion this situation is mainly
+created by the public tendering context prevailing in the European space world. &lt;/p&gt;
+&lt;h3&gt;Public tendering VS products and services&lt;/h3&gt;
+&lt;p&gt;For those who are familiar with the space industry, it's not a surprise. For the others, you must realize
+that projects are created the governments. They found the money and they select industrials to realize.
+This is referred as B2G, or &lt;a href="https://en.wikipedia.org/wiki/Business-to-government"&gt;business-to-government&lt;/a&gt;. Governments or institutions publish tenders and industrials submit proposals. Tenders are evaluated
+by awarding points using both technical and financial criteria. Tenders often contains a list of requirements
+or at least a statement of work.
+Within traditional business the key point to succeed is having the best products or the best 
+services. With B2G the crucial points are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;being referenced by institutions and governments so as to be allowed to submit tenders with restricted
+procedure&lt;/li&gt;
+&lt;li&gt;being experienced with public tendering. Submit a tender for big contract is really hard and it requires
+an experienced bid team.&lt;/li&gt;
+&lt;li&gt;having a good credibility. Politicals don't like the change and don't like the risk. If you are a
+new comer, your chances to succeed are very low.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;You will notice that you can be really good in B2G without having good products or good services. The
+downside of this approach is that some company decrease the R&amp;amp;D part to a very low level in order to maximize
+profits.&lt;/p&gt;
+&lt;h3&gt;Public tendering VS agility&lt;/h3&gt;
+&lt;p&gt;Agility is the thing that make you avoid "tunnel effect" and maximize the value delivered to end-users. Few public tenders
+deliberately exclude agility but in most of the case it's just impossible. Some public tenders contain a fine-grained
+design and high-level of details for requirements. In this conditions, you cannot change the design. If you recommend
+a major change in  the design, it is rarely accepted by the end user because it means that he must invalidate the original
+contract. I have already seen the following situations:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Industrial recommend that the design must change to minimize the risk. But the end user refuses it. It argues that changing design
+could create political problem because it means that wrong choice has been done during the tendering phase. Sometimes
+industrials are just too fearful to ask for the change.&lt;/li&gt;
+&lt;li&gt;Industrial recommend that we cancel a requirement because it's a non-sense or it's not technically possible but end user refuses.
+It argues that buying team may reclaims money if the feature is not present.&lt;/li&gt;
+&lt;li&gt;Industrial warns that he need more resources (financial or humans) but end user say that it's not possible because
+no more money is available. This situations can cause a bogus system or an incomplete system.&lt;/li&gt;
+&lt;li&gt;Industrial discover that the original design is not functional but he continue to realize it. The idea is that if
+you respect the contract you will be paid, even if you deliver non-functional systems. Some industrials hope
+they will receive additional money after end user realize the error.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;Geographical return policy&lt;/h3&gt;
+&lt;p&gt;Furthermore some public institutions have a geographical return policy
+(like &lt;a href="https://en.wikipedia.org/wiki/European_Space_Agency"&gt;ESA&lt;/a&gt;). Even if the idea sounds good, i.e. having a fair
+rewarding according to the level of financial contribution, this is really difficult to achieve.
+It's hard for the submitter to respect the geographical return policy. If the return policy includes countries
+where your company have no contact, it means that you have to select, evaluate and sign an agreement during the bid phase.
+Some companies choose to disrespect the geographical policy even it will result in a bad evaluation. Some companies use workaround
+by giving minor and not risky parts to fulfil the geographical policy.&lt;/p&gt;
+&lt;p&gt;With the &lt;a href="https://en.wikipedia.org/wiki/NewSpace"&gt;new space&lt;/a&gt;, and the globalization, space business is under pressure.
+Bad habits created by public tendering context are definitely not good for the business. To prepare the future, you must
+invest and take risk. Once the market sanction is here, it's too late.&lt;/p&gt;</content></entry><entry><title>Reliability and infrastructure-as-code</title><link href="https://romainjacquet.github.io/reliability-and-infrastructure-as-code.html" rel="alternate"></link><published>2019-07-05T21:00:00+02:00</published><updated>2019-07-05T21:00:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-07-05:/reliability-and-infrastructure-as-code.html</id><summary type="html">&lt;p&gt;Infra-as-code required a stable environment&lt;/p&gt;</summary><content type="html">&lt;p&gt;I like using &lt;a href="https://www.ansible.com/"&gt;ansible&lt;/a&gt;, because it provides a reproductible way to
 install servers. This is reproductible ... in theory. This week I get stuck with the
 reinstallation of a jenkins server. I was confident because we are using ansible and I had already
 made a dozen of installation. But as usual, unexpected events occured :-).
