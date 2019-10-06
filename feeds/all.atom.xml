@@ -1,5 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Deep in the system</title><link href="https://romainjacquet.github.io/" rel="alternate"></link><link href="https://romainjacquet.github.io/feeds/all.atom.xml" rel="self"></link><id>https://romainjacquet.github.io/</id><updated>2019-08-08T22:01:00+02:00</updated><entry><title>Public tendering is decreasing efficiency of the industrials</title><link href="https://romainjacquet.github.io/public-tendering-is-decreasing-efficiency-of-the-industrials.html" rel="alternate"></link><published>2019-08-08T22:01:00+02:00</published><updated>2019-08-08T22:01:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-08-08:/public-tendering-is-decreasing-efficiency-of-the-industrials.html</id><summary type="html">&lt;p&gt;how public tendering process slow down productivity&lt;/p&gt;</summary><content type="html">&lt;p&gt;Last weeks news were not very good for &lt;a href="https://en.wikipedia.org/wiki/Thales_Alenia_Space"&gt;Thales Alenia Space&lt;/a&gt;. The french media Latribune publish
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Deep in the system</title><link href="https://romainjacquet.github.io/" rel="alternate"></link><link href="https://romainjacquet.github.io/feeds/all.atom.xml" rel="self"></link><id>https://romainjacquet.github.io/</id><updated>2019-10-06T17:59:00+02:00</updated><entry><title>Paranoïd assertion in the manual of wipe or serious warning?</title><link href="https://romainjacquet.github.io/paranoid-assertion-in-the-manual-of-wipe-or-serious-warning.html" rel="alternate"></link><published>2019-10-06T17:59:00+02:00</published><updated>2019-10-06T17:59:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-10-06:/paranoid-assertion-in-the-manual-of-wipe-or-serious-warning.html</id><summary type="html">&lt;p&gt;Strange remark in the manual of wipe&lt;/p&gt;</summary><content type="html">&lt;p&gt;I recently found old IDE disks in my IT cupboard. I used them through an 
+USB connexion to backup data. Now I want to get rid of all those disks,
+because cloud and other modern stuffs like USB 3.0 sticks offer more convenient solutions.
+As they contains private data like tax forms, I decide to securely delete all data.
+So &lt;a href="http://lambda-diode.com/software/wipe"&gt;&lt;code&gt;wipe&lt;/code&gt;&lt;/a&gt; is my friend. 
+It's a simple Unix commandline tool that achieve secure 
+deletion by writing different patterns on the original data. The idea behind is
+prevent from Magnetic Force Microscopy data recovery.&lt;/p&gt;
+&lt;p&gt;The first issue I get is that it is really slow. Using a USB 2.0 interface to IDE,
+with more than 500 Go to wipe, it will take days at least. Or maybe more than one
+week...&lt;/p&gt;
+&lt;p&gt;The second issue and the more astonishing is what I found reading &lt;a href="http://manpages.ubuntu.com/manpages/trusty/man1/wipe.1.html"&gt;&lt;code&gt;man wipe&lt;/code&gt;&lt;/a&gt; on Ubuntu 18,
+section 'ABOUT JOURNALING FILESYSTEMS AND SOME RECOMMENDATIONS (JUNE 2004)'.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Be aware that harddisks are quite intelligent beasts those days.  They transparently  remap
+defective  blocks.   This means that the disk can keep an albeit corrupted (maybe slightly)
+but inaccessible and unerasable copy of some of your data.  Modern disks are said  to  have
+about  100%  transparent  remapping capacity.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Hum ok, I have heard about this, especially for SSD drives.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;I hereby speculate that harddisks can use the spare remapping area to secretly make  copies
+of your data.  Rising totalitarianism makes this almost a certitude.  It is quite straight‐
+forward to implement some simple filtering schemes that would copy potentially  interesting
+data.   Better,  a  harddisk  can  probably  detect  that  a given file is being wiped, and
+silently make a copy of it, while wiping the original as instructed. Recovering such data is 
+probably easily done with secret IDE/SCSI commands.   My  guess  is
+that  there  are  agreements between harddisk manufacturers and government agencies.  Well-
+funded mafia hackers should then be able to find those secret commands too.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;I think this is a little bit paranoïd. I understand that it is technically possible. But there is
+no evidence that this mechanism has been in implemend in the IDE controller. I have checked the 
+&lt;a href="https://github.com/berke/wipe/tree/master"&gt;wipe github&lt;/a&gt; and the warning is not longer present. 
+Even if we go back in the git history. Did debian maintainers add it?
+With this kind of warning, I understand  company who prefer destroying over 
+wiping for disk with classified documents.&lt;/p&gt;</content></entry><entry><title>Public tendering is decreasing efficiency of the industrials</title><link href="https://romainjacquet.github.io/public-tendering-is-decreasing-efficiency-of-the-industrials.html" rel="alternate"></link><published>2019-08-08T22:01:00+02:00</published><updated>2019-08-08T22:01:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-08-08:/public-tendering-is-decreasing-efficiency-of-the-industrials.html</id><summary type="html">&lt;p&gt;how public tendering process slow down productivity&lt;/p&gt;</summary><content type="html">&lt;p&gt;Last weeks news were not very good for &lt;a href="https://en.wikipedia.org/wiki/Thales_Alenia_Space"&gt;Thales Alenia Space&lt;/a&gt;. The french media Latribune publish
 an article revealing a &lt;a href="https://www.latribune.fr/entreprises-finance/industrie/aeronautique-defense/pourquoi-thales-alenia-space-pourrait-decrocher-de-l-orbite-geostationnaire-823824.html"&gt;incoming redundancy plan&lt;/a&gt;.
 The article points out the lack in R&amp;amp;D investment at Thales Alenia Space. In my opinion this situation is mainly
 created by the public tendering context prevailing in the European space world. &lt;/p&gt;

@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en" itemscope itemtype="http://schema.org/Person">
+<head>
+            <meta charset="utf-8">
+        <!-- Site Meta Data -->
+        <title>How to recompile and debug fastboot</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="Romain JACQUET">
+
+        <link rel="shortcut icon" href="">
+
+        <!-- schema.org -->
+        <meta itemprop="name" content="Deep in the system">
+        <meta itemprop="image" content="">
+        <meta itemprop="description" content="">
+
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel='stylesheet' type='text/css'>
+        <!-- Style Meta Data -->
+        <link rel="stylesheet" href="https://romainjacquet.github.io/theme/css/style.css" type="text/css"/>
+        <link rel="stylesheet" href="https://romainjacquet.github.io/theme/css/pygments.css" type="text/css"/>
+
+        <!-- Feed Meta Data -->
+            <link href="https://romainjacquet.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate"
+                  title="Deep in the system ATOM Feed"/>
+
+        <!-- Twitter Feed -->
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:image" content="">
+
+    <meta name="twitter:creator" content="">
+    <meta name="twitter:url" content="https://romainjacquet.github.io/drafts/how-to-recompile-and-debug-fastboot.html">
+    <meta name="twitter:title" content="Deep in the system ~ How to recompile and debug fastboot">
+    <meta name="twitter:description" content="Learn how to recompile fastboot">
+
+    <!-- Facebook Meta Data -->
+    <meta property="og:title" content="Deep in the system ~ How to recompile and debug fastboot"/>
+    <meta property="og:description" content="Learn how to recompile fastboot"/>
+    <meta property="og:image" content=""/>
+</head>
+
+<body>
+<!-- Sidebar -->
+<aside>
+    <!--<center><a href="https://romainjacquet.github.io"><img id="avatar" src=""></a></center>-->
+    <h1>Deep in the system</h1>
+        <p>Unix, sysadmin, devops, CI/CD</p>
+    <br>
+
+
+    <nav class="nav">
+        <ul class="list-bare">
+
+                <li><a class="nav__link" href="/">Blog entry</a></li>
+
+                <li><a class="nav__link" href="https://romainjacquet.github.io/pages/about.html">About</a></li>
+                <li><a class="nav__link" href="https://romainjacquet.github.io/pages/links.html">Links</a></li>
+
+        </ul>
+    </nav>
+
+    <p class="social">
+                <a href="https://www.linkedin.com/in/jacquet-romain-493049141/?locale=en_US" target="_blank"><img
+                        src="https://romainjacquet.github.io/theme/images/icons/linkedin.png"></a>
+                <a href="https://github.com/romainjacquet" target="_blank"><img
+                        src="https://romainjacquet.github.io/theme/images/icons/github.png"></a>
+                <a href="mailto:romainjacquet@free.fr" target="_blank"><img
+                        src="https://romainjacquet.github.io/theme/images/icons/mail.png"></a>
+            <a href="https://romainjacquet.github.io/feeds/all.atom.xml" rel="alternate">
+                <img src="https://romainjacquet.github.io/theme/images/icons/rss.png"></a>
+    </p>
+
+        <h2>Categories</h2>
+        <ul class="navbar">
+                <li><a
+                        href="https://romainjacquet.github.io/category/business.html">business</a></li>
+                <li><a
+                        href="https://romainjacquet.github.io/category/cicd.html">ci/cd</a></li>
+                <li class="active"><a
+                        href="https://romainjacquet.github.io/category/development.html">development</a></li>
+                <li><a
+                        href="https://romainjacquet.github.io/category/sysadmin.html">sysadmin</a></li>
+        </ul>
+
+        <h2 class="blog_roll_link"><br/>BLOGROLLS</h2>
+        <ul class="navbar">
+                <li><a href="http://getpelican.com/">Pelican</a></li>
+                <li><a href="http://python.org/">Python.org</a></li>
+                <li><a href="http://jinja.pocoo.org/">Jinja2</a></li>
+        </ul>
+
+</aside>
+
+<!-- Content -->
+<article>
+    <section id="content">
+        <article>
+            <h2 class="post_title post_detail"><a href="https://romainjacquet.github.io/drafts/how-to-recompile-and-debug-fastboot.html" rel="bookmark"
+                                                  title="Permalink to How to recompile and debug fastboot">How to recompile and debug fastboot</a></h2>
+            <div class="entry-content blog-post">
+                <p>The story has started when I was fed up with my [Samsung J3 2016]
+(https://www.gsmarena.com/samsung_galaxy_j3_(2016)-7760.php) getting slower and slower.
+I was also unable to update the phone, because there was no free space. So I want
+to remove all the <a href="https://en.wikipedia.org/wiki/Software_bloat#Bloatware">bloatwares</a>,
+like Microsoft Office.
+Without rooting the phone, you can only disable apps. You cannot remove them
+from the phone.</p>
+<p>Rooting is not very hard and could be done using a software leaked from Samsung: Odin.
+But I quickly realized that Odin does not work. And the same thing happens with the
+fastboot utility. The fastboot utilise doesn't see my device. It looks like the fastboot
+mode doesn't work. So I decided to add some debugging information in fastboot. </p>
+<p>The most tedious part is getting the Android sources. Warning it takes 120 Go and few hours to download:</p>
+<div class="highlight"><pre><span></span><span class="n">mkdir</span> <span class="n">aosp</span> <span class="o">&amp;&amp;</span> <span class="n">cd</span> <span class="n">aosp</span>
+<span class="n">repo</span> <span class="n">init</span> <span class="o">-</span><span class="n">u</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">android</span><span class="p">.</span><span class="n">googlesource</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">platform</span><span class="o">/</span><span class="n">manifest</span> <span class="o">-</span><span class="n">b</span> <span class="n">android</span><span class="o">-</span><span class="mi">5</span><span class="p">.</span><span class="mi">1</span><span class="p">.</span><span class="mi">1</span><span class="n">_r38</span>
+</pre></div>
+
+
+<p>Edit fastboot/usb_linux.c and add a macro to define TRACE_USB. The file must looks like:</p>
+<div class="highlight"><pre><span></span><span class="cp">#define TRACE_USB 1</span>
+<span class="cp">#ifdef TRACE_USB</span>
+<span class="cp">#define DBG1(x...) fprintf(stderr, x)</span>
+<span class="cp">#define DBG(x...) fprintf(stderr, x)</span>
+<span class="cp">#else</span>
+<span class="cp">#define DBG(x...)</span>
+<span class="cp">#define DBG1(x...)</span>
+<span class="cp">#endif</span>
+</pre></div>
+
+
+<p>Uncomment the scanning statement line 321 in fastboot/usb_linux.c:</p>
+<div class="highlight"><pre><span></span>        <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">convert_to_devfs_name</span><span class="p">(</span><span class="n">de</span><span class="o">-&gt;</span><span class="n">d_name</span><span class="p">,</span> <span class="n">devname</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">devname</span><span class="p">)))</span> <span class="p">{</span>
+
+            <span class="n">DBG</span><span class="p">(</span><span class="s">&quot;[ scanning %s ]</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">devname</span><span class="p">);</span>
+            <span class="n">writable</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="k">if</span><span class="p">((</span><span class="n">fd</span> <span class="o">=</span> <span class="n">open</span><span class="p">(</span><span class="n">devname</span><span class="p">,</span> <span class="n">O_RDWR</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// Check if we have read-only access</span>
+</pre></div>
+
+
+<p>Finally, do the compilation:</p>
+<div class="highlight"><pre><span></span>make fastboot
+</pre></div>
+
+
+<p>You can now use your fastboot with a better verbosity.</p>
+            </div>
+            <div class="post_list">
+                <span>By </span>
+                <a href="https://romainjacquet.github.io/author/romain-jacquet.html">@Romain JACQUET</a>
+                <span> in </span>
+                <span class="post_category"><a href="https://romainjacquet.github.io/category/development.html" rel="bookmark"
+                                               title="Permalink to development">[ development ]</a></span>
+                <span class="post_date">mer. 25 septembre 2019</span>
+                <div><span>Tags : </span>
+                </div>
+
+                <div class="entry-social">
+                    <span class="twitter"><a target="_blank" rel="nofollow"
+                                             onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=400,width=700');return false;"
+                                             title="Twitter"
+                                             href="https://twitter.com/share?url=https://romainjacquet.github.io/drafts/how-to-recompile-and-debug-fastboot.html&text=How to recompile and debug fastboot&via="><img
+                            src="https://romainjacquet.github.io/theme/images/icons/twitter-s.png"></a></span>
+
+                    <span class="gplus"><a target="_blank" title="Google +"
+                                           href="https://plus.google.com/share?url=https://romainjacquet.github.io/drafts/how-to-recompile-and-debug-fastboot.html&hl=fr"
+                                           rel="nofollow"
+                                           onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=650');return false;"><img
+                            src="https://romainjacquet.github.io/theme/images/icons/google-s.png"></a></span>
+
+                    <span class="facebook"><a target="_blank" title="Facebook" rel="nofollow"
+                                              onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=500,width=700');return false;"
+                                              href="https://www.facebook.com/sharer.php?u=https://romainjacquet.github.io/drafts/how-to-recompile-and-debug-fastboot.html&t=How to recompile and debug fastboot"><img
+                            src="https://romainjacquet.github.io/theme/images/icons/facebook-s.png"></a></span>
+
+                    <a target="_blank" title="Linkedin"
+                       href="https://www.linkedin.com/shareArticle?mini=true&url=https://romainjacquet.github.io/drafts/how-to-recompile-and-debug-fastboot.html&title=How to recompile and debug fastboot"
+                       rel="nofollow"
+                       onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=650');return false;"><img
+                            src="https://romainjacquet.github.io/theme/images/icons/linkedin-s.png"></a>
+
+                    <span class="mail"><a
+                            href="mailto:?subject=How to recompile and debug fastboot&amp;body=Viens découvrir un article à propos de [How to recompile and debug fastboot] sur le site de Romain JACQUET. https://romainjacquet.github.io/drafts/how-to-recompile-and-debug-fastboot.html"
+                            title="Share by Email" target="_blank"><img
+                            src="https://romainjacquet.github.io/theme/images/icons/mail-s.png"></a></span>
+                </div>
+            </div>
+        </article>
+    </section>
+</article>
+
+<!-- Footer -->
+    <footer>
+        <p>
+            <a href="http://getpelican.com/">Pelican</a> theme
+            based on <a href="https://github.com/parbhat/pelican-blue">Pelican-Blue</a> by <a
+                href="https://parbhatpuri.com/">@parbhat</a> with minor changes.
+        </p>
+    </footer>
+
+
+</body>
+</html>
