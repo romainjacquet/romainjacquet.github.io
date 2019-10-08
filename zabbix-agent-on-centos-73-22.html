@@ -105,30 +105,30 @@ Disabling SELinux from the kernel command line is interesting because SELinux is
 at the early beginning of the boot process. So event if you have a broken configuration of
 SELinux, you can bypass it and boot.
 Below is the official definition of the kernel argument:</p>
-<div class="highlight"><pre><span></span> <span class="nv">selinux</span><span class="o">=</span>        [<span class="nv">SELINUX</span>] <span class="nv">Disable</span> <span class="nv">or</span> <span class="nv">enable</span> <span class="nv">SELinux</span> <span class="nv">at</span> <span class="nv">boot</span> <span class="nv">time</span>.
-                        <span class="nv">Format</span>: { <span class="s2">&quot;</span><span class="s">0</span><span class="s2">&quot;</span> <span class="o">|</span> <span class="s2">&quot;</span><span class="s">1</span><span class="s2">&quot;</span> }
-                        <span class="nv">See</span> <span class="nv">security</span><span class="o">/</span><span class="nv">selinux</span><span class="o">/</span><span class="nv">Kconfig</span> <span class="nv">help</span> <span class="nv">text</span>.
-                        <span class="mi">0</span> <span class="o">--</span> <span class="nv">disable</span>.
-                        <span class="mi">1</span> <span class="o">--</span> <span class="nv">enable</span>.
-                        <span class="nv">Default</span> <span class="nv">value</span> <span class="nv">is</span> <span class="nv">set</span> <span class="nv">via</span> <span class="nv">kernel</span> <span class="nv">config</span> <span class="nv">option</span>.
-                        <span class="k">If</span> <span class="nv">enabled</span> <span class="nv">at</span> <span class="nv">boot</span> <span class="nv">time</span>, <span class="o">/</span><span class="nv">selinux</span><span class="o">/</span><span class="nv">disable</span> <span class="nv">can</span> <span class="nv">be</span> <span class="nv">used</span>
-                        <span class="nv">later</span> <span class="nv">to</span> <span class="nv">disable</span> <span class="nv">prior</span> <span class="nv">to</span> <span class="nv">initial</span> <span class="nv">policy</span> <span class="nv">load</span>.
+<div class="highlight"><pre><span></span> selinux=        [SELINUX] Disable or enable SELinux at boot time.
+                        Format: { &quot;0&quot; | &quot;1&quot; }
+                        See security/selinux/Kconfig help text.
+                        0 -- disable.
+                        1 -- enable.
+                        Default value is set via kernel config option.
+                        If enabled at boot time, /selinux/disable can be used
+                        later to disable prior to initial policy load.
 </pre></div>
 
 
 <p>I reboot the server and edit the command line to append "selinux=0".
 I checked the content of /etc/selinux.config:</p>
-<div class="highlight"><pre><span></span><span class="o">#</span> <span class="n">This</span> <span class="n">file</span> <span class="n">controls</span> <span class="n">the</span> <span class="k">state</span> <span class="k">of</span> <span class="n">SELinux</span> <span class="k">on</span> <span class="n">the</span> <span class="k">system</span><span class="p">.</span>
-<span class="o">#</span> <span class="n">SELINUX</span><span class="o">=</span> <span class="n">can</span> <span class="n">take</span> <span class="n">one</span> <span class="k">of</span> <span class="n">these</span> <span class="n">three</span> <span class="k">values</span><span class="p">:</span>
-<span class="o">#</span>     <span class="n">enforcing</span> <span class="o">-</span> <span class="n">SELinux</span> <span class="k">security</span> <span class="n">policy</span> <span class="k">is</span> <span class="n">enforced</span><span class="p">.</span>
-<span class="o">#</span>     <span class="n">permissive</span> <span class="o">-</span> <span class="n">SELinux</span> <span class="n">prints</span> <span class="n">warnings</span> <span class="k">instead</span> <span class="k">of</span> <span class="n">enforcing</span><span class="p">.</span>
-<span class="o">#</span>     <span class="n">disabled</span> <span class="o">-</span> <span class="k">No</span> <span class="n">SELinux</span> <span class="n">policy</span> <span class="k">is</span> <span class="n">loaded</span><span class="p">.</span>
-<span class="n">SELINUX</span><span class="o">=</span><span class="n">enforcing</span>
-<span class="o">#</span> <span class="n">SELINUXTYPE</span><span class="o">=</span> <span class="n">can</span> <span class="n">take</span> <span class="n">one</span> <span class="k">of</span> <span class="n">three</span> <span class="n">two</span> <span class="k">values</span><span class="p">:</span>
-<span class="o">#</span>     <span class="n">targeted</span> <span class="o">-</span> <span class="n">Targeted</span> <span class="n">processes</span> <span class="k">are</span> <span class="n">protected</span><span class="p">,</span>
-<span class="o">#</span>     <span class="n">minimum</span> <span class="o">-</span> <span class="n">Modification</span> <span class="k">of</span> <span class="n">targeted</span> <span class="n">policy</span><span class="p">.</span> <span class="k">Only</span> <span class="n">selected</span> <span class="n">processes</span> <span class="k">are</span> <span class="n">protected</span><span class="p">.</span>
-<span class="o">#</span>     <span class="n">mls</span> <span class="o">-</span> <span class="n">Multi</span> <span class="k">Level</span> <span class="k">Security</span> <span class="n">protection</span><span class="p">.</span>
-<span class="n">SELINUXTYPE</span><span class="o">=</span><span class="n">disabled</span>
+<div class="highlight"><pre><span></span># This file controls the state of SELinux on the system.
+# SELINUX= can take one of these three values:
+#     enforcing - SELinux security policy is enforced.
+#     permissive - SELinux prints warnings instead of enforcing.
+#     disabled - No SELinux policy is loaded.
+SELINUX=enforcing
+# SELINUXTYPE= can take one of three two values:
+#     targeted - Targeted processes are protected,
+#     minimum - Modification of targeted policy. Only selected processes are protected.
+#     mls - Multi Level Security protection.
+SELINUXTYPE=disabled
 </pre></div>
 
 
