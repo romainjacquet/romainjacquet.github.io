@@ -3,7 +3,7 @@
 <head>
             <meta charset="utf-8">
         <!-- Site Meta Data -->
-        <title>Fix mixed-language UI in firefox</title>
+        <title>Reproject image with LSAT projection using GDAL</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="">
         <meta name="author" content="Romain JACQUET">
@@ -30,13 +30,13 @@
         <meta name="twitter:image" content="">
 
     <meta name="twitter:creator" content="">
-    <meta name="twitter:url" content="https://romainjacquet.github.io/fix-mixed-language-ui-in-firefox.html">
-    <meta name="twitter:title" content="Deep in the system ~ Fix mixed-language UI in firefox">
-    <meta name="twitter:description" content="firefox language problem">
+    <meta name="twitter:url" content="https://romainjacquet.github.io/reproject-image-with-lsat-projection-using-gdal.html">
+    <meta name="twitter:title" content="Deep in the system ~ Reproject image with LSAT projection using GDAL">
+    <meta name="twitter:description" content="lsat projection with gdal is tricky">
 
     <!-- Facebook Meta Data -->
-    <meta property="og:title" content="Deep in the system ~ Fix mixed-language UI in firefox"/>
-    <meta property="og:description" content="firefox language problem"/>
+    <meta property="og:title" content="Deep in the system ~ Reproject image with LSAT projection using GDAL"/>
+    <meta property="og:description" content="lsat projection with gdal is tricky"/>
     <meta property="og:image" content=""/>
 </head>
 
@@ -79,9 +79,9 @@
                         href="https://romainjacquet.github.io/category/cicd.html">ci/cd</a></li>
                 <li><a
                         href="https://romainjacquet.github.io/category/development.html">development</a></li>
-                <li><a
-                        href="https://romainjacquet.github.io/category/gis.html">gis</a></li>
                 <li class="active"><a
+                        href="https://romainjacquet.github.io/category/gis.html">gis</a></li>
+                <li><a
                         href="https://romainjacquet.github.io/category/sysadmin.html">sysadmin</a></li>
         </ul>
 
@@ -98,46 +98,49 @@
 <article>
     <section id="content">
         <article>
-            <h2 class="post_title post_detail"><a href="https://romainjacquet.github.io/fix-mixed-language-ui-in-firefox.html" rel="bookmark"
-                                                  title="Permalink to Fix mixed-language UI in firefox">Fix mixed-language UI in firefox</a></h2>
+            <h2 class="post_title post_detail"><a href="https://romainjacquet.github.io/reproject-image-with-lsat-projection-using-gdal.html" rel="bookmark"
+                                                  title="Permalink to Reproject image with LSAT projection using GDAL">Reproject image with LSAT projection using GDAL</a></h2>
             <div class="entry-content blog-post">
-                <p>My company is using an <a href="https://en.wikipedia.org/wiki/Enterprise_resource_planning">ERP</a>
- and everyone must use it to report monthly activity.
-Doing this report has always been a true non-user-friendly experience. It is a
-web portal written in <a href="https://en.wikipedia.org/wiki/ASP.NET">ASP.net</a> as the aspx
-extension of the pages demonstrates. The most annoying problem is a mix of french
-and english in the interface.</p>
-<ul>
-<li>Date format is english style (MM/DD/YYYY) and not french style (DD/MM/YYYY)</li>
-<li>Calendar displays weeks that begins the Sunday instead of Monday</li>
-<li>Labels are in french in the interface</li>
-</ul>
-<p><img alt="EN calendar and french labels" src="https://romainjacquet.github.io/images/bad_calendar.PNG"></p>
-<p><img alt="EN dates and french labels" src="https://romainjacquet.github.io/images/bad_date.PNG"></p>
-<p>My first idea was that the website have a bug. But testing on Chrome shows that
-it works! I launched a debug session with Firefox and find a wrong header: 
-<code>Accept-Language:en-US,fr-FR;q=0.7,en;q=0.3</code>.
-The <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language">Accept-Language header</a>
- is sent by the browser to define the language of the session. The value of this header depends on
- the firefox settings language (Settings &gt; Options &gt; Language). In my case it was EN-US. I
- changed to <code>fr-fr</code>.</p>
-<p><img alt="EN dates and french labels" src="https://romainjacquet.github.io/images/default_language.PNG"></p>
-<p>After restarting Firefox it works. But it clearly shows that the label of the application
-are agnostic to the header <code>Accept-Language</code> and had cause this strange mix. This is 
-not a proper way of programming. Firefox version is <a href="https://support.mozilla.org/en-US/products/firefox-enterprise">Firefox entreprise</a>.</p>
-<p><img alt="EN dates and french labels" src="https://romainjacquet.github.io/images/firefox_version.PNG"></p>
-<p>Why do the IT guys provide a default installation with
-a locale EN-US? It is possible to customize the installer and provide
-a per locale installer. You just have to use the switch <code>lang=</code> in  the 
-msi installer (<a href="https://support.mozilla.org/en-US/kb/deploy-firefox-msi-installers#w_configuration-options">official documentation</a>)...</p>
+                <p>I'm working near a team of data-scientist specialized in satellite imagery. One the data-scientist
+explain me its problem with <a href="https://landsat.visibleearth.nasa.gov/">Landsat</a> images.
+Landsat images uses the UTM spatial reference and he wants to reproject all images with 
+the <code>Space oblique for LANDSAT</code> projection. I have never heard about this projection before and I
+discovered that it is a variation of <a href="https://landsat.gsfc.nasa.gov/space-oblique-mercator-projection/">Space Oblique Mercartor Projection</a>. This projection aims to map
+all image along the swath. Nasa page quotes that it is "one of the most complex projections ever devised".</p>
+<h1>Explanation</h1>
+<p><a href="https://gdal.org/">GDAL</a> is the standard library for projection and the <a href="https://gdal.org/programs/gdalwarp.html"><code>gdalwarp</code></a> utility is usefull. It's really powerfull but you often
+have very complex case with unusual usage. Here it's the proj4 definition of lsat that doesn't work.</p>
+<div class="highlight"><pre><span></span>% gdalwarp -s_srs <span class="s2">&quot;EPSG:32630&quot;</span> -t_srs <span class="s1">&#39;+proj=lsat +lsat=5 +path=201&#39;</span> 24_mosaic_8bB08.sca.tif toto.tif
+ERROR <span class="m">1</span>: Translating <span class="nb">source</span> or target SRS failed:
++proj<span class="o">=</span>lsat +lsat<span class="o">=</span><span class="m">5</span> +path<span class="o">=</span><span class="m">201</span>
+</pre></div>
+
+
+<p>According to the maintainer of Gdal, there is a parsing limitation in GDal! And the
+proj.4 string using lsat can't be converto to WKT format. He advises to uses WKT and extension and
+after testing it works! Thank Even Rouault to suggest the tip on the <a href="http://osgeo-org.1560.x6.nabble.com/gdalwarp-proj4-and-Space-Oblique-Mercator-problem-td3752278.html">osgeo forum</a>.</p>
+<h1>Final result</h1>
+<div class="highlight"><pre><span></span><span class="k">function</span> get_srs <span class="o">()</span>
+<span class="o">{</span>
+    <span class="nv">name</span><span class="o">=</span><span class="nv">$1</span>
+    gdalinfo <span class="nv">$1</span> <span class="p">|</span> grep <span class="s1">&#39;AUTHORITY\[&quot;EPSG&quot;,&quot;326&#39;</span> <span class="p">|</span> cut -d <span class="s1">&#39;&quot;&#39;</span> -f <span class="m">4</span>
+<span class="o">}</span>
+
+<span class="k">for</span> f in <span class="k">$(</span>ls *tif<span class="k">)</span> <span class="p">;</span>
+<span class="k">do</span>
+    <span class="nv">epsg_code</span><span class="o">=</span><span class="k">$(</span>get_srs <span class="s2">&quot;</span><span class="nv">$f</span><span class="s2">&quot;</span><span class="k">)</span>
+    <span class="nv">basic_name</span><span class="o">=</span><span class="k">$(</span>basename <span class="nv">$f</span><span class="k">)</span>
+    gdalwarp -s_srs <span class="s2">&quot;EPSG:</span><span class="nv">$epsg_code</span><span class="s2">&quot;</span> -t_srs <span class="s1">&#39;LOCAL_CS[&quot;lsat0&quot;,EXTENSION[&quot;PROJ4&quot;,&quot;+proj=lsat +lsat=5 +path=201 +wktext&quot;]]&#39;</span> <span class="s2">&quot;</span><span class="nv">$f</span><span class="s2">&quot;</span> <span class="s2">&quot;reprojected/</span><span class="nv">$f</span><span class="s2">&quot;</span>
+<span class="k">done</span>
+</pre></div>
             </div>
             <div class="post_list">
                 <span>By </span>
                 <a href="https://romainjacquet.github.io/author/romain-jacquet.html">@Romain JACQUET</a>
                 <span> in </span>
-                <span class="post_category"><a href="https://romainjacquet.github.io/category/sysadmin.html" rel="bookmark"
-                                               title="Permalink to sysadmin">[ sysadmin ]</a></span>
-                <span class="post_date">mer. 17 avril 2019</span>
+                <span class="post_category"><a href="https://romainjacquet.github.io/category/gis.html" rel="bookmark"
+                                               title="Permalink to gis">[ gis ]</a></span>
+                <span class="post_date">ven. 25 octobre 2019</span>
                 <div><span>Tags : </span>
                 </div>
 
@@ -145,28 +148,28 @@ msi installer (<a href="https://support.mozilla.org/en-US/kb/deploy-firefox-msi-
                     <span class="twitter"><a target="_blank" rel="nofollow"
                                              onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=400,width=700');return false;"
                                              title="Twitter"
-                                             href="https://twitter.com/share?url=https://romainjacquet.github.io/fix-mixed-language-ui-in-firefox.html&text=Fix mixed-language UI in firefox&via="><img
+                                             href="https://twitter.com/share?url=https://romainjacquet.github.io/reproject-image-with-lsat-projection-using-gdal.html&text=Reproject image with LSAT projection using GDAL&via="><img
                             src="https://romainjacquet.github.io/theme/images/icons/twitter-s.png"></a></span>
 
                     <span class="gplus"><a target="_blank" title="Google +"
-                                           href="https://plus.google.com/share?url=https://romainjacquet.github.io/fix-mixed-language-ui-in-firefox.html&hl=fr"
+                                           href="https://plus.google.com/share?url=https://romainjacquet.github.io/reproject-image-with-lsat-projection-using-gdal.html&hl=fr"
                                            rel="nofollow"
                                            onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=650');return false;"><img
                             src="https://romainjacquet.github.io/theme/images/icons/google-s.png"></a></span>
 
                     <span class="facebook"><a target="_blank" title="Facebook" rel="nofollow"
                                               onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=500,width=700');return false;"
-                                              href="https://www.facebook.com/sharer.php?u=https://romainjacquet.github.io/fix-mixed-language-ui-in-firefox.html&t=Fix mixed-language UI in firefox"><img
+                                              href="https://www.facebook.com/sharer.php?u=https://romainjacquet.github.io/reproject-image-with-lsat-projection-using-gdal.html&t=Reproject image with LSAT projection using GDAL"><img
                             src="https://romainjacquet.github.io/theme/images/icons/facebook-s.png"></a></span>
 
                     <a target="_blank" title="Linkedin"
-                       href="https://www.linkedin.com/shareArticle?mini=true&url=https://romainjacquet.github.io/fix-mixed-language-ui-in-firefox.html&title=Fix mixed-language UI in firefox"
+                       href="https://www.linkedin.com/shareArticle?mini=true&url=https://romainjacquet.github.io/reproject-image-with-lsat-projection-using-gdal.html&title=Reproject image with LSAT projection using GDAL"
                        rel="nofollow"
                        onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=650');return false;"><img
                             src="https://romainjacquet.github.io/theme/images/icons/linkedin-s.png"></a>
 
                     <span class="mail"><a
-                            href="mailto:?subject=Fix mixed-language UI in firefox&amp;body=Viens découvrir un article à propos de [Fix mixed-language UI in firefox] sur le site de Romain JACQUET. https://romainjacquet.github.io/fix-mixed-language-ui-in-firefox.html"
+                            href="mailto:?subject=Reproject image with LSAT projection using GDAL&amp;body=Viens découvrir un article à propos de [Reproject image with LSAT projection using GDAL] sur le site de Romain JACQUET. https://romainjacquet.github.io/reproject-image-with-lsat-projection-using-gdal.html"
                             title="Share by Email" target="_blank"><img
                             src="https://romainjacquet.github.io/theme/images/icons/mail-s.png"></a></span>
                 </div>
