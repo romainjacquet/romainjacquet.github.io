@@ -1,5 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Deep in the system</title><link href="https://romainjacquet.github.io/" rel="alternate"></link><link href="https://romainjacquet.github.io/feeds/all.atom.xml" rel="self"></link><id>https://romainjacquet.github.io/</id><updated>2019-11-24T19:43:00+01:00</updated><entry><title>Best way to execute bash command with Python 2.x</title><link href="https://romainjacquet.github.io/best-way-to-execute-bash-command-with-python-2x.html" rel="alternate"></link><published>2019-11-24T19:43:00+01:00</published><updated>2019-11-24T19:43:00+01:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-11-24:/best-way-to-execute-bash-command-with-python-2x.html</id><summary type="html">&lt;p&gt;best way to execute bash command with Python2&lt;/p&gt;</summary><content type="html">&lt;h1&gt;Why this is not recommanded&lt;/h1&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Deep in the system</title><link href="https://romainjacquet.github.io/" rel="alternate"></link><link href="https://romainjacquet.github.io/feeds/all.atom.xml" rel="self"></link><id>https://romainjacquet.github.io/</id><updated>2020-01-06T19:48:00+01:00</updated><entry><title>Debugging HTTPS clients written with Python requests</title><link href="https://romainjacquet.github.io/debugging-https-clients-written-with-python-requests.html" rel="alternate"></link><published>2020-01-06T19:48:00+01:00</published><updated>2020-01-06T19:48:00+01:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2020-01-06:/debugging-https-clients-written-with-python-requests.html</id><summary type="html">&lt;p&gt;proper way to display header and content with requests&lt;/p&gt;</summary><content type="html">&lt;p&gt;With the modern web, very few websites still used plain old unencrypted
+&lt;a href="https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol"&gt;http protocol&lt;/a&gt;.
+It's a good news for end-user because &lt;a href="https://en.wikipedia.org/wiki/HTTPS"&gt;https&lt;/a&gt;
+ provides better privacy. For
+developers it could be hard to debug HTTPS exchanges because you cannot capture
+the network traffic with analyzer like &lt;a href="https://www.tcpdump.org/"&gt;tcpdump&lt;/a&gt;. In fact 
+you could but you will only see the HTTPS session initialization not the 
+underlying HTTP exchanges. Not enough to debug an HTTP client. 
+To solve this problem, &lt;strong&gt;the only solution is to activate debugging from the
+client side&lt;/strong&gt;.&lt;/p&gt;
+&lt;h1&gt;Debugging using Python requests&lt;/h1&gt;
+&lt;p&gt;Python &lt;a href="https://2.python-requests.org/en/master/"&gt;requests&lt;/a&gt; is a nice http 
+library, but there is no simple way to activate
+debugging. Internet provide many advice to activate debugging. It is always like this:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;http.client&lt;/span&gt;
+&lt;span class="c1"&gt;# logging stuffs&lt;/span&gt;
+&lt;span class="n"&gt;http&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;client&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;HTTPConnection&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;debuglevel&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;
+&lt;span class="n"&gt;requests&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;https://myurl/path/myrsr&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;In my opinion it is just a dirty hack that use an hidden feature of http.client,
+the low-level http library of Python.
+You should not use it because:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;official documentation says that &lt;code&gt;http.client&lt;/code&gt; is normally not used directly&lt;/li&gt;
+&lt;li&gt;the level of logging is not configurable&lt;/li&gt;
+&lt;li&gt;debuglevel just activate some print statements. It does not use the logging system&lt;/li&gt;
+&lt;li&gt;most annoying thing is that activating debuglevel is also printing form data. Just horrible if you 
+are trying to debug POST requests. You terminal will be filled with tons of binary data :-)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1&gt;A better solution&lt;/h1&gt;
+&lt;p&gt;The solution is to use the headers provide by the requests object and adapt it to your need.
+Here is an example for the GET request:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;requests&lt;/span&gt;
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;logging&lt;/span&gt;
+
+&lt;span class="n"&gt;logging&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;basicConfig&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;level&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;logging&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;DEBUG&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;format&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39; &lt;/span&gt;&lt;span class="si"&gt;%(message)s&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="n"&gt;logger&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;logging&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;getLogger&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;myclient&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;logger&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;setLevel&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;logging&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;DEBUG&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;get_and_debug&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;url&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;kw&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot; do the get and print debug info &amp;quot;&lt;/span&gt;
+    &lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;requests&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;url&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;kw&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;h&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;request&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;headers&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;items&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+        &lt;span class="n"&gt;logger&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;debug&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot; &amp;gt; {}: {}&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;format&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;h&lt;/span&gt; &lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;h&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;headers&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;items&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+        &lt;span class="n"&gt;logger&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;debug&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot; &amp;lt; {}: {}&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;format&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="n"&gt;h&lt;/span&gt; &lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+    &lt;span class="n"&gt;logger&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;debug&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Size of the response: {}&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;format&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;content&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;))&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;r&lt;/span&gt;
+
+&lt;span class="n"&gt;get_and_debug&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;https://docs.python.org/3/_static/py.png&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The output is:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;Starting new HTTPS connection &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;: docs.python.org
+ https://docs.python.org:443 &lt;span class="s2"&gt;&amp;quot;GET /3/_static/py.png HTTP/1.1&amp;quot;&lt;/span&gt; &lt;span class="m"&gt;200&lt;/span&gt; &lt;span class="m"&gt;695&lt;/span&gt;
+  &amp;gt; User-Agent: python-requests/2.18.4
+  &amp;gt; Accept-Encoding: gzip, deflate
+  &amp;gt; Accept: */*
+  &amp;gt; Connection: keep-alive
+  &amp;lt; Connection: keep-alive
+  &amp;lt; Content-Length: &lt;span class="m"&gt;695&lt;/span&gt;
+  &amp;lt; Server: nginx
+  &amp;lt; Content-Type: image/png
+  &amp;lt; Last-Modified: Thu, &lt;span class="m"&gt;14&lt;/span&gt; Feb &lt;span class="m"&gt;2019&lt;/span&gt; &lt;span class="m"&gt;11&lt;/span&gt;:40:31 GMT
+  &amp;lt; ETag: &lt;span class="s2"&gt;&amp;quot;5c6553af-2b7&amp;quot;&lt;/span&gt;
+  &amp;lt; X-Clacks-Overhead: GNU Terry Pratchett
+  &amp;lt; Strict-Transport-Security: max-age&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;315360000&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; includeSubDomains&lt;span class="p"&gt;;&lt;/span&gt; preload
+  &amp;lt; Via: &lt;span class="m"&gt;1&lt;/span&gt;.1 varnish, &lt;span class="m"&gt;1&lt;/span&gt;.1 varnish
+  &amp;lt; Accept-Ranges: bytes
+  &amp;lt; Date: Wed, &lt;span class="m"&gt;29&lt;/span&gt; Jan &lt;span class="m"&gt;2020&lt;/span&gt; &lt;span class="m"&gt;19&lt;/span&gt;:54:26 GMT
+  &amp;lt; Age: &lt;span class="m"&gt;398453&lt;/span&gt;
+  &amp;lt; X-Served-By: cache-jfk8144-JFK, cache-cdg20740-CDG
+  &amp;lt; X-Cache: HIT, HIT
+  &amp;lt; X-Cache-Hits: &lt;span class="m"&gt;649&lt;/span&gt;, &lt;span class="m"&gt;184&lt;/span&gt;
+  &amp;lt; X-Timer: S1580327667.914627,VS0,VE0
+ Size of the response: &lt;span class="m"&gt;695&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;You can use this method to wrap any top-level methods of requests you need to debug.
+If you still cannot debug HTTPS with this blog post, your last chance is to use
+website like &lt;a href="http://neverssl.com"&gt;neverssl&lt;/a&gt; :-). &lt;/p&gt;</content><category term="python"></category><category term="requests"></category><category term="https"></category><category term="debug"></category></entry><entry><title>Best way to execute bash command with Python 2.x</title><link href="https://romainjacquet.github.io/best-way-to-execute-bash-command-with-python-2x.html" rel="alternate"></link><published>2019-11-24T19:43:00+01:00</published><updated>2019-11-24T19:43:00+01:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-11-24:/best-way-to-execute-bash-command-with-python-2x.html</id><summary type="html">&lt;p&gt;best way to execute bash command with Python2&lt;/p&gt;</summary><content type="html">&lt;h1&gt;Why this is not recommanded&lt;/h1&gt;
 &lt;p&gt;Python is my favorite language for complex scripts and tooling.
 Unlike &lt;a href="https://www.gnu.org/software/bash/"&gt;bash&lt;/a&gt; it's a real 
 programming language and thus provide a better way
