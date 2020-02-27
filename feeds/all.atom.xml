@@ -1,5 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Deep in the system</title><link href="https://romainjacquet.github.io/" rel="alternate"></link><link href="https://romainjacquet.github.io/feeds/all.atom.xml" rel="self"></link><id>https://romainjacquet.github.io/</id><updated>2020-01-06T19:48:00+01:00</updated><entry><title>Debugging HTTPS clients written with Python requests</title><link href="https://romainjacquet.github.io/debugging-https-clients-written-with-python-requests.html" rel="alternate"></link><published>2020-01-06T19:48:00+01:00</published><updated>2020-01-06T19:48:00+01:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2020-01-06:/debugging-https-clients-written-with-python-requests.html</id><summary type="html">&lt;p&gt;proper way to display header and content with requests&lt;/p&gt;</summary><content type="html">&lt;p&gt;With the modern web, very few websites still used plain old unencrypted
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Deep in the system</title><link href="https://romainjacquet.github.io/" rel="alternate"></link><link href="https://romainjacquet.github.io/feeds/all.atom.xml" rel="self"></link><id>https://romainjacquet.github.io/</id><updated>2020-02-25T21:12:00+01:00</updated><entry><title>never deploy non-java artifacts with maven</title><link href="https://romainjacquet.github.io/never-deploy-non-java-artifacts-with-maven.html" rel="alternate"></link><published>2020-02-25T21:12:00+01:00</published><updated>2020-02-25T21:12:00+01:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2020-02-25:/never-deploy-non-java-artifacts-with-maven.html</id><summary type="html">&lt;p&gt;do not use maven to deploy non-java artifacts&lt;/p&gt;</summary><content type="html">&lt;p&gt;&lt;a href="https://maven.apache.org/"&gt;Maven&lt;/a&gt; is a build system and a de facto standard 
+of the Java world. It solves the problem of dependencies resolution and improve 
+the previous tool &lt;a href="https://ant.apache.org/"&gt;ant&lt;/a&gt; which doesn't offer a standardized
+way of building.
+Despite &lt;a href="https://maven.apache.org/"&gt;Maven&lt;/a&gt; is clearly not designed to deploy non-java
+artifacts, people can try to do it. It usually occured in a large-scale 
+project where developpers have no system background, and they try to answer to system 
+problems with their everyday tool. I will explain here why you should never do this.&lt;/p&gt;
+&lt;h1&gt;Upload to archive repository&lt;/h1&gt;
+&lt;p&gt;We will consider here the situation where we have a custom RPM 
+of &lt;a href="https://vim.org"&gt;vim&lt;/a&gt; and we want to upload it   to an artifact repository:
+&lt;a href="https://fr.sonatype.com/product-nexus-repository"&gt;Nexus&lt;/a&gt;. Like &lt;a href="https://jfrog.com/artifactory/"&gt;artifactory&lt;/a&gt; 
+Nexus a very common binary repository
+manager that supports many types of repositories and especially maven repositories. You can
+query it using an REST API or using maven command: &lt;code&gt;mvn&lt;/code&gt;.&lt;/p&gt;
+&lt;h2&gt;upload with curl&lt;/h2&gt;
+&lt;p&gt;Here is the command that I use to upload non-java artifact. In case
+of error nexus will answer with an HTTP header containing a string describing the problem.
+It is &lt;strong&gt;easy to use and easy to troobleshoot&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;curl -v --upload-file vim-enhanced-7.4.873-2.el7.psychotic.x86_64.rpm.html -u foo:bar http://localhost:8081/repository/MyRpms/vim-enhanced-7.4.873-2.el7.psychotic.x86_64.rpm.html
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This the way I recommand to upload on nexus.&lt;/p&gt;
+&lt;h2&gt;upload artifact with maven-deploy-file&lt;/h2&gt;
+&lt;p&gt;Here is the way to do the same thing wih maven. Maven uses plugin to do everything, it is a plugin execution framework.
+To deploy in a similar way of curl we have to use the goal &lt;code&gt;deploy-file&lt;/code&gt; 
+of the &lt;a href="https://maven.apache.org/plugins/maven-deploy-plugin/"&gt;deploy&lt;/a&gt; plugin.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;mvn deploy:deploy-file --settings&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nv"&gt;$PWD&lt;/span&gt;/settings.xml -Dfile&lt;span class="o"&gt;=&lt;/span&gt;vim-common-7.4.629-6.el7.x86_64.rpm -DgroupId&lt;span class="o"&gt;=&lt;/span&gt;molnar.vim -DartifactId&lt;span class="o"&gt;=&lt;/span&gt;vimrpm -Dversion&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.0 -DrepositoryId&lt;span class="o"&gt;=&lt;/span&gt;localnexus -Durl&lt;span class="o"&gt;=&lt;/span&gt;http://localhost:8081/repository/MyRpms/ 
+WARNING: An illegal reflective access operation has occurred
+WARNING: Illegal reflective access by com.google.inject.internal.cglib.core.&lt;span class="nv"&gt;$ReflectUtils$1&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;file:/usr/share/maven/lib/guice.jar&lt;span class="o"&gt;)&lt;/span&gt; to method java.lang.ClassLoader.defineClass&lt;span class="o"&gt;(&lt;/span&gt;java.lang.String,byte&lt;span class="o"&gt;[]&lt;/span&gt;,int,int,java.security.ProtectionDomain&lt;span class="o"&gt;)&lt;/span&gt;
+WARNING: Please consider reporting this to the maintainers of com.google.inject.internal.cglib.core.&lt;span class="nv"&gt;$ReflectUtils$1&lt;/span&gt;
+WARNING: Use --illegal-access&lt;span class="o"&gt;=&lt;/span&gt;warn to &lt;span class="nb"&gt;enable&lt;/span&gt; warnings of further illegal reflective access operations
+WARNING: All illegal access operations will be denied in a future release
+&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt; Scanning &lt;span class="k"&gt;for&lt;/span&gt; projects...
+&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt; 
+&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt; ------------------&amp;lt; org.apache.maven:standalone-pom &amp;gt;-------------------
+&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt; Building Maven Stub Project &lt;span class="o"&gt;(&lt;/span&gt;No POM&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="m"&gt;1&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt; --------------------------------&lt;span class="o"&gt;[&lt;/span&gt; pom &lt;span class="o"&gt;]&lt;/span&gt;---------------------------------
+&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt; 
+&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt; --- maven-deploy-plugin:2.7:deploy-file &lt;span class="o"&gt;(&lt;/span&gt;default-cli&lt;span class="o"&gt;)&lt;/span&gt; @ standalone-pom ---
+Uploading to localnexus: http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/1.0/vimrpm-1.0.rpm
+Uploaded to localnexus: http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/1.0/vimrpm-1.0.rpm &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;6&lt;/span&gt;.2 MB at &lt;span class="m"&gt;17&lt;/span&gt; MB/s&lt;span class="o"&gt;)&lt;/span&gt;
+Uploading to localnexus: http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/1.0/vimrpm-1.0.pom
+Uploaded to localnexus: http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/1.0/vimrpm-1.0.pom &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;416&lt;/span&gt; B at &lt;span class="m"&gt;5&lt;/span&gt;.5 kB/s&lt;span class="o"&gt;)&lt;/span&gt;
+Downloading from localnexus: http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/maven-metadata.xml
+Downloaded from localnexus: http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/maven-metadata.xml &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;292&lt;/span&gt; B at &lt;span class="m"&gt;7&lt;/span&gt;.5 kB/s&lt;span class="o"&gt;)&lt;/span&gt;
+Uploading to localnexus: http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/maven-metadata.xml
+Uploaded to localnexus: http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/maven-metadata.xml &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;292&lt;/span&gt; B at &lt;span class="m"&gt;4&lt;/span&gt;.8 kB/s&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt; ------------------------------------------------------------------------
+&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt; BUILD SUCCESS
+&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt; ------------------------------------------------------------------------
+&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt; Total time:  &lt;span class="m"&gt;1&lt;/span&gt;.007 s
+&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt; Finished at: &lt;span class="m"&gt;2020&lt;/span&gt;-02-24T22:15:08+01:00
+&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt; ------------------------------------------------------------------------
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Few remarks about this command:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;User and password are hidden in the &lt;code&gt;settings.xml&lt;/code&gt; file&lt;/li&gt;
+&lt;li&gt;You have to specify additionnal parameters: groupId, artifactID and version. All this things 
+  only make sense in a maven context. In a RPM context it doesn't make sense!&lt;/li&gt;
+&lt;li&gt;useless files have been automatically generated&lt;/li&gt;
+&lt;li&gt;Even if you don't have seen any warnings &lt;strong&gt;the RPM has been renamed&lt;/strong&gt; 
+  from &lt;code&gt;vim-common-7.4.629-6.el7.x86_64.rpm&lt;/code&gt; to &lt;code&gt;vimrpm-1.0.rpm&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img alt="maven renamed upload" src="https://romainjacquet.github.io/images/nexus-rpm-upload.png"&gt;&lt;/p&gt;
+&lt;h2&gt;Under the hood&lt;/h2&gt;
+&lt;p&gt;The automatic renaming is really annoying and it could not be avoid if you are using 
+maven deploy. It happens because maven has been written to handle artifacts following &lt;a href="https://maven.apache.org/guides/mini/guide-naming-conventions.html"&gt;maven 
+naming&lt;/a&gt;.
+If you look at the code in the maven plugin in &lt;a href="https://github.com/apache/maven-deploy-plugin/blob/maven-deploy-plugin-2.7/src/main/java/org/apache/maven/plugin/deploy/DeployFileMojo.java"&gt;DeployFileMojo.java&lt;/a&gt;, you will see that an URL is build using different factories from Maven classes.
+So it's important to understand that you cannot specify the URL of the artifact. If you
+need to deploy non-java artifact don't use maven, even if the doc says that 
+&lt;code&gt;artifacts which are not built using Maven can be added to any remote repository using the deploy:deploy-file mojo&lt;/code&gt;.
+Yes you can, but with no control on the name and final URL.&lt;/p&gt;</content><category term="java"></category><category term="nexus"></category><category term="deploy"></category></entry><entry><title>Tooling in Python or tooling on bash?</title><link href="https://romainjacquet.github.io/tooling-in-python-or-tooling-on-bash.html" rel="alternate"></link><published>2020-01-29T21:32:00+01:00</published><updated>2020-01-29T21:32:00+01:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2020-01-29:/tooling-in-python-or-tooling-on-bash.html</id><summary type="html">&lt;p&gt;best tools for scripting in 2020&lt;/p&gt;</summary><content type="html">&lt;h1&gt;Introduction&lt;/h1&gt;
+&lt;h1&gt;why bash?&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;no dependencies. So just install and run it&lt;/li&gt;
+&lt;li&gt;bash is part of the skill set of sysadmin&lt;/li&gt;
+&lt;li&gt;easy file operation and filter&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1&gt;nowaday&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><category term="python"></category><category term="bash"></category><category term="tooling"></category></entry><entry><title>Debugging HTTPS clients written with Python requests</title><link href="https://romainjacquet.github.io/debugging-https-clients-written-with-python-requests.html" rel="alternate"></link><published>2020-01-06T19:48:00+01:00</published><updated>2020-01-06T19:48:00+01:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2020-01-06:/debugging-https-clients-written-with-python-requests.html</id><summary type="html">&lt;p&gt;proper way to display header and content with requests&lt;/p&gt;</summary><content type="html">&lt;p&gt;With the modern web, very few websites still used plain old unencrypted
 &lt;a href="https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol"&gt;http protocol&lt;/a&gt;.
 It's a good news for end-user because &lt;a href="https://en.wikipedia.org/wiki/HTTPS"&gt;https&lt;/a&gt;
  provides better privacy. For
