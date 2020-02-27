@@ -75,17 +75,7 @@ If you look at the code in the maven plugin in &lt;a href="https://github.com/ap
 So it's important to understand that you cannot specify the URL of the artifact. If you
 need to deploy non-java artifact don't use maven, even if the doc says that 
 &lt;code&gt;artifacts which are not built using Maven can be added to any remote repository using the deploy:deploy-file mojo&lt;/code&gt;.
-Yes you can, but with no control on the name and final URL.&lt;/p&gt;</content><category term="java"></category><category term="nexus"></category><category term="deploy"></category></entry><entry><title>Tooling in Python or tooling on bash?</title><link href="https://romainjacquet.github.io/tooling-in-python-or-tooling-on-bash.html" rel="alternate"></link><published>2020-01-29T21:32:00+01:00</published><updated>2020-01-29T21:32:00+01:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2020-01-29:/tooling-in-python-or-tooling-on-bash.html</id><summary type="html">&lt;p&gt;best tools for scripting in 2020&lt;/p&gt;</summary><content type="html">&lt;h1&gt;Introduction&lt;/h1&gt;
-&lt;h1&gt;why bash?&lt;/h1&gt;
-&lt;ul&gt;
-&lt;li&gt;no dependencies. So just install and run it&lt;/li&gt;
-&lt;li&gt;bash is part of the skill set of sysadmin&lt;/li&gt;
-&lt;li&gt;easy file operation and filter&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h1&gt;nowaday&lt;/h1&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ul&gt;</content><category term="python"></category><category term="bash"></category><category term="tooling"></category></entry><entry><title>Debugging HTTPS clients written with Python requests</title><link href="https://romainjacquet.github.io/debugging-https-clients-written-with-python-requests.html" rel="alternate"></link><published>2020-01-06T19:48:00+01:00</published><updated>2020-01-06T19:48:00+01:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2020-01-06:/debugging-https-clients-written-with-python-requests.html</id><summary type="html">&lt;p&gt;proper way to display header and content with requests&lt;/p&gt;</summary><content type="html">&lt;p&gt;With the modern web, very few websites still used plain old unencrypted
+Yes you can, but with no control on the name and final URL.&lt;/p&gt;</content><category term="java"></category><category term="nexus"></category><category term="deploy"></category></entry><entry><title>Debugging HTTPS clients written with Python requests</title><link href="https://romainjacquet.github.io/debugging-https-clients-written-with-python-requests.html" rel="alternate"></link><published>2020-01-06T19:48:00+01:00</published><updated>2020-01-06T19:48:00+01:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2020-01-06:/debugging-https-clients-written-with-python-requests.html</id><summary type="html">&lt;p&gt;proper way to display header and content with requests&lt;/p&gt;</summary><content type="html">&lt;p&gt;With the modern web, very few websites still used plain old unencrypted
 &lt;a href="https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol"&gt;http protocol&lt;/a&gt;.
 It's a good news for end-user because &lt;a href="https://en.wikipedia.org/wiki/HTTPS"&gt;https&lt;/a&gt;
  provides better privacy. For

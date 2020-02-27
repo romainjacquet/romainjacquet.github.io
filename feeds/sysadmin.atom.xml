@@ -1,15 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Deep in the system - sysadmin</title><link href="https://romainjacquet.github.io/" rel="alternate"></link><link href="https://romainjacquet.github.io/feeds/sysadmin.atom.xml" rel="self"></link><id>https://romainjacquet.github.io/</id><updated>2020-01-29T21:32:00+01:00</updated><entry><title>Tooling in Python or tooling on bash?</title><link href="https://romainjacquet.github.io/tooling-in-python-or-tooling-on-bash.html" rel="alternate"></link><published>2020-01-29T21:32:00+01:00</published><updated>2020-01-29T21:32:00+01:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2020-01-29:/tooling-in-python-or-tooling-on-bash.html</id><summary type="html">&lt;p&gt;best tools for scripting in 2020&lt;/p&gt;</summary><content type="html">&lt;h1&gt;Introduction&lt;/h1&gt;
-&lt;h1&gt;why bash?&lt;/h1&gt;
-&lt;ul&gt;
-&lt;li&gt;no dependencies. So just install and run it&lt;/li&gt;
-&lt;li&gt;bash is part of the skill set of sysadmin&lt;/li&gt;
-&lt;li&gt;easy file operation and filter&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h1&gt;nowaday&lt;/h1&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ul&gt;</content><category term="python"></category><category term="bash"></category><category term="tooling"></category></entry><entry><title>Paranoïd assertion in the manual of wipe or serious warning?</title><link href="https://romainjacquet.github.io/paranoid-assertion-in-the-manual-of-wipe-or-serious-warning.html" rel="alternate"></link><published>2019-10-06T17:59:00+02:00</published><updated>2019-10-06T17:59:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-10-06:/paranoid-assertion-in-the-manual-of-wipe-or-serious-warning.html</id><summary type="html">&lt;p&gt;Strange remark in the manual of wipe&lt;/p&gt;</summary><content type="html">&lt;p&gt;I recently found old IDE disks in my IT cupboard. I used them through an 
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Deep in the system - sysadmin</title><link href="https://romainjacquet.github.io/" rel="alternate"></link><link href="https://romainjacquet.github.io/feeds/sysadmin.atom.xml" rel="self"></link><id>https://romainjacquet.github.io/</id><updated>2019-10-06T17:59:00+02:00</updated><entry><title>Paranoïd assertion in the manual of wipe or serious warning?</title><link href="https://romainjacquet.github.io/paranoid-assertion-in-the-manual-of-wipe-or-serious-warning.html" rel="alternate"></link><published>2019-10-06T17:59:00+02:00</published><updated>2019-10-06T17:59:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-10-06:/paranoid-assertion-in-the-manual-of-wipe-or-serious-warning.html</id><summary type="html">&lt;p&gt;Strange remark in the manual of wipe&lt;/p&gt;</summary><content type="html">&lt;p&gt;I recently found old IDE disks in my IT cupboard. I used them through an 
 USB connexion to backup data. Now I want to get rid of all those disks,
 because cloud and other modern stuffs like USB 3.0 sticks offer more convenient solutions.
 As they contains private data like tax forms, I decide to securely delete all data.
