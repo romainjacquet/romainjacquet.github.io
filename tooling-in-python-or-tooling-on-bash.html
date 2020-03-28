@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en" itemscope itemtype="http://schema.org/Person">
+<head>
+            <meta charset="utf-8">
+        <!-- Site Meta Data -->
+        <title>Tooling in Python or tooling on bash?</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="Romain JACQUET">
+
+        <link rel="shortcut icon" href="">
+
+        <!-- schema.org -->
+        <meta itemprop="name" content="Deep in the system">
+        <meta itemprop="image" content="">
+        <meta itemprop="description" content="">
+
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel='stylesheet' type='text/css'>
+        <!-- Style Meta Data -->
+        <link rel="stylesheet" href="https://romainjacquet.github.io/theme/css/style.css" type="text/css"/>
+        <link rel="stylesheet" href="https://romainjacquet.github.io/theme/css/pygments.css" type="text/css"/>
+
+        <!-- Feed Meta Data -->
+            <link href="https://romainjacquet.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate"
+                  title="Deep in the system ATOM Feed"/>
+
+        <!-- Twitter Feed -->
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:image" content="">
+
+    <meta name="twitter:creator" content="">
+    <meta name="twitter:url" content="https://romainjacquet.github.io/tooling-in-python-or-tooling-on-bash.html">
+    <meta name="twitter:title" content="Deep in the system ~ Tooling in Python or tooling on bash?">
+    <meta name="twitter:description" content="I recommand Python for tooling and I discourage shell">
+
+    <!-- Facebook Meta Data -->
+    <meta property="og:title" content="Deep in the system ~ Tooling in Python or tooling on bash?"/>
+    <meta property="og:description" content="I recommand Python for tooling and I discourage shell"/>
+    <meta property="og:image" content=""/>
+</head>
+
+<body>
+<!-- Sidebar -->
+<aside>
+    <!--<center><a href="https://romainjacquet.github.io"><img id="avatar" src=""></a></center>-->
+    <h1>Deep in the system</h1>
+        <p>Unix, sysadmin, devops, CI/CD</p>
+    <br>
+
+
+    <nav class="nav">
+        <ul class="list-bare">
+
+                <li><a class="nav__link" href="/">Blog entry</a></li>
+
+                <li><a class="nav__link" href="https://romainjacquet.github.io/pages/about.html">About</a></li>
+                <li><a class="nav__link" href="https://romainjacquet.github.io/pages/links.html">Links</a></li>
+
+        </ul>
+    </nav>
+
+    <p class="social">
+                <a href="https://www.linkedin.com/in/jacquet-romain-493049141/?locale=en_US" target="_blank"><img
+                        src="https://romainjacquet.github.io/theme/images/icons/linkedin.png"></a>
+                <a href="https://github.com/romainjacquet" target="_blank"><img
+                        src="https://romainjacquet.github.io/theme/images/icons/github.png"></a>
+                <a href="mailto:romainjacquet@free.fr" target="_blank"><img
+                        src="https://romainjacquet.github.io/theme/images/icons/mail.png"></a>
+            <a href="https://romainjacquet.github.io/feeds/all.atom.xml" rel="alternate">
+                <img src="https://romainjacquet.github.io/theme/images/icons/rss.png"></a>
+    </p>
+
+        <h2>Categories</h2>
+        <ul class="navbar">
+                <li><a
+                        href="https://romainjacquet.github.io/category/business.html">business</a></li>
+                <li><a
+                        href="https://romainjacquet.github.io/category/cicd.html">ci/cd</a></li>
+                <li><a
+                        href="https://romainjacquet.github.io/category/development.html">development</a></li>
+                <li><a
+                        href="https://romainjacquet.github.io/category/gis.html">gis</a></li>
+                <li class="active"><a
+                        href="https://romainjacquet.github.io/category/sysadmin.html">sysadmin</a></li>
+        </ul>
+
+        <h2 class="blog_roll_link"><br/>BLOGROLLS</h2>
+        <ul class="navbar">
+                <li><a href="http://getpelican.com/">Pelican</a></li>
+                <li><a href="http://python.org/">Python.org</a></li>
+                <li><a href="http://jinja.pocoo.org/">Jinja2</a></li>
+        </ul>
+
+</aside>
+
+<!-- Content -->
+<article>
+    <section id="content">
+        <article>
+            <h2 class="post_title post_detail"><a href="https://romainjacquet.github.io/tooling-in-python-or-tooling-on-bash.html" rel="bookmark"
+                                                  title="Permalink to Tooling in Python or tooling on bash?">Tooling in Python or tooling on bash?</a></h2>
+            <div class="entry-content blog-post">
+                <p>I started working in 2006 in a <a href="https://www.clarisys.fr/">startup</a> 
+that make an heavy usage of Python.
+I quickly realize of powerfull it is, even if it was only <strong>Python 2.4</strong>. 
+But I wasn't sure if Python will continue it's expension and I would
+have never believed that Python spread to this level.
+In 2006, there was only one way of scripting, tooling or 
+instrumenting: <strong>shell</strong>! The situation has changed.</p>
+<h1>why bash?</h1>
+<p>Shell is a standard since the beginning of Unix because the native interface
+of Unix is terminal and your terminal interacts with the OS using <strong>Shell</strong>. </p>
+<p><img alt="AIX shell" src="https://romainjacquet.github.io/images/aix.jpg"></p>
+<p>Bash have some advantages:</p>
+<ul>
+<li>no dependencies. It is installed by default on all distros. 
+  Most of the containers have bash</li>
+<li>bash is part of the skill set of every sysadmin</li>
+<li>basic file operations (copy, move, deletion) are simple and powerfull</li>
+</ul>
+<p>Bash have some disavantages:</p>
+<ul>
+<li>syntax is not really eye candy and come directly from the dark ages of the 80's. 
+  Especially if you need arithmetic expressions or list</li>
+<li>function and parameters handling is really basic</li>
+<li>there is not extension possible except by calling an external binary</li>
+<li>the library concept is limited to import instruction or function with the <code>source</code> keyword</li>
+</ul>
+<h1>why python rather than bash</h1>
+<ul>
+<li>it is a real programming language with objects and libraries to better
+  structure your code</li>
+<li>you can debug your code using <a href="https://code.visualstudio.com/">vscode</a> for example</li>
+<li>you can extend Python using the <a href="https://docs.python.org/3/extending/index.html">Python/C Api</a></li>
+<li>the <a href="https://docs.python.org/3/library/index.html">standard library</a> includes a wide range 
+  of features that covers 95% of the basic usage</li>
+<li>Python is included by default in the major distros. For example CentOS come with 
+  a Python interpreter by default because its package manager (yum) is written in Python.</li>
+</ul>
+<h1>nowaday</h1>
+<p>In 2020, I would never recommand to use Shell except for simple and short scripts that don't need
+maintenance neither debugging. 
+The following situations indicates that you should stop to use shell:</p>
+<ul>
+<li>you are using IO redirections to file and <code>grep -v</code> to simulate <a href="https://docs.python.org/3/library/stdtypes.html#set-types-set-frozenset">set operations</a></li>
+<li>you are writing shell scripts with more than 200 lines or more than three functions</li>
+<li>you are spending a lot of time to debug by adding a lot <code>echo</code>s</li>
+<li>you are thinking to split your shell script into different libraires and use <code>source</code> to include</li>
+<li>you are calling binaries or other shell scripts with sensitive parameter like <code>--password</code></li>
+</ul>
+<p>I know the power of usage and I know that people are often reluctant to change.
+But remember that it could worse if you realize your error too late. Two of the worst 
+systems I have ever seen was made by more than 10.000 lines of code with interleaved 
+layers of bash and Python. So if you are 
+starting to write a new system from scratch think Python not bash.</p>
+            </div>
+            <div class="post_list">
+                <span>By </span>
+                <a href="https://romainjacquet.github.io/author/romain-jacquet.html">@Romain JACQUET</a>
+                <span> in </span>
+                <span class="post_category"><a href="https://romainjacquet.github.io/category/sysadmin.html" rel="bookmark"
+                                               title="Permalink to sysadmin">[ sysadmin ]</a></span>
+                <span class="post_date">sam. 28 mars 2020</span>
+                <div><span>Tags : </span>
+                            <span><a href="https://romainjacquet.github.io/tag/development.html">#development, </a></span>
+                            <span><a href="https://romainjacquet.github.io/tag/sysadmin.html">#sysadmin, </a></span>
+                </div>
+
+                <div class="entry-social">
+                    <span class="twitter"><a target="_blank" rel="nofollow"
+                                             onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=400,width=700');return false;"
+                                             title="Twitter"
+                                             href="https://twitter.com/share?url=https://romainjacquet.github.io/tooling-in-python-or-tooling-on-bash.html&text=Tooling in Python or tooling on bash?&via="><img
+                            src="https://romainjacquet.github.io/theme/images/icons/twitter-s.png"></a></span>
+
+                    <span class="gplus"><a target="_blank" title="Google +"
+                                           href="https://plus.google.com/share?url=https://romainjacquet.github.io/tooling-in-python-or-tooling-on-bash.html&hl=fr"
+                                           rel="nofollow"
+                                           onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=650');return false;"><img
+                            src="https://romainjacquet.github.io/theme/images/icons/google-s.png"></a></span>
+
+                    <span class="facebook"><a target="_blank" title="Facebook" rel="nofollow"
+                                              onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=500,width=700');return false;"
+                                              href="https://www.facebook.com/sharer.php?u=https://romainjacquet.github.io/tooling-in-python-or-tooling-on-bash.html&t=Tooling in Python or tooling on bash?"><img
+                            src="https://romainjacquet.github.io/theme/images/icons/facebook-s.png"></a></span>
+
+                    <a target="_blank" title="Linkedin"
+                       href="https://www.linkedin.com/shareArticle?mini=true&url=https://romainjacquet.github.io/tooling-in-python-or-tooling-on-bash.html&title=Tooling in Python or tooling on bash?"
+                       rel="nofollow"
+                       onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=650');return false;"><img
+                            src="https://romainjacquet.github.io/theme/images/icons/linkedin-s.png"></a>
+
+                    <span class="mail"><a
+                            href="mailto:?subject=Tooling in Python or tooling on bash?&amp;body=Viens découvrir un article à propos de [Tooling in Python or tooling on bash?] sur le site de Romain JACQUET. https://romainjacquet.github.io/tooling-in-python-or-tooling-on-bash.html"
+                            title="Share by Email" target="_blank"><img
+                            src="https://romainjacquet.github.io/theme/images/icons/mail-s.png"></a></span>
+                </div>
+            </div>
+        </article>
+    </section>
+</article>
+
+<!-- Footer -->
+    <footer>
+        <p>
+            <a href="http://getpelican.com/">Pelican</a> theme
+            based on <a href="https://github.com/parbhat/pelican-blue">Pelican-Blue</a> by <a
+                href="https://parbhatpuri.com/">@parbhat</a> with minor changes.
+        </p>
+    </footer>
+
+
+</body>
+</html>

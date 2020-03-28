@@ -1,5 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Deep in the system - sysadmin</title><link href="https://romainjacquet.github.io/" rel="alternate"></link><link href="https://romainjacquet.github.io/feeds/sysadmin.atom.xml" rel="self"></link><id>https://romainjacquet.github.io/</id><updated>2019-10-06T17:59:00+02:00</updated><entry><title>Paranoïd assertion in the manual of wipe or serious warning?</title><link href="https://romainjacquet.github.io/paranoid-assertion-in-the-manual-of-wipe-or-serious-warning.html" rel="alternate"></link><published>2019-10-06T17:59:00+02:00</published><updated>2019-10-06T17:59:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-10-06:/paranoid-assertion-in-the-manual-of-wipe-or-serious-warning.html</id><summary type="html">&lt;p&gt;Strange remark in the manual of wipe&lt;/p&gt;</summary><content type="html">&lt;p&gt;I recently found old IDE disks in my IT cupboard. I used them through an 
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Deep in the system - sysadmin</title><link href="https://romainjacquet.github.io/" rel="alternate"></link><link href="https://romainjacquet.github.io/feeds/sysadmin.atom.xml" rel="self"></link><id>https://romainjacquet.github.io/</id><updated>2020-03-28T21:32:00+01:00</updated><entry><title>Tooling in Python or tooling on bash?</title><link href="https://romainjacquet.github.io/tooling-in-python-or-tooling-on-bash.html" rel="alternate"></link><published>2020-03-28T21:32:00+01:00</published><updated>2020-03-28T21:32:00+01:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2020-03-28:/tooling-in-python-or-tooling-on-bash.html</id><summary type="html">&lt;p&gt;I recommand Python for tooling and I discourage shell&lt;/p&gt;</summary><content type="html">&lt;p&gt;I started working in 2006 in a &lt;a href="https://www.clarisys.fr/"&gt;startup&lt;/a&gt; 
+that make an heavy usage of Python.
+I quickly realize of powerfull it is, even if it was only &lt;strong&gt;Python 2.4&lt;/strong&gt;. 
+But I wasn't sure if Python will continue it's expension and I would
+have never believed that Python spread to this level.
+In 2006, there was only one way of scripting, tooling or 
+instrumenting: &lt;strong&gt;shell&lt;/strong&gt;! The situation has changed.&lt;/p&gt;
+&lt;h1&gt;why bash?&lt;/h1&gt;
+&lt;p&gt;Shell is a standard since the beginning of Unix because the native interface
+of Unix is terminal and your terminal interacts with the OS using &lt;strong&gt;Shell&lt;/strong&gt;. &lt;/p&gt;
+&lt;p&gt;&lt;img alt="AIX shell" src="https://romainjacquet.github.io/images/aix.jpg"&gt;&lt;/p&gt;
+&lt;p&gt;Bash have some advantages:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;no dependencies. It is installed by default on all distros. 
+  Most of the containers have bash&lt;/li&gt;
+&lt;li&gt;bash is part of the skill set of every sysadmin&lt;/li&gt;
+&lt;li&gt;basic file operations (copy, move, deletion) are simple and powerfull&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Bash have some disavantages:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;syntax is not really eye candy and come directly from the dark ages of the 80's. 
+  Especially if you need arithmetic expressions or list&lt;/li&gt;
+&lt;li&gt;function and parameters handling is really basic&lt;/li&gt;
+&lt;li&gt;there is not extension possible except by calling an external binary&lt;/li&gt;
+&lt;li&gt;the library concept is limited to import instruction or function with the &lt;code&gt;source&lt;/code&gt; keyword&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1&gt;why python rather than bash&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;it is a real programming language with objects and libraries to better
+  structure your code&lt;/li&gt;
+&lt;li&gt;you can debug your code using &lt;a href="https://code.visualstudio.com/"&gt;vscode&lt;/a&gt; for example&lt;/li&gt;
+&lt;li&gt;you can extend Python using the &lt;a href="https://docs.python.org/3/extending/index.html"&gt;Python/C Api&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;the &lt;a href="https://docs.python.org/3/library/index.html"&gt;standard library&lt;/a&gt; includes a wide range 
+  of features that covers 95% of the basic usage&lt;/li&gt;
+&lt;li&gt;Python is included by default in the major distros. For example CentOS come with 
+  a Python interpreter by default because its package manager (yum) is written in Python.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1&gt;nowaday&lt;/h1&gt;
+&lt;p&gt;In 2020, I would never recommand to use Shell except for simple and short scripts that don't need
+maintenance neither debugging. 
+The following situations indicates that you should stop to use shell:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;you are using IO redirections to file and &lt;code&gt;grep -v&lt;/code&gt; to simulate &lt;a href="https://docs.python.org/3/library/stdtypes.html#set-types-set-frozenset"&gt;set operations&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;you are writing shell scripts with more than 200 lines or more than three functions&lt;/li&gt;
+&lt;li&gt;you are spending a lot of time to debug by adding a lot &lt;code&gt;echo&lt;/code&gt;s&lt;/li&gt;
+&lt;li&gt;you are thinking to split your shell script into different libraires and use &lt;code&gt;source&lt;/code&gt; to include&lt;/li&gt;
+&lt;li&gt;you are calling binaries or other shell scripts with sensitive parameter like &lt;code&gt;--password&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I know the power of usage and I know that people are often reluctant to change.
+But remember that it could worse if you realize your error too late. Two of the worst 
+systems I have ever seen was made by more than 10.000 lines of code with interleaved 
+layers of bash and Python. So if you are 
+starting to write a new system from scratch think Python not bash.&lt;/p&gt;</content><category term="development"></category><category term="sysadmin"></category></entry><entry><title>Paranoïd assertion in the manual of wipe or serious warning?</title><link href="https://romainjacquet.github.io/paranoid-assertion-in-the-manual-of-wipe-or-serious-warning.html" rel="alternate"></link><published>2019-10-06T17:59:00+02:00</published><updated>2019-10-06T17:59:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-10-06:/paranoid-assertion-in-the-manual-of-wipe-or-serious-warning.html</id><summary type="html">&lt;p&gt;Strange remark in the manual of wipe&lt;/p&gt;</summary><content type="html">&lt;p&gt;I recently found old IDE disks in my IT cupboard. I used them through an 
 USB connexion to backup data. Now I want to get rid of all those disks,
 because cloud and other modern stuffs like USB 3.0 sticks offer more convenient solutions.
 As they contains private data like tax forms, I decide to securely delete all data.
