@@ -1,5 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Deep in the system</title><link href="https://romainjacquet.github.io/" rel="alternate"></link><link href="https://romainjacquet.github.io/feeds/all.atom.xml" rel="self"></link><id>https://romainjacquet.github.io/</id><updated>2020-05-01T14:48:00+02:00</updated><entry><title>Desktop chair of 2006 VS gaming chair of 2020</title><link href="https://romainjacquet.github.io/desktop-chair-of-2006-vs-gaming-chair-of-2020.html" rel="alternate"></link><published>2020-05-01T14:48:00+02:00</published><updated>2020-05-01T14:48:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2020-05-01:/desktop-chair-of-2006-vs-gaming-chair-of-2020.html</id><summary type="html">&lt;p&gt;dxracer formula08 review&lt;/p&gt;</summary><content type="html">&lt;p&gt;Just after the beginning of the lockdown in France, I started homeworking full time.
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Deep in the system</title><link href="https://romainjacquet.github.io/" rel="alternate"></link><link href="https://romainjacquet.github.io/feeds/all.atom.xml" rel="self"></link><id>https://romainjacquet.github.io/</id><updated>2020-05-21T16:00:00+02:00</updated><entry><title>Tor browser don't start with Ubuntu 18.04</title><link href="https://romainjacquet.github.io/tor-browser-dont-start-with-ubuntu-1804.html" rel="alternate"></link><published>2020-05-21T16:00:00+02:00</published><updated>2020-05-21T16:00:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2020-05-21:/tor-browser-dont-start-with-ubuntu-1804.html</id><summary type="html">&lt;p&gt;torbrowser fail to start on Ubuntu 18.04: solution&lt;/p&gt;</summary><content type="html">&lt;p&gt;I sometimes use the &lt;a href="https://www.torproject.org/"&gt;TOR browser&lt;/a&gt; to check connections
+from different networks or different countries. My usage of Tor is very rare. The last 
+time I try, TOR have never started. To troubleshoot I ended up to launch it from
+ the console and same problem occurs.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;rja@SBox:~/tmp/$ torbrowser-launcher 
+Gtk-Message: &lt;span class="m"&gt;15&lt;/span&gt;:56:44.321: Failed to load module &lt;span class="s2"&gt;&amp;quot;canberra-gtk-module&amp;quot;&lt;/span&gt;
+Tor Browser Launcher
+By Micah Lee, licensed under MIT
+version &lt;span class="m"&gt;0&lt;/span&gt;.2.9
+https://github.com/micahflee/torbrowser-launcher
+Refreshing &lt;span class="nb"&gt;local&lt;/span&gt; keyring...
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h1&gt;diagnosis&lt;/h1&gt;
+&lt;p&gt;What is this thing? Local keyring? I found more details with the pstree and ps commands.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;rja@SBox:~/tmp/$ pstree -l -p &lt;span class="m"&gt;4517&lt;/span&gt;
+bash&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;4517&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;───torbrowser-laun&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;6295&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;───gpg&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;6300&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+rja@SBox:~/tmp/$ ps auwx &lt;span class="p"&gt;|&lt;/span&gt;grep gpg
+rja  &lt;span class="m"&gt;3941&lt;/span&gt;  &lt;span class="m"&gt;0&lt;/span&gt;.0  &lt;span class="m"&gt;0&lt;/span&gt;.0 &lt;span class="m"&gt;100472&lt;/span&gt;  &lt;span class="m"&gt;3656&lt;/span&gt; ?        SLs  &lt;span class="m"&gt;15&lt;/span&gt;:27   &lt;span class="m"&gt;0&lt;/span&gt;:00 /usr/bin/gpg-agent --supervised
+rja  &lt;span class="m"&gt;4974&lt;/span&gt;  &lt;span class="m"&gt;0&lt;/span&gt;.0  &lt;span class="m"&gt;0&lt;/span&gt;.1  &lt;span class="m"&gt;54808&lt;/span&gt; &lt;span class="m"&gt;16280&lt;/span&gt; tty2     SL+  &lt;span class="m"&gt;15&lt;/span&gt;:31   &lt;span class="m"&gt;0&lt;/span&gt;:00 /usr/bin/gpg --status-fd &lt;span class="m"&gt;2&lt;/span&gt; --homedir /home/rja/.local/share/torbrowser/gnupg_homedir --keyserver hkps://hkps.pool.sks-keyservers.net --keyserver-options ca-cert-file /usr/share/torbrowser-launcher/sks-keyservers.netCA.pem include-revoked no-honor-keyserver-url no-honor-pka-record --refresh-keys
+rja  &lt;span class="m"&gt;5075&lt;/span&gt;  &lt;span class="m"&gt;0&lt;/span&gt;.0  &lt;span class="m"&gt;0&lt;/span&gt;.1  &lt;span class="m"&gt;54104&lt;/span&gt; &lt;span class="m"&gt;15660&lt;/span&gt; tty2     SL+  &lt;span class="m"&gt;15&lt;/span&gt;:34   &lt;span class="m"&gt;0&lt;/span&gt;:00 /usr/bin/gpg --status-fd &lt;span class="m"&gt;2&lt;/span&gt; --homedir /home/rja/.local/share/torbrowser/gnupg_homedir --keyserver hkps://hkps.pool.sks-keyservers.net --keyserver-options ca-cert-file /usr/share/torbrowser-launcher/sks-keyservers.netCA.pem include-revoked no-honor-keyserver-url no-honor-pka-record --refresh-keys
+rja  &lt;span class="m"&gt;6300&lt;/span&gt;  &lt;span class="m"&gt;0&lt;/span&gt;.0  &lt;span class="m"&gt;0&lt;/span&gt;.0  &lt;span class="m"&gt;46584&lt;/span&gt;  &lt;span class="m"&gt;8180&lt;/span&gt; pts/0    SL+  &lt;span class="m"&gt;15&lt;/span&gt;:56   &lt;span class="m"&gt;0&lt;/span&gt;:00 /usr/bin/gpg --status-fd &lt;span class="m"&gt;2&lt;/span&gt; --homedir /home/rja/.local/share/torbrowser/gnupg_homedir --keyserver hkps://hkps.pool.sks-keyservers.net --keyserver-options ca-cert-file /usr/share/torbrowser-launcher/sks-keyservers.netCA.pem include-revoked no-honor-keyserver-url no-honor-pka-record --refresh-keys
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;We can see that the &lt;a href="https://gnupg.org/documentation/manpage.html"&gt;GPG&lt;/a&gt; command is used to refresh 
+a specific keyring located under /home/rja/.local/share/torbrowser/. 
+Multiple GPG commands come from multiple Tor browser launching. Because
+it doesn't make sense to run more than one gpg command at the same time on the same keyring.&lt;br&gt;
+Gpg told us that the key is associated with the email torbrowser@torproject.org
+and that key is still valid.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ &lt;span class="nv"&gt;LANG&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt; gpg --homedir /home/rja/.local/share/torbrowser/gnupg_homedir --list-keys
+/home/rjacquet/.local/share/torbrowser/gnupg_homedir/pubring.kbx
+----------------------------------------------------------------
+pub   rsa4096 &lt;span class="m"&gt;2014&lt;/span&gt;-12-15 &lt;span class="o"&gt;[&lt;/span&gt;C&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;expires: &lt;span class="m"&gt;2020&lt;/span&gt;-08-24&lt;span class="o"&gt;]&lt;/span&gt;
+      EF6E286DDA85EA2A4BA7DE684E2C6E8793298290
+uid           &lt;span class="o"&gt;[&lt;/span&gt; unknown&lt;span class="o"&gt;]&lt;/span&gt; Tor Browser Developers &lt;span class="o"&gt;(&lt;/span&gt;signing key&lt;span class="o"&gt;)&lt;/span&gt; &amp;lt;torbrowser@torproject.org&amp;gt;
+sub   rsa4096 &lt;span class="m"&gt;2018&lt;/span&gt;-05-26 &lt;span class="o"&gt;[&lt;/span&gt;S&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;expires: &lt;span class="m"&gt;2020&lt;/span&gt;-09-12&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;So what's happenning? I get the clue when I ran the command in  the console:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ &lt;span class="nv"&gt;LANG&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt; /usr/bin/gpg --status-fd &lt;span class="m"&gt;2&lt;/span&gt; --homedir /home/rjacquet/.local/share/torbrowser/gnupg_homedir --keyserver hkps://hkps.pool.sks-keyservers.net --keyserver-options ca-cert-file /usr/share/torbrowser-launcher/sks-keyservers.netCA.pem include-revoked no-honor-keyserver-url no-honor-pka-record --refresh-keys
+gpg: keyserver option &lt;span class="s1"&gt;&amp;#39;ca-cert-file&amp;#39;&lt;/span&gt; is obsolete&lt;span class="p"&gt;;&lt;/span&gt; please use &lt;span class="s1"&gt;&amp;#39;hkp-cacert&amp;#39;&lt;/span&gt; in dirmngr.conf
+gpg: Note: &lt;span class="s1"&gt;&amp;#39;--refresh-keys&amp;#39;&lt;/span&gt; is not considered an option
+gpg: WARNING: no &lt;span class="nb"&gt;command&lt;/span&gt; supplied.  Trying to guess what you mean ...
+usage: gpg &lt;span class="o"&gt;[&lt;/span&gt;options&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;filename&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The syntax of the command is &lt;em&gt;not correct&lt;/em&gt;! Problably the gpg command have been updated
+and it broke the torbrowser-launcher.&lt;/p&gt;
+&lt;h1&gt;Looking for a solution&lt;/h1&gt;
+&lt;p&gt;I try to find a potential update but nothing match gpg or tor.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;apt list --upgradable &lt;span class="p"&gt;|&lt;/span&gt;egrep &lt;span class="s1"&gt;&amp;#39;gpg|tor&amp;#39;&lt;/span&gt;
+
+WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;I decided to fix it in the source code.
+Yes this is ugly but it will fix my tor browser before updating my Ubuntu to 20.04 :-).&lt;/p&gt;
+&lt;p&gt;This gpg call is located in the file /usr/lib/python2.7/dist-packages/torbrowser_launcher/common.py
+around line 220:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;        &lt;span class="n"&gt;p&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;subprocess&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Popen&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/usr/bin/gpg&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;--status-fd&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;2&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                              &lt;span class="s1"&gt;&amp;#39;--homedir&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;paths&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;gnupg_homedir&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+                              &lt;span class="s1"&gt;&amp;#39;--keyserver&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;hkps://hkps.pool.sks-keyservers.net&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                              &lt;span class="s1"&gt;&amp;#39;--keyserver-options&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;ca-cert-file=&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;paths&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;keyserver_ca&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+                              &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;,include-revoked,no-honor-keyserver-url,no-honor-pka-record&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                              &lt;span class="s1"&gt;&amp;#39;--refresh-keys&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="n"&gt;stderr&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;subprocess&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;PIPE&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;I decided to remove the keyserver options. There are really unclear for me. I also
+replace the server url like it is in the &lt;a href="https://github.com/micahflee/torbrowser-launcher/blob/develop/torbrowser_launcher/common.py"&gt;last version of code source&lt;/a&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$  &lt;span class="nv"&gt;LANG&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt; gpg --homedir . --keyserver hkps://keys.openpgp.org --refresh-keys
+gpg: refreshing &lt;span class="m"&gt;1&lt;/span&gt; key from hkps://keys.openpgp.org
+gpg: key 4E2C6E8793298290: no user ID
+gpg: Total number processed: &lt;span class="m"&gt;1&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The victory is near... 
+Below are the lines that fix the problem. And TOR starts in few seconds :-)&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;        &lt;span class="n"&gt;p&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;subprocess&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Popen&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/usr/bin/gpg&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;--status-fd&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;2&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                              &lt;span class="s1"&gt;&amp;#39;--homedir&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;paths&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;gnupg_homedir&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+                              &lt;span class="s1"&gt;&amp;#39;--keyserver&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;hkps://keys.openpgp.org&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;                              
+                              &lt;span class="s1"&gt;&amp;#39;--refresh-keys&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="n"&gt;stderr&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;subprocess&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;PIPE&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;</content></entry><entry><title>Desktop chair of 2006 VS gaming chair of 2020</title><link href="https://romainjacquet.github.io/desktop-chair-of-2006-vs-gaming-chair-of-2020.html" rel="alternate"></link><published>2020-05-01T14:48:00+02:00</published><updated>2020-05-01T14:48:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2020-05-01:/desktop-chair-of-2006-vs-gaming-chair-of-2020.html</id><summary type="html">&lt;p&gt;dxracer formula08 review&lt;/p&gt;</summary><content type="html">&lt;p&gt;Just after the beginning of the lockdown in France, I started homeworking full time.
 I quickly realized that my old computer chair of 2005 was not good enough
 to sit from eigth to ten hours per day in front of my computer.&lt;/p&gt;
 &lt;p&gt;I bougth this chair sixteen years ago when I was a student. It was
