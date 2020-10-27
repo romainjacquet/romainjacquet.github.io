@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en" itemscope itemtype="http://schema.org/Person">
+<head>
+            <meta charset="utf-8">
+        <!-- Site Meta Data -->
+        <title>the mystery if HOSTNAME environment variable with ansible</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="Romain JACQUET">
+
+        <link rel="shortcut icon" href="">
+
+        <!-- schema.org -->
+        <meta itemprop="name" content="Deep in the system">
+        <meta itemprop="image" content="">
+        <meta itemprop="description" content="">
+
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel='stylesheet' type='text/css'>
+        <!-- Style Meta Data -->
+        <link rel="stylesheet" href="https://romainjacquet.github.io/theme/css/style.css" type="text/css"/>
+        <link rel="stylesheet" href="https://romainjacquet.github.io/theme/css/pygments.css" type="text/css"/>
+
+        <!-- Feed Meta Data -->
+            <link href="https://romainjacquet.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate"
+                  title="Deep in the system ATOM Feed"/>
+
+        <!-- Twitter Feed -->
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:image" content="">
+
+    <meta name="twitter:creator" content="">
+    <meta name="twitter:url" content="https://romainjacquet.github.io/the-mystery-if-hostname-environment-variable-with-ansible.html">
+    <meta name="twitter:title" content="Deep in the system ~ the mystery if HOSTNAME environment variable with ansible">
+    <meta name="twitter:description" content="ansible emulate the bash environment">
+
+    <!-- Facebook Meta Data -->
+    <meta property="og:title" content="Deep in the system ~ the mystery if HOSTNAME environment variable with ansible"/>
+    <meta property="og:description" content="ansible emulate the bash environment"/>
+    <meta property="og:image" content=""/>
+</head>
+
+<body>
+<!-- Sidebar -->
+<aside>
+    <!--<center><a href="https://romainjacquet.github.io"><img id="avatar" src=""></a></center>-->
+    <h1>Deep in the system</h1>
+        <p>Unix, sysadmin, devops, CI/CD</p>
+    <br>
+
+
+    <nav class="nav">
+        <ul class="list-bare">
+
+                <li><a class="nav__link" href="/">Blog entry</a></li>
+
+                <li><a class="nav__link" href="https://romainjacquet.github.io/pages/about.html">About</a></li>
+                <li><a class="nav__link" href="https://romainjacquet.github.io/pages/links.html">Links</a></li>
+
+        </ul>
+    </nav>
+
+    <p class="social">
+                <a href="https://www.linkedin.com/in/jacquet-romain-493049141/?locale=en_US" target="_blank"><img
+                        src="https://romainjacquet.github.io/theme/images/icons/linkedin.png"></a>
+                <a href="https://github.com/romainjacquet" target="_blank"><img
+                        src="https://romainjacquet.github.io/theme/images/icons/github.png"></a>
+                <a href="mailto:romainjacquet@free.fr" target="_blank"><img
+                        src="https://romainjacquet.github.io/theme/images/icons/mail.png"></a>
+            <a href="https://romainjacquet.github.io/feeds/all.atom.xml" rel="alternate">
+                <img src="https://romainjacquet.github.io/theme/images/icons/rss.png"></a>
+    </p>
+
+        <h2>Categories</h2>
+        <ul class="navbar">
+                <li><a
+                        href="https://romainjacquet.github.io/category/business.html">business</a></li>
+                <li class="active"><a
+                        href="https://romainjacquet.github.io/category/cicd.html">ci/cd</a></li>
+                <li><a
+                        href="https://romainjacquet.github.io/category/development.html">development</a></li>
+                <li><a
+                        href="https://romainjacquet.github.io/category/gis.html">gis</a></li>
+                <li><a
+                        href="https://romainjacquet.github.io/category/misc.html">misc</a></li>
+                <li><a
+                        href="https://romainjacquet.github.io/category/sysadmin.html">sysadmin</a></li>
+        </ul>
+
+        <h2 class="blog_roll_link"><br/>BLOGROLLS</h2>
+        <ul class="navbar">
+                <li><a href="http://getpelican.com/">Pelican</a></li>
+                <li><a href="http://python.org/">Python.org</a></li>
+                <li><a href="http://jinja.pocoo.org/">Jinja2</a></li>
+        </ul>
+
+</aside>
+
+<!-- Content -->
+<article>
+    <section id="content">
+        <article>
+            <h2 class="post_title post_detail"><a href="https://romainjacquet.github.io/the-mystery-if-hostname-environment-variable-with-ansible.html" rel="bookmark"
+                                                  title="Permalink to the mystery if HOSTNAME environment variable with ansible">the mystery if HOSTNAME environment variable with ansible</a></h2>
+            <div class="entry-content blog-post">
+                <p>A friend show me a problem when running Python script with ansible
+ <a href="https://docs.ansible.com/ansible/latest/collections/ansible/builtin/command_module.html">command</a> 
+module.
+The command failed because the <code>HOSTNAME</code> variable was missing. The ansible documentation warns about
+this behaviour and provide this explanation: "The command(s) will not be processed through
+ the shell, so variables like $HOSTNAME and [...] will not work. <strong>Use the shell module if you need these features.</strong>"
+It's true, but there is a serious pitfall. The variable HOSTNAME is not really in the environment, you can't view
+when running <code>env</code>.</p>
+<h1>What's happened when running an ansible command</h1>
+<p>To troubleshoot, I'm using a simple Python script <code>printenv.py</code> to print env:</p>
+<div class="highlight"><pre><span></span><span class="ch">#!/bin/python</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+               <span class="k">print</span><span class="p">(</span><span class="s2">&quot;{}={}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;{} variables found.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">)))</span>
+</pre></div>
+
+
+<p>I'm using a simple docker to simulate the remote host and demonstrate the problem.</p>
+<div class="highlight"><pre><span></span><span class="k">FROM</span><span class="s"> centos:7</span>
+
+<span class="k">RUN</span> yum update -y
+<span class="k">RUN</span> yum -y install openssh-server openssh-clients sshpass
+<span class="k">RUN</span> mkdir /var/run/sshd
+<span class="k">RUN</span> <span class="nb">echo</span> <span class="s1">&#39;root:r00t&#39;</span> <span class="p">|</span> chpasswd
+<span class="k">RUN</span> sed -i <span class="s1">&#39;s/#PermitRootLogin without-password/PermitRootLogin yes/&#39;</span> /etc/ssh/sshd_config
+<span class="k">RUN</span> sed <span class="s1">&#39;s@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g&#39;</span> -i /etc/pam.d/sshd
+<span class="k">RUN</span> <span class="nb">echo</span> <span class="s2">&quot;export VISIBLE=now&quot;</span> &gt;&gt; /etc/profile
+<span class="k">RUN</span> /usr/bin/ssh-keygen -A
+<span class="k">COPY</span> printenv.py /root/
+
+<span class="k">CMD</span> <span class="s2">&quot;/usr/sbin/sshd&quot;</span> <span class="s2">&quot;-D&quot;</span>
+</pre></div>
+
+
+<p>Here is the output, and HOSTNAME is set:</p>
+<div class="highlight"><pre><span></span>docker <span class="nb">exec</span> -it d909a67ab429 python /root/printenv.py
+<span class="nv">PATH</span><span class="o">=</span>/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+<span class="nv">TERM</span><span class="o">=</span>xterm
+<span class="nv">HOSTNAME</span><span class="o">=</span>d909a67ab429
+<span class="nv">HOME</span><span class="o">=</span>/root
+<span class="m">4</span> variables found.
+</pre></div>
+
+
+<p>When running ansible, even with the shell module you did not have access to HOSTNAME:</p>
+<div class="highlight"><pre><span></span>$ ansible -i docker.yml -m shell -a <span class="s1">&#39;python /root/printenv.py&#39;</span> centos7 
+centos7 <span class="p">|</span> SUCCESS <span class="p">|</span> <span class="nv">rc</span><span class="o">=</span><span class="m">0</span> &gt;&gt;
+<span class="nv">LANG</span><span class="o">=</span>C
+<span class="nv">TERM</span><span class="o">=</span>xterm-256color
+<span class="nv">SHELL</span><span class="o">=</span>/bin/bash
+<span class="nv">LC_MESSAGES</span><span class="o">=</span>C
+<span class="nv">MAIL</span><span class="o">=</span>/var/mail/root
+<span class="nv">SHLVL</span><span class="o">=</span><span class="m">3</span>
+<span class="nv">SSH_TTY</span><span class="o">=</span>/dev/pts/1
+<span class="nv">PWD</span><span class="o">=</span>/root
+<span class="nv">SSH_CLIENT</span><span class="o">=</span><span class="m">10</span>.5.117.254 <span class="m">32896</span> <span class="m">22</span>
+<span class="nv">LOGNAME</span><span class="o">=</span>root
+<span class="nv">USER</span><span class="o">=</span>root
+<span class="nv">PATH</span><span class="o">=</span>/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+<span class="nv">LC_ALL</span><span class="o">=</span>C
+<span class="nv">LS_COLORS</span><span class="o">=</span><span class="nv">rs</span><span class="o">=</span><span class="m">0</span>:di<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">27</span>:ln<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">51</span>:mh<span class="o">=</span><span class="m">44</span><span class="p">;</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">15</span>:pi<span class="o">=</span><span class="m">40</span><span class="p">;</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">11</span>:so<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:do<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">5</span>:bd<span class="o">=</span><span class="m">48</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">232</span><span class="p">;</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">11</span>:cd<span class="o">=</span><span class="m">48</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">232</span><span class="p">;</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">3</span>:or<span class="o">=</span><span class="m">48</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">232</span><span class="p">;</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:mi<span class="o">=</span><span class="m">05</span><span class="p">;</span><span class="m">48</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">232</span><span class="p">;</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">15</span>:su<span class="o">=</span><span class="m">48</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">196</span><span class="p">;</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">15</span>:sg<span class="o">=</span><span class="m">48</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">11</span><span class="p">;</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">16</span>:ca<span class="o">=</span><span class="m">48</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">196</span><span class="p">;</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">226</span>:tw<span class="o">=</span><span class="m">48</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">10</span><span class="p">;</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">16</span>:ow<span class="o">=</span><span class="m">48</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">10</span><span class="p">;</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">21</span>:st<span class="o">=</span><span class="m">48</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">21</span><span class="p">;</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">15</span>:ex<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">34</span>:*.tar<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.tgz<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.arc<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.arj<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.taz<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.lha<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.lz4<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.lzh<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.lzma<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.tlz<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.txz<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.tzo<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.t7z<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.zip<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.z<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.Z<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.dz<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.gz<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.lrz<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.lz<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.lzo<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.xz<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.bz2<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.bz<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.tbz<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.tbz2<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.tz<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.deb<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.rpm<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.jar<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.war<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.ear<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.sar<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.rar<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.alz<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.ace<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.zoo<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.cpio<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.7z<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.rz<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.cab<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">9</span>:*.jpg<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.jpeg<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.gif<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.bmp<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.pbm<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.pgm<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.ppm<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.tga<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.xbm<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.xpm<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.tif<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.tiff<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.png<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.svg<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.svgz<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.mng<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.pcx<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.mov<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.mpg<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.mpeg<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.m2v<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.mkv<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.webm<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.ogm<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.mp4<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.m4v<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.mp4v<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.vob<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.qt<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.nuv<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.wmv<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.asf<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.rm<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.rmvb<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.flc<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.avi<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.fli<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.flv<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.gl<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.dl<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.xcf<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.xwd<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.yuv<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.cgm<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.emf<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.axv<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.anx<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.ogv<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.ogx<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">13</span>:*.aac<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">45</span>:*.au<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">45</span>:*.flac<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">45</span>:*.mid<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">45</span>:*.midi<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">45</span>:*.mka<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">45</span>:*.mp3<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">45</span>:*.mpc<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">45</span>:*.ogg<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">45</span>:*.ra<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">45</span>:*.wav<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">45</span>:*.axa<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">45</span>:*.oga<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">45</span>:*.spx<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">45</span>:*.xspf<span class="o">=</span><span class="m">38</span><span class="p">;</span><span class="m">5</span><span class="p">;</span><span class="m">45</span>:
+<span class="nv">HOME</span><span class="o">=</span>/root
+<span class="nv">_</span><span class="o">=</span>/usr/bin/python
+<span class="nv">SSH_CONNECTION</span><span class="o">=</span><span class="m">10</span>.5.117.254 <span class="m">32896</span> <span class="m">10</span>.5.117.1 <span class="m">22</span>
+<span class="m">17</span> variables found.
+</pre></div>
+
+
+<p>Same thing happened when the env command:</p>
+<div class="highlight"><pre><span></span>ansible -i docker.yml -m shell -a <span class="s1">&#39;env| grep HOSTNAME&#39;</span> centos7 
+centos7 <span class="p">|</span> FAILED <span class="p">|</span> <span class="nv">rc</span><span class="o">=</span><span class="m">1</span> &gt;&gt;
+non-zero <span class="k">return</span> code
+</pre></div>
+
+
+<p>The hostname is the name of the container (2b97621d1f75) that docker have generated.
+At this point we can see that there is a difference when running the script 
+<code>printenv.py</code> through the docker or using in the ansible shell module.</p>
+<p>The weirdest thing is that the variable HOSTNAME is defined!</p>
+<div class="highlight"><pre><span></span> ansible -i docker.yml -m shell -a <span class="s1">&#39;echo $HOSTNAME/$USER&#39;</span> centos7 
+centos7 <span class="p">|</span> SUCCESS <span class="p">|</span> <span class="nv">rc</span><span class="o">=</span><span class="m">0</span> &gt;&gt;
+2b97621d1f75/root
+</pre></div>
+
+
+<p>It looks like that env command doesn't work as expected.</p>
+<h1>The true cause of this behaviour</h1>
+<p>The problem is really complicated because there is a lot 
+of layers involved when running ansible shell command.</p>
+<ol>
+<li>you are using a shell to run the ansible command. All the variables from the environment are not visible from the remote host</li>
+<li>ansible transform the command line ansible into a ssh command that could be see if you increase verbosity with <code>-vvv</code>. It looks like 
+ <code>&lt;10.5.117.1&gt; SSH: EXEC sshpass -d12 ssh -C -o ControlMaster=auto -o ControlPersist=60s -o User=root -o ConnectTimeout=10 -o ControlPath=/home/rjacquet/.ansible/cp/634b52de7c -tt 10.5.117.1</code></li>
+<li>the ssh is using a bash command to run the ansible module. Note that the <strong>bash command is not a shell login</strong>, this is why accessing to HOSTNAME variable is not possible. Stuffs like are also visible with more verbosity <code>/bin/sh -c '"'"'rm -f -r /root/.ansible/tmp/ansible-tmp-1603741018.49-107090793072670/ &gt; /dev/null 2&gt;&amp;1 &amp;&amp; sleep 0</code></li>
+<li>the bash (non-login) shell is running a python command with the syscall fork</li>
+<li>finally the Python command use the <a href="https://docs.python.org/2.7/library/subprocess.html">subprocess module</a> to run <code>printenv.py</code>! Furthermore the subprocess module doesn't inherit the environment from its parent (the sh scripts). The environment is created is the ansible class <code>AnsibleModule</code> and
+ the <code>run_command</code> method after the comment <code># Manipulate the environ we'll send to the new process</code> 
+ (see <a href="https://github.com/ansible/ansible/blob/0d1ecee7670bdbbd84d4c19b0a63c560cfe46fc1/lib/ansible/module_utils/basic.py#L2737">here</a>).
+    Probably you have never heard about this module except you have already written your own ansible module. This a class that provide
+    common things to all modules.</li>
+</ol>
+<h1>Simple workaround</h1>
+<p>The only workaround I found is to change the python or shell script to run the <code>hostname</code> command
+instead of using the environment. This is exactly how the shell initialize the variable.</p>
+<p>If you have a solution without changing the script, feel free to share me the solution :-).</p>
+            </div>
+            <div class="post_list">
+                <span>By </span>
+                <a href="https://romainjacquet.github.io/author/romain-jacquet.html">@Romain JACQUET</a>
+                <span> in </span>
+                <span class="post_category"><a href="https://romainjacquet.github.io/category/cicd.html" rel="bookmark"
+                                               title="Permalink to ci/cd">[ ci/cd ]</a></span>
+                <span class="post_date">lun. 26 octobre 2020</span>
+                <div><span>Tags : </span>
+                </div>
+
+                <div class="entry-social">
+                    <span class="twitter"><a target="_blank" rel="nofollow"
+                                             onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=400,width=700');return false;"
+                                             title="Twitter"
+                                             href="https://twitter.com/share?url=https://romainjacquet.github.io/the-mystery-if-hostname-environment-variable-with-ansible.html&text=the mystery if HOSTNAME environment variable with ansible&via="><img
+                            src="https://romainjacquet.github.io/theme/images/icons/twitter-s.png"></a></span>
+
+                    <span class="gplus"><a target="_blank" title="Google +"
+                                           href="https://plus.google.com/share?url=https://romainjacquet.github.io/the-mystery-if-hostname-environment-variable-with-ansible.html&hl=fr"
+                                           rel="nofollow"
+                                           onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=650');return false;"><img
+                            src="https://romainjacquet.github.io/theme/images/icons/google-s.png"></a></span>
+
+                    <span class="facebook"><a target="_blank" title="Facebook" rel="nofollow"
+                                              onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=500,width=700');return false;"
+                                              href="https://www.facebook.com/sharer.php?u=https://romainjacquet.github.io/the-mystery-if-hostname-environment-variable-with-ansible.html&t=the mystery if HOSTNAME environment variable with ansible"><img
+                            src="https://romainjacquet.github.io/theme/images/icons/facebook-s.png"></a></span>
+
+                    <a target="_blank" title="Linkedin"
+                       href="https://www.linkedin.com/shareArticle?mini=true&url=https://romainjacquet.github.io/the-mystery-if-hostname-environment-variable-with-ansible.html&title=the mystery if HOSTNAME environment variable with ansible"
+                       rel="nofollow"
+                       onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=650');return false;"><img
+                            src="https://romainjacquet.github.io/theme/images/icons/linkedin-s.png"></a>
+
+                    <span class="mail"><a
+                            href="mailto:?subject=the mystery if HOSTNAME environment variable with ansible&amp;body=Viens découvrir un article à propos de [the mystery if HOSTNAME environment variable with ansible] sur le site de Romain JACQUET. https://romainjacquet.github.io/the-mystery-if-hostname-environment-variable-with-ansible.html"
+                            title="Share by Email" target="_blank"><img
+                            src="https://romainjacquet.github.io/theme/images/icons/mail-s.png"></a></span>
+                </div>
+            </div>
+        </article>
+    </section>
+</article>
+
+<!-- Footer -->
+    <footer>
+        <p>
+            <a href="http://getpelican.com/">Pelican</a> theme
+            based on <a href="https://github.com/parbhat/pelican-blue">Pelican-Blue</a> by <a
+                href="https://parbhatpuri.com/">@parbhat</a> with minor changes.
+        </p>
+    </footer>
+
+
+</body>
+</html>
