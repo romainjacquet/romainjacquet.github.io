@@ -86,8 +86,21 @@ centos7 &lt;span class="p"&gt;|&lt;/span&gt; SUCCESS &lt;span class="p"&gt;|&lt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;It looks like that env command doesn't work as expected.&lt;/p&gt;
-&lt;h1&gt;The true cause of this behaviour&lt;/h1&gt;
+&lt;p&gt;&lt;s&gt;It looks like that env command doesn't work as expected.&lt;/s&gt; &lt;strong&gt;UPDATE&lt;/strong&gt;:
+I received a message from &lt;a href="https://www.linkedin.com/in/benoît-dejean-43a49a1b"&gt;Benoît&lt;/a&gt; explaining why there
+is a difference between &lt;code&gt;echo&lt;/code&gt;, &lt;code&gt;env&lt;/code&gt; and the &lt;code&gt;printenv.py&lt;/code&gt; script. Simply the difference coming from that &lt;code&gt;HOSTNAME&lt;/code&gt;
+variable is set but is not exported. The export is done when reading when loading &lt;code&gt;/etc/profile&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;root@264421a1c781 /&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c1"&gt;# egrep -A 8 -Hnr &amp;#39;HOSTNAME=&amp;#39; /etc/&lt;/span&gt;
+/etc/profile:45:HOSTNAME&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt;/usr/bin/hostname &lt;span class="m"&gt;2&lt;/span&gt;&amp;gt;/dev/null&lt;span class="sb"&gt;`&lt;/span&gt;
+/etc/profile-46-HISTSIZE&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1000&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;...&lt;span class="o"&gt;]&lt;/span&gt;
+/etc/profile-53-export PATH USER LOGNAME MAIL HOSTNAME HISTSIZE HISTCONTROL
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;But the &lt;code&gt;/etc/profile&lt;/code&gt; is not loaded when running ansible because ansible doesn't invocate
+ bash like an interactive shell neither like a login shell.&lt;/p&gt;
+&lt;h1&gt;The cause of this behaviour&lt;/h1&gt;
 &lt;p&gt;The problem is really complicated because there is a lot 
 of layers involved when running ansible shell command.&lt;/p&gt;
 &lt;ol&gt;
@@ -105,7 +118,7 @@ of layers involved when running ansible shell command.&lt;/p&gt;
 &lt;h1&gt;Simple workaround&lt;/h1&gt;
 &lt;p&gt;The only workaround I found is to change the python or shell script to run the &lt;code&gt;hostname&lt;/code&gt; command
 instead of using the environment. This is exactly how the shell initialize the variable.&lt;/p&gt;
-&lt;p&gt;If you have a solution without changing the script, feel free to share me the solution :-).&lt;/p&gt;</content></entry><entry><title>Tor browser don't start with Ubuntu 18.04</title><link href="https://romainjacquet.github.io/tor-browser-dont-start-with-ubuntu-1804.html" rel="alternate"></link><published>2020-05-21T16:00:00+02:00</published><updated>2020-05-21T16:00:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2020-05-21:/tor-browser-dont-start-with-ubuntu-1804.html</id><summary type="html">&lt;p&gt;torbrowser fail to start on Ubuntu 18.04: solution&lt;/p&gt;</summary><content type="html">&lt;p&gt;I sometimes use the &lt;a href="https://www.torproject.org/"&gt;TOR browser&lt;/a&gt; to check connections
+&lt;p&gt;&lt;s&gt; If you have a solution without changing the script, feel free to share me the solution :-). &lt;/s&gt;&lt;/p&gt;</content></entry><entry><title>Tor browser don't start with Ubuntu 18.04</title><link href="https://romainjacquet.github.io/tor-browser-dont-start-with-ubuntu-1804.html" rel="alternate"></link><published>2020-05-21T16:00:00+02:00</published><updated>2020-05-21T16:00:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2020-05-21:/tor-browser-dont-start-with-ubuntu-1804.html</id><summary type="html">&lt;p&gt;torbrowser fail to start on Ubuntu 18.04: solution&lt;/p&gt;</summary><content type="html">&lt;p&gt;I sometimes use the &lt;a href="https://www.torproject.org/"&gt;TOR browser&lt;/a&gt; to check connections
 from different networks or different countries. My usage of Tor is very rare. The last 
 time I try, TOR have never started. To troubleshoot I ended up to launch it from
  the console and same problem occurs.&lt;/p&gt;

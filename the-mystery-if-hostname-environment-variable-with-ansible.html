@@ -190,8 +190,21 @@ centos7 <span class="p">|</span> SUCCESS <span class="p">|</span> <span class="n
 </pre></div>
 
 
-<p>It looks like that env command doesn't work as expected.</p>
-<h1>The true cause of this behaviour</h1>
+<p><s>It looks like that env command doesn't work as expected.</s> <strong>UPDATE</strong>:
+I received a message from <a href="https://www.linkedin.com/in/benoît-dejean-43a49a1b">Benoît</a> explaining why there
+is a difference between <code>echo</code>, <code>env</code> and the <code>printenv.py</code> script. Simply the difference coming from that <code>HOSTNAME</code>
+variable is set but is not exported. The export is done when reading when loading <code>/etc/profile</code>.</p>
+<div class="highlight"><pre><span></span><span class="o">[</span>root@264421a1c781 /<span class="o">]</span><span class="c1"># egrep -A 8 -Hnr &#39;HOSTNAME=&#39; /etc/</span>
+/etc/profile:45:HOSTNAME<span class="o">=</span><span class="sb">`</span>/usr/bin/hostname <span class="m">2</span>&gt;/dev/null<span class="sb">`</span>
+/etc/profile-46-HISTSIZE<span class="o">=</span><span class="m">1000</span>
+<span class="o">[</span>...<span class="o">]</span>
+/etc/profile-53-export PATH USER LOGNAME MAIL HOSTNAME HISTSIZE HISTCONTROL
+</pre></div>
+
+
+<p>But the <code>/etc/profile</code> is not loaded when running ansible because ansible doesn't invocate
+ bash like an interactive shell neither like a login shell.</p>
+<h1>The cause of this behaviour</h1>
 <p>The problem is really complicated because there is a lot 
 of layers involved when running ansible shell command.</p>
 <ol>
@@ -209,7 +222,7 @@ of layers involved when running ansible shell command.</p>
 <h1>Simple workaround</h1>
 <p>The only workaround I found is to change the python or shell script to run the <code>hostname</code> command
 instead of using the environment. This is exactly how the shell initialize the variable.</p>
-<p>If you have a solution without changing the script, feel free to share me the solution :-).</p>
+<p><s> If you have a solution without changing the script, feel free to share me the solution :-). </s></p>
             </div>
             <div class="post_list">
                 <span>By </span>
