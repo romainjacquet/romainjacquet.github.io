@@ -113,7 +113,7 @@ The ansible playbook failed with this type of errors:</p>
 <li>Impossible to download some jenkins' plugin. <code>Failed to connect to updates.jenkins-ci.org at port 443: [Errno 104]</code></li>
 </ul>
 <p>It is a network problem that could be reproduced by a simple oneliner:</p>
-<div class="highlight"><pre><span></span><span class="o">[</span>root@vmt-jenkins ~<span class="o">]</span><span class="c1"># LANG= curl -XGET -v -L https://jenkins-ci.org/redhat/jenkins-ci.org.key</span>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>root@vmt-jenkins ~<span class="o">]</span><span class="c1"># LANG= curl -XGET -v -L https://jenkins-ci.org/redhat/jenkins-ci.org.key</span>
 * About to connect<span class="o">()</span> to jenkins-ci.org port <span class="m">443</span> <span class="o">(</span><span class="c1">#0)</span>
 <span class="o">[</span>...<span class="o">]</span>
 * Ignoring the response-body
@@ -125,8 +125,7 @@ The ansible playbook failed with this type of errors:</p>
 * Failed connect to pkg.jenkins.io:443<span class="p">;</span> Connection timed out
 * Closing connection <span class="m">3</span>
 curl: <span class="o">(</span><span class="m">7</span><span class="o">)</span> Failed connect to pkg.jenkins.io:443<span class="p">;</span> Connection timed out
-</pre></div>
-
+</code></pre></div>
 
 <p>I first believed it was a network issue on our company network. But same error occured on
  an external network :-(. So I create an <a href="https://issues.jenkins-ci.org/projects/INFRA/issues/INFRA-2168">issue</a> on the bugtracker jenkins.

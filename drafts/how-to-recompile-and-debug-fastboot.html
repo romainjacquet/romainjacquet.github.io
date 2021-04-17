@@ -115,13 +115,12 @@ But I quickly realized that Odin does not work. And the same thing happens with 
 fastboot utility. The fastboot utilise doesn't see my device. It looks like the fastboot
 mode doesn't work. So I decided to add some debugging information in fastboot. </p>
 <p>The most tedious part is getting the Android sources. Warning it takes 120 Go and few hours to download:</p>
-<div class="highlight"><pre><span></span><span class="n">mkdir</span> <span class="n">aosp</span> <span class="o">&amp;&amp;</span> <span class="n">cd</span> <span class="n">aosp</span>
-<span class="n">repo</span> <span class="n">init</span> <span class="o">-</span><span class="n">u</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">android</span><span class="p">.</span><span class="n">googlesource</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">platform</span><span class="o">/</span><span class="n">manifest</span> <span class="o">-</span><span class="n">b</span> <span class="n">android</span><span class="o">-</span><span class="mi">5</span><span class="p">.</span><span class="mi">1</span><span class="p">.</span><span class="mi">1</span><span class="n">_r38</span>
-</pre></div>
-
+<div class="highlight"><pre><span></span><code>mkdir aosp &amp;&amp; cd aosp
+repo init -u https://android.googlesource.com/platform/manifest -b android-5.1.1_r38
+</code></pre></div>
 
 <p>Edit fastboot/usb_linux.c and add a macro to define TRACE_USB. The file must looks like:</p>
-<div class="highlight"><pre><span></span><span class="cp">#define TRACE_USB 1</span>
+<div class="highlight"><pre><span></span><code><span class="cp">#define TRACE_USB 1</span>
 <span class="cp">#ifdef TRACE_USB</span>
 <span class="cp">#define DBG1(x...) fprintf(stderr, x)</span>
 <span class="cp">#define DBG(x...) fprintf(stderr, x)</span>
@@ -129,23 +128,20 @@ mode doesn't work. So I decided to add some debugging information in fastboot. <
 <span class="cp">#define DBG(x...)</span>
 <span class="cp">#define DBG1(x...)</span>
 <span class="cp">#endif</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>Uncomment the scanning statement line 321 in fastboot/usb_linux.c:</p>
-<div class="highlight"><pre><span></span>        <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">convert_to_devfs_name</span><span class="p">(</span><span class="n">de</span><span class="o">-&gt;</span><span class="n">d_name</span><span class="p">,</span> <span class="n">devname</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">devname</span><span class="p">)))</span> <span class="p">{</span>
+<div class="highlight"><pre><span></span><code>        <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">convert_to_devfs_name</span><span class="p">(</span><span class="n">de</span><span class="o">-&gt;</span><span class="n">d_name</span><span class="p">,</span> <span class="n">devname</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">devname</span><span class="p">)))</span> <span class="p">{</span>
 
             <span class="n">DBG</span><span class="p">(</span><span class="s">&quot;[ scanning %s ]</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">devname</span><span class="p">);</span>
             <span class="n">writable</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
             <span class="k">if</span><span class="p">((</span><span class="n">fd</span> <span class="o">=</span> <span class="n">open</span><span class="p">(</span><span class="n">devname</span><span class="p">,</span> <span class="n">O_RDWR</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
                 <span class="c1">// Check if we have read-only access</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>Finally, do the compilation:</p>
-<div class="highlight"><pre><span></span>make fastboot
-</pre></div>
-
+<div class="highlight"><pre><span></span><code>make fastboot
+</code></pre></div>
 
 <p>You can now use your fastboot with a better verbosity.</p>
             </div>

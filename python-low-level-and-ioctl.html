@@ -108,47 +108,42 @@ need to read the DVB card status to find if the acquisition is fine. The status
 is provided by the DVB driver which is a set a of kernel modules. The DVB Card
 status could be read using the <a href="https://www.linuxtv.org/docs/dvbapi/DVB_Frontend_API.html">DVB API</a> of the kernel. Using old-style C and
 <a href="https://linux.die.net/man/2/ioctl">ioctl</a> function , this could be achieved using this lines:</p>
-<div class="highlight"><pre><span></span><span class="n">fe_status_t</span> <span class="n">my_status</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><span class="n">fe_status_t</span> <span class="n">my_status</span><span class="p">;</span>
 
 <span class="kt">int</span> <span class="n">ret</span> <span class="o">=</span> <span class="n">ioctl</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">FE_READ_STATUS</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">my_status</span><span class="p">);</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>It works. But my software is written in Python and I don't want to write a
 binding. C-binding is possible but painful compared of writing pure Python. How
 to translate this code into Python? Official documentation talks about <a href="https://docs.python.org/2/library/fcntl.html">fcntl
 module</a> but the description of the usage is not simple. I try this code in
 Python:</p>
-<div class="highlight"><pre><span></span><span class="c1"># f previously open</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># f previously open</span>
 
 <span class="n">ret_status</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
 <span class="n">fcntl</span><span class="o">.</span><span class="n">ioctl</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="mh">0x69</span><span class="p">,</span> <span class="n">ret_status</span><span class="p">)</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>My first attempt failed, resulting in an exception "Operation not permitted". Hum, wait a minute I remembered that ioctl system call is unique among all drivers. I looked more carefully the definition of FE_READ_STATUS in the kernel headers in the file ./include/linux/dvb/frontend.h .</p>
-<div class="highlight"><pre><span></span><span class="cp">#define FE_READ_STATUS                   _IOR(&#39;o&#39;, 69, fe_status_t)</span>
-</pre></div>
-
+<div class="highlight"><pre><span></span><code><span class="cp">#define FE_READ_STATUS                   _IOR(&#39;o&#39;, 69, fe_status_t)</span>
+</code></pre></div>
 
 <p>_IOR is a macro in the kernel to create unique IOCTL number. I didn't understand all the logic behind. Using a C program I successfully display the real number of the IOCTL FE_READ_STATUS.</p>
-<div class="highlight"><pre><span></span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;REAL VALUE %08x</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">FE_READ_STATUS</span><span class="p">);</span>
-</pre></div>
-
+<div class="highlight"><pre><span></span><code><span class="n">printf</span><span class="p">(</span><span class="s">&quot;REAL VALUE %08x</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">FE_READ_STATUS</span><span class="p">);</span>
+</code></pre></div>
 
 <p>And the final function to get status is now easy:</p>
-<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">is_dvb_locked</span><span class="p">(</span><span class="n">adapter_name</span><span class="p">):</span>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">is_dvb_locked</span><span class="p">(</span><span class="n">adapter_name</span><span class="p">):</span>
     <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span> <span class="p">(</span><span class="n">adapter_name</span><span class="p">,</span> <span class="s2">&quot;rw&quot;</span><span class="p">)</span>
     <span class="n">ret_status</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">])</span>
     <span class="n">fcntl</span><span class="o">.</span><span class="n">ioctl</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="mh">0x80046f45</span><span class="p">,</span> <span class="n">ret_status</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">value</span> <span class="o">=</span> <span class="n">ret_status</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
-        <span class="k">print</span> <span class="s2">&quot;locked </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">value</span> <span class="o">&amp;</span> <span class="mh">0x10</span> <span class="o">==</span> <span class="mh">0x10</span><span class="p">)</span>
+        <span class="nb">print</span> <span class="s2">&quot;locked </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">value</span> <span class="o">&amp;</span> <span class="mh">0x10</span> <span class="o">==</span> <span class="mh">0x10</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-        <span class="k">print</span> <span class="s2">&quot;Unknown status </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">err</span>
-</pre></div>
-
+        <span class="nb">print</span> <span class="s2">&quot;Unknown status </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">err</span>
+</code></pre></div>
 
 <p>Definitely Python is "batteries included" and even for low-level Python could do the job. See <a href="https://www.python.org/dev/peps/pep-0206/">PEP 206</a> for more information about "batteries included".</p>
             </div>

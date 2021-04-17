@@ -130,13 +130,12 @@ Python philosophy <a href="https://www.python.org/dev/peps/pep-0206/#id3">batter
 <p>Beginners often look for a simple way to run command, capture the output
 in a variable and check the return code. They want an equivalent of the 
 following bash statements:</p>
-<div class="highlight"><pre><span></span><span class="nv">my_output</span><span class="o">=</span><span class="k">$(</span>mycmd arg1 arg2<span class="k">)</span>
+<div class="highlight"><pre><span></span><code><span class="nv">my_output</span><span class="o">=</span><span class="k">$(</span>mycmd arg1 arg2<span class="k">)</span>
 <span class="nv">return_code</span><span class="o">=</span><span class="nv">$?</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>Here is my favorite solution:</p>
-<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tempfile</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">tempfile</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 
 <span class="k">def</span> <span class="nf">execute_shell</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
@@ -155,7 +154,7 @@ following bash statements:</p>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_output</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">output</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">())</span>
     <span class="k">return</span> <span class="n">ret</span><span class="p">,</span> <span class="n">output</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-</pre></div>
+</code></pre></div>
             </div>
             <div class="post_list">
                 <span>By </span>

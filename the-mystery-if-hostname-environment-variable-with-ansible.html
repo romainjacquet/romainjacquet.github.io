@@ -113,17 +113,16 @@ It's true, but there is a serious pitfall. The variable HOSTNAME is not really i
 when running <code>env</code>.</p>
 <h1>What's happened when running an ansible command</h1>
 <p>To troubleshoot, I'm using a simple Python script <code>printenv.py</code> to print env:</p>
-<div class="highlight"><pre><span></span><span class="ch">#!/bin/python</span>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/python</span>
 <span class="kn">import</span> <span class="nn">os</span>
 
 <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-               <span class="k">print</span><span class="p">(</span><span class="s2">&quot;{}={}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;{} variables found.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">)))</span>
-</pre></div>
-
+               <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> variables found.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">)))</span>
+</code></pre></div>
 
 <p>I'm using a simple docker to simulate the remote host and demonstrate the problem.</p>
-<div class="highlight"><pre><span></span><span class="k">FROM</span><span class="s"> centos:7</span>
+<div class="highlight"><pre><span></span><code><span class="k">FROM</span> <span class="s">centos:7</span>
 
 <span class="k">RUN</span> yum update -y
 <span class="k">RUN</span> yum -y install openssh-server openssh-clients sshpass
@@ -136,21 +135,19 @@ when running <code>env</code>.</p>
 <span class="k">COPY</span> printenv.py /root/
 
 <span class="k">CMD</span> <span class="s2">&quot;/usr/sbin/sshd&quot;</span> <span class="s2">&quot;-D&quot;</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>Here is the output, and HOSTNAME is set:</p>
-<div class="highlight"><pre><span></span>docker <span class="nb">exec</span> -it d909a67ab429 python /root/printenv.py
+<div class="highlight"><pre><span></span><code>docker <span class="nb">exec</span> -it d909a67ab429 python /root/printenv.py
 <span class="nv">PATH</span><span class="o">=</span>/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 <span class="nv">TERM</span><span class="o">=</span>xterm
 <span class="nv">HOSTNAME</span><span class="o">=</span>d909a67ab429
 <span class="nv">HOME</span><span class="o">=</span>/root
 <span class="m">4</span> variables found.
-</pre></div>
-
+</code></pre></div>
 
 <p>When running ansible, even with the shell module you did not have access to HOSTNAME:</p>
-<div class="highlight"><pre><span></span>$ ansible -i docker.yml -m shell -a <span class="s1">&#39;python /root/printenv.py&#39;</span> centos7 
+<div class="highlight"><pre><span></span><code>$ ansible -i docker.yml -m shell -a <span class="s1">&#39;python /root/printenv.py&#39;</span> centos7 
 centos7 <span class="p">|</span> SUCCESS <span class="p">|</span> <span class="nv">rc</span><span class="o">=</span><span class="m">0</span> &gt;&gt;
 <span class="nv">LANG</span><span class="o">=</span>C
 <span class="nv">TERM</span><span class="o">=</span>xterm-256color
@@ -170,37 +167,33 @@ centos7 <span class="p">|</span> SUCCESS <span class="p">|</span> <span class="n
 <span class="nv">_</span><span class="o">=</span>/usr/bin/python
 <span class="nv">SSH_CONNECTION</span><span class="o">=</span><span class="m">10</span>.5.117.254 <span class="m">32896</span> <span class="m">10</span>.5.117.1 <span class="m">22</span>
 <span class="m">17</span> variables found.
-</pre></div>
-
+</code></pre></div>
 
 <p>Same thing happened when the env command:</p>
-<div class="highlight"><pre><span></span>ansible -i docker.yml -m shell -a <span class="s1">&#39;env| grep HOSTNAME&#39;</span> centos7 
+<div class="highlight"><pre><span></span><code>ansible -i docker.yml -m shell -a <span class="s1">&#39;env| grep HOSTNAME&#39;</span> centos7 
 centos7 <span class="p">|</span> FAILED <span class="p">|</span> <span class="nv">rc</span><span class="o">=</span><span class="m">1</span> &gt;&gt;
 non-zero <span class="k">return</span> code
-</pre></div>
-
+</code></pre></div>
 
 <p>The hostname is the name of the container (2b97621d1f75) that docker have generated.
 At this point we can see that there is a difference when running the script 
 <code>printenv.py</code> through the docker or using in the ansible shell module.</p>
 <p>The weirdest thing is that the variable HOSTNAME is defined!</p>
-<div class="highlight"><pre><span></span> ansible -i docker.yml -m shell -a <span class="s1">&#39;echo $HOSTNAME/$USER&#39;</span> centos7 
+<div class="highlight"><pre><span></span><code> ansible -i docker.yml -m shell -a <span class="s1">&#39;echo $HOSTNAME/$USER&#39;</span> centos7 
 centos7 <span class="p">|</span> SUCCESS <span class="p">|</span> <span class="nv">rc</span><span class="o">=</span><span class="m">0</span> &gt;&gt;
 2b97621d1f75/root
-</pre></div>
-
+</code></pre></div>
 
 <p><s>It looks like that env command doesn't work as expected.</s> <strong>UPDATE</strong>:
 I received a message from <a href="https://www.linkedin.com/in/benoît-dejean-43a49a1b">Benoît</a> explaining why there
 is a difference between <code>echo</code>, <code>env</code> and the <code>printenv.py</code> script. Simply the difference coming from that <code>HOSTNAME</code>
 variable is set but is not exported. The export is done when reading when loading <code>/etc/profile</code>.</p>
-<div class="highlight"><pre><span></span><span class="o">[</span>root@264421a1c781 /<span class="o">]</span><span class="c1"># egrep -A 8 -Hnr &#39;HOSTNAME=&#39; /etc/</span>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>root@264421a1c781 /<span class="o">]</span><span class="c1"># egrep -A 8 -Hnr &#39;HOSTNAME=&#39; /etc/</span>
 /etc/profile:45:HOSTNAME<span class="o">=</span><span class="sb">`</span>/usr/bin/hostname <span class="m">2</span>&gt;/dev/null<span class="sb">`</span>
 /etc/profile-46-HISTSIZE<span class="o">=</span><span class="m">1000</span>
 <span class="o">[</span>...<span class="o">]</span>
 /etc/profile-53-export PATH USER LOGNAME MAIL HOSTNAME HISTSIZE HISTCONTROL
-</pre></div>
-
+</code></pre></div>
 
 <p>But the <code>/etc/profile</code> is not loaded when running ansible because ansible doesn't invocate
  bash like an interactive shell neither like a login shell.</p>

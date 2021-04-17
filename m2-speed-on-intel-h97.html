@@ -133,12 +133,11 @@ any difficulty except that I had to upgrade the BIOS to install F7 version (<a h
  Before the F6 version you can use nvme disk but you cannot boot it. I reinstalled my Ubuntu.
  I didn't record the installation time but it seems really fast.
 With the lspci option, I checked the speed:</p>
-<div class="highlight"><pre><span></span><span class="c1"># lspci |grep -i nvme</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># lspci |grep -i nvme</span>
 <span class="m">02</span>:00.0 Non-Volatile memory controller: Samsung Electronics Co Ltd NVMe SSD Controller SM961/PM961
 lspci -vvv -s <span class="m">02</span>:00.0<span class="p">|</span>grep LnkCap
         LnkCap: Port <span class="c1">#0, Speed 8GT/s, Width x4, ASPM L1, Exit Latency L0s unlimited, L1 &lt;64us</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>Great! I got four lanes (Width x4) for my new disk.</p>
 <h1>Final benchmark</h1>

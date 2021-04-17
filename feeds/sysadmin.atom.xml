@@ -3,27 +3,25 @@
 from different networks or different countries. My usage of Tor is very rare. The last 
 time I try, TOR have never started. To troubleshoot I ended up to launch it from
  the console and same problem occurs.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;rja@SBox:~/tmp/$ torbrowser-launcher 
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;rja@SBox:~/tmp/$ torbrowser-launcher 
 Gtk-Message: &lt;span class="m"&gt;15&lt;/span&gt;:56:44.321: Failed to load module &lt;span class="s2"&gt;&amp;quot;canberra-gtk-module&amp;quot;&lt;/span&gt;
 Tor Browser Launcher
 By Micah Lee, licensed under MIT
 version &lt;span class="m"&gt;0&lt;/span&gt;.2.9
 https://github.com/micahflee/torbrowser-launcher
 Refreshing &lt;span class="nb"&gt;local&lt;/span&gt; keyring...
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;h1&gt;diagnosis&lt;/h1&gt;
 &lt;p&gt;What is this thing? Local keyring? I found more details with the pstree and ps commands.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;rja@SBox:~/tmp/$ pstree -l -p &lt;span class="m"&gt;4517&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;rja@SBox:~/tmp/$ pstree -l -p &lt;span class="m"&gt;4517&lt;/span&gt;
 bash&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;4517&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;───torbrowser-laun&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;6295&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;───gpg&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;6300&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
 rja@SBox:~/tmp/$ ps auwx &lt;span class="p"&gt;|&lt;/span&gt;grep gpg
 rja  &lt;span class="m"&gt;3941&lt;/span&gt;  &lt;span class="m"&gt;0&lt;/span&gt;.0  &lt;span class="m"&gt;0&lt;/span&gt;.0 &lt;span class="m"&gt;100472&lt;/span&gt;  &lt;span class="m"&gt;3656&lt;/span&gt; ?        SLs  &lt;span class="m"&gt;15&lt;/span&gt;:27   &lt;span class="m"&gt;0&lt;/span&gt;:00 /usr/bin/gpg-agent --supervised
 rja  &lt;span class="m"&gt;4974&lt;/span&gt;  &lt;span class="m"&gt;0&lt;/span&gt;.0  &lt;span class="m"&gt;0&lt;/span&gt;.1  &lt;span class="m"&gt;54808&lt;/span&gt; &lt;span class="m"&gt;16280&lt;/span&gt; tty2     SL+  &lt;span class="m"&gt;15&lt;/span&gt;:31   &lt;span class="m"&gt;0&lt;/span&gt;:00 /usr/bin/gpg --status-fd &lt;span class="m"&gt;2&lt;/span&gt; --homedir /home/rja/.local/share/torbrowser/gnupg_homedir --keyserver hkps://hkps.pool.sks-keyservers.net --keyserver-options ca-cert-file /usr/share/torbrowser-launcher/sks-keyservers.netCA.pem include-revoked no-honor-keyserver-url no-honor-pka-record --refresh-keys
 rja  &lt;span class="m"&gt;5075&lt;/span&gt;  &lt;span class="m"&gt;0&lt;/span&gt;.0  &lt;span class="m"&gt;0&lt;/span&gt;.1  &lt;span class="m"&gt;54104&lt;/span&gt; &lt;span class="m"&gt;15660&lt;/span&gt; tty2     SL+  &lt;span class="m"&gt;15&lt;/span&gt;:34   &lt;span class="m"&gt;0&lt;/span&gt;:00 /usr/bin/gpg --status-fd &lt;span class="m"&gt;2&lt;/span&gt; --homedir /home/rja/.local/share/torbrowser/gnupg_homedir --keyserver hkps://hkps.pool.sks-keyservers.net --keyserver-options ca-cert-file /usr/share/torbrowser-launcher/sks-keyservers.netCA.pem include-revoked no-honor-keyserver-url no-honor-pka-record --refresh-keys
 rja  &lt;span class="m"&gt;6300&lt;/span&gt;  &lt;span class="m"&gt;0&lt;/span&gt;.0  &lt;span class="m"&gt;0&lt;/span&gt;.0  &lt;span class="m"&gt;46584&lt;/span&gt;  &lt;span class="m"&gt;8180&lt;/span&gt; pts/0    SL+  &lt;span class="m"&gt;15&lt;/span&gt;:56   &lt;span class="m"&gt;0&lt;/span&gt;:00 /usr/bin/gpg --status-fd &lt;span class="m"&gt;2&lt;/span&gt; --homedir /home/rja/.local/share/torbrowser/gnupg_homedir --keyserver hkps://hkps.pool.sks-keyservers.net --keyserver-options ca-cert-file /usr/share/torbrowser-launcher/sks-keyservers.netCA.pem include-revoked no-honor-keyserver-url no-honor-pka-record --refresh-keys
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;We can see that the &lt;a href="https://gnupg.org/documentation/manpage.html"&gt;GPG&lt;/a&gt; command is used to refresh 
 a specific keyring located under /home/rja/.local/share/torbrowser/. 
@@ -31,64 +29,59 @@ Multiple GPG commands come from multiple Tor browser launching. Because
 it doesn't make sense to run more than one gpg command at the same time on the same keyring.&lt;br&gt;
 Gpg told us that the key is associated with the email torbrowser@torproject.org
 and that key is still valid.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ &lt;span class="nv"&gt;LANG&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt; gpg --homedir /home/rja/.local/share/torbrowser/gnupg_homedir --list-keys
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$ &lt;span class="nv"&gt;LANG&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt; gpg --homedir /home/rja/.local/share/torbrowser/gnupg_homedir --list-keys
 /home/rjacquet/.local/share/torbrowser/gnupg_homedir/pubring.kbx
 ----------------------------------------------------------------
 pub   rsa4096 &lt;span class="m"&gt;2014&lt;/span&gt;-12-15 &lt;span class="o"&gt;[&lt;/span&gt;C&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;expires: &lt;span class="m"&gt;2020&lt;/span&gt;-08-24&lt;span class="o"&gt;]&lt;/span&gt;
       EF6E286DDA85EA2A4BA7DE684E2C6E8793298290
 uid           &lt;span class="o"&gt;[&lt;/span&gt; unknown&lt;span class="o"&gt;]&lt;/span&gt; Tor Browser Developers &lt;span class="o"&gt;(&lt;/span&gt;signing key&lt;span class="o"&gt;)&lt;/span&gt; &amp;lt;torbrowser@torproject.org&amp;gt;
 sub   rsa4096 &lt;span class="m"&gt;2018&lt;/span&gt;-05-26 &lt;span class="o"&gt;[&lt;/span&gt;S&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;expires: &lt;span class="m"&gt;2020&lt;/span&gt;-09-12&lt;span class="o"&gt;]&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;So what's happenning? I get the clue when I ran the command in  the console:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ &lt;span class="nv"&gt;LANG&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt; /usr/bin/gpg --status-fd &lt;span class="m"&gt;2&lt;/span&gt; --homedir /home/rjacquet/.local/share/torbrowser/gnupg_homedir --keyserver hkps://hkps.pool.sks-keyservers.net --keyserver-options ca-cert-file /usr/share/torbrowser-launcher/sks-keyservers.netCA.pem include-revoked no-honor-keyserver-url no-honor-pka-record --refresh-keys
-gpg: keyserver option &lt;span class="s1"&gt;&amp;#39;ca-cert-file&amp;#39;&lt;/span&gt; is obsolete&lt;span class="p"&gt;;&lt;/span&gt; please use &lt;span class="s1"&gt;&amp;#39;hkp-cacert&amp;#39;&lt;/span&gt; in dirmngr.conf
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$ &lt;span class="nv"&gt;LANG&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt; /usr/bin/gpg --status-fd &lt;span class="m"&gt;2&lt;/span&gt; --homedir /home/rjacquet/.local/share/torbrowser/gnupg_homedir --keyserver hkps://hkps.pool.sks-keyservers.net --keyserver-options ca-cert-file /usr/share/torbrowser-launcher/sks-keyservers.netCA.pem include-revoked no-honor-keyserver-url no-honor-pka-record --refresh-keys
+gpg: keyserver option &lt;span class="s1"&gt;&amp;#39;ca-cert-file&amp;#39;&lt;/span&gt; is obsolete&lt;span class="p"&gt;;&lt;/span&gt; please use &lt;span class="s1"&gt;&amp;#39;hkp-cacert&amp;#39;&lt;/span&gt; &lt;span class="k"&gt;in&lt;/span&gt; dirmngr.conf
 gpg: Note: &lt;span class="s1"&gt;&amp;#39;--refresh-keys&amp;#39;&lt;/span&gt; is not considered an option
 gpg: WARNING: no &lt;span class="nb"&gt;command&lt;/span&gt; supplied.  Trying to guess what you mean ...
 usage: gpg &lt;span class="o"&gt;[&lt;/span&gt;options&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;filename&lt;span class="o"&gt;]&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;The syntax of the command is &lt;em&gt;not correct&lt;/em&gt;! Problably the gpg command have been updated
 and it broke the torbrowser-launcher.&lt;/p&gt;
 &lt;h1&gt;Looking for a solution&lt;/h1&gt;
 &lt;p&gt;I try to find a potential update but nothing match gpg or tor.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;apt list --upgradable &lt;span class="p"&gt;|&lt;/span&gt;egrep &lt;span class="s1"&gt;&amp;#39;gpg|tor&amp;#39;&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;apt list --upgradable &lt;span class="p"&gt;|&lt;/span&gt;egrep &lt;span class="s1"&gt;&amp;#39;gpg|tor&amp;#39;&lt;/span&gt;
 
-WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
-&lt;/pre&gt;&lt;/div&gt;
-
+WARNING: apt does not have a stable CLI interface. Use with caution &lt;span class="k"&gt;in&lt;/span&gt; scripts.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;I decided to fix it in the source code.
 Yes this is ugly but it will fix my tor browser before updating my Ubuntu to 20.04 :-).&lt;/p&gt;
 &lt;p&gt;This gpg call is located in the file /usr/lib/python2.7/dist-packages/torbrowser_launcher/common.py
 around line 220:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;        &lt;span class="n"&gt;p&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;subprocess&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Popen&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/usr/bin/gpg&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;--status-fd&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;2&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;        &lt;span class="n"&gt;p&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;subprocess&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Popen&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/usr/bin/gpg&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;--status-fd&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;2&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
                               &lt;span class="s1"&gt;&amp;#39;--homedir&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;paths&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;gnupg_homedir&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
                               &lt;span class="s1"&gt;&amp;#39;--keyserver&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;hkps://hkps.pool.sks-keyservers.net&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
                               &lt;span class="s1"&gt;&amp;#39;--keyserver-options&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;ca-cert-file=&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;paths&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;keyserver_ca&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
                               &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;,include-revoked,no-honor-keyserver-url,no-honor-pka-record&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
                               &lt;span class="s1"&gt;&amp;#39;--refresh-keys&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="n"&gt;stderr&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;subprocess&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;PIPE&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;I decided to remove the keyserver options. There are really unclear for me. I also
 replace the server url like it is in the &lt;a href="https://github.com/micahflee/torbrowser-launcher/blob/develop/torbrowser_launcher/common.py"&gt;last version of code source&lt;/a&gt;.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$  &lt;span class="nv"&gt;LANG&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt; gpg --homedir . --keyserver hkps://keys.openpgp.org --refresh-keys
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$  &lt;span class="nv"&gt;LANG&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt; gpg --homedir . --keyserver hkps://keys.openpgp.org --refresh-keys
 gpg: refreshing &lt;span class="m"&gt;1&lt;/span&gt; key from hkps://keys.openpgp.org
 gpg: key 4E2C6E8793298290: no user ID
 gpg: Total number processed: &lt;span class="m"&gt;1&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;The victory is near... 
 Below are the lines that fix the problem. And TOR starts in few seconds :-)&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;        &lt;span class="n"&gt;p&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;subprocess&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Popen&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/usr/bin/gpg&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;--status-fd&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;2&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;        &lt;span class="n"&gt;p&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;subprocess&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Popen&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/usr/bin/gpg&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;--status-fd&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;2&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
                               &lt;span class="s1"&gt;&amp;#39;--homedir&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;paths&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;gnupg_homedir&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
                               &lt;span class="s1"&gt;&amp;#39;--keyserver&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;hkps://keys.openpgp.org&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;                              
                               &lt;span class="s1"&gt;&amp;#39;--refresh-keys&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="n"&gt;stderr&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;subprocess&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;PIPE&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;</content></entry><entry><title>Tooling in Python or tooling in bash?</title><link href="https://romainjacquet.github.io/tooling-in-python-or-tooling-in-bash.html" rel="alternate"></link><published>2020-03-28T21:32:00+01:00</published><updated>2020-03-28T21:32:00+01:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2020-03-28:/tooling-in-python-or-tooling-in-bash.html</id><summary type="html">&lt;p&gt;I recommand Python for tooling and I discourage shell&lt;/p&gt;</summary><content type="html">&lt;p&gt;I started working in 2006 in a &lt;a href="https://www.clarisys.fr/"&gt;startup&lt;/a&gt; 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</content><category term="sysadmin"></category></entry><entry><title>Tooling in Python or tooling in bash?</title><link href="https://romainjacquet.github.io/tooling-in-python-or-tooling-in-bash.html" rel="alternate"></link><published>2020-03-28T21:32:00+01:00</published><updated>2020-03-28T21:32:00+01:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2020-03-28:/tooling-in-python-or-tooling-in-bash.html</id><summary type="html">&lt;p&gt;I recommand Python for tooling and I discourage shell&lt;/p&gt;</summary><content type="html">&lt;p&gt;I started working in 2006 in a &lt;a href="https://www.clarisys.fr/"&gt;startup&lt;/a&gt; 
 that make an heavy usage of Python.
 I quickly realize of powerfull it is, even if it was only &lt;strong&gt;Python 2.4&lt;/strong&gt;. 
 But I wasn't sure if Python will continue it's expension and I would
@@ -140,7 +133,7 @@ The following situations indicates that you should stop to use shell:&lt;/p&gt;
 But remember that it could worse if you realize your error too late. Two of the worst 
 systems I have ever seen was made by more than 10.000 lines of code with interleaved 
 layers of bash and Python. So if you are 
-starting to write a new system from scratch think Python not bash.&lt;/p&gt;</content><category term="development"></category><category term="sysadmin"></category></entry><entry><title>Paranoïd assertion in the manual of wipe or serious warning?</title><link href="https://romainjacquet.github.io/paranoid-assertion-in-the-manual-of-wipe-or-serious-warning.html" rel="alternate"></link><published>2019-10-06T17:59:00+02:00</published><updated>2019-10-06T17:59:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-10-06:/paranoid-assertion-in-the-manual-of-wipe-or-serious-warning.html</id><summary type="html">&lt;p&gt;Strange remark in the manual of wipe&lt;/p&gt;</summary><content type="html">&lt;p&gt;I recently found old IDE disks in my IT cupboard. I used them through an 
+starting to write a new system from scratch think Python not bash.&lt;/p&gt;</content><category term="sysadmin"></category><category term="development"></category><category term="sysadmin"></category></entry><entry><title>Paranoïd assertion in the manual of wipe or serious warning?</title><link href="https://romainjacquet.github.io/paranoid-assertion-in-the-manual-of-wipe-or-serious-warning.html" rel="alternate"></link><published>2019-10-06T17:59:00+02:00</published><updated>2019-10-06T17:59:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-10-06:/paranoid-assertion-in-the-manual-of-wipe-or-serious-warning.html</id><summary type="html">&lt;p&gt;Strange remark in the manual of wipe&lt;/p&gt;</summary><content type="html">&lt;p&gt;I recently found old IDE disks in my IT cupboard. I used them through an 
 USB connexion to backup data. Now I want to get rid of all those disks,
 because cloud and other modern stuffs like USB 3.0 sticks offer more convenient solutions.
 As they contains private data like tax forms, I decide to securely delete all data.
@@ -175,61 +168,56 @@ no evidence that this mechanism has been in implemend in the IDE controller. I h
 &lt;a href="https://github.com/berke/wipe/tree/master"&gt;wipe github&lt;/a&gt; and the warning is not longer present. 
 Even if we go back in the git history. Did debian maintainers add it?
 With this kind of warning, I understand  company who prefer destroying over 
-wiping for disk with classified documents.&lt;/p&gt;</content></entry><entry><title>Fix Filezilla import SSH key problem</title><link href="https://romainjacquet.github.io/fix-filezilla-import-ssh-key-problem.html" rel="alternate"></link><published>2019-05-24T18:13:00+02:00</published><updated>2019-05-24T18:13:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-05-24:/fix-filezilla-import-ssh-key-problem.html</id><summary type="html">&lt;p&gt;filezilla only support PKCS...&lt;/p&gt;</summary><content type="html">&lt;p&gt;I'm always surprized how long users can suffer from IT problem before asking for help.
+wiping for disk with classified documents.&lt;/p&gt;</content><category term="sysadmin"></category></entry><entry><title>Fix Filezilla import SSH key problem</title><link href="https://romainjacquet.github.io/fix-filezilla-import-ssh-key-problem.html" rel="alternate"></link><published>2019-05-24T18:13:00+02:00</published><updated>2019-05-24T18:13:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-05-24:/fix-filezilla-import-ssh-key-problem.html</id><summary type="html">&lt;p&gt;filezilla only support PKCS...&lt;/p&gt;</summary><content type="html">&lt;p&gt;I'm always surprized how long users can suffer from IT problem before asking for help.
 One employee of my company told me that it has problem with a ssh key. It uses its
 key to copy with scp and it works. But he cannot use &lt;a href="https://filezilla-project.org/"&gt;Filezilla&lt;/a&gt;.
 Filezilla refuses the key without any warning.
 I try to use Filezilla with a newly-generated key and I successfully connect to a test server.
 So the problem comes from the key.
 Let's have a look to the keys. Both keys looks correct and contains correct header and footer:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;-----BEGIN RSA PRIVATE KEY-----
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;-----BEGIN RSA PRIVATE KEY-----
 &lt;span class="o"&gt;[&lt;/span&gt;...&lt;span class="o"&gt;]&lt;/span&gt;
 -----END RSA PRIVATE KEY-----
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;But openssl failed to check to suspicious key:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;% openssl rsa -check -in suspiciouskey_id                               
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;% openssl rsa -check -in suspiciouskey_id                               
 RSA key ok
 &lt;span class="m"&gt;140634506504080&lt;/span&gt;:error:0D0680A8:asn1 encoding routines:ASN1_CHECK_TLEN:wrong tag:tasn_dec.c:1199:
 &lt;span class="m"&gt;140634506504080&lt;/span&gt;:error:0D06C03A:asn1 encoding routines:ASN1_D2I_EX_PRIMITIVE:nested asn1 error:tasn_dec.c:767:
 &lt;span class="m"&gt;140634506504080&lt;/span&gt;:error:0D08303A:asn1 encoding routines:ASN1_TEMPLATE_NOEXP_D2I:nested asn1 error:tasn_dec.c:699:Field&lt;span class="o"&gt;=&lt;/span&gt;n, &lt;span class="nv"&gt;Type&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;RSA
 &lt;span class="m"&gt;140634506504080&lt;/span&gt;:error:04093004:rsa routines:OLD_RSA_PRIV_DECODE:RSA lib:rsa_ameth.c:121:
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;A deeper inspection show that the key contains extra data:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;% openssl asn1parse &amp;lt; suspiciouskey_id 
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;% openssl asn1parse &amp;lt; suspiciouskey_id 
     &lt;span class="m"&gt;0&lt;/span&gt;:d&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;  &lt;span class="nv"&gt;hl&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt; &lt;span class="nv"&gt;l&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1214&lt;/span&gt; cons: SEQUENCE          
     &lt;span class="m"&gt;4&lt;/span&gt;:d&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;  &lt;span class="nv"&gt;hl&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt; &lt;span class="nv"&gt;l&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;   &lt;span class="m"&gt;1&lt;/span&gt; prim: INTEGER           :00
     &lt;span class="m"&gt;7&lt;/span&gt;:d&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;  &lt;span class="nv"&gt;hl&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt; &lt;span class="nv"&gt;l&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;  &lt;span class="m"&gt;13&lt;/span&gt; cons: SEQUENCE          
     &lt;span class="m"&gt;9&lt;/span&gt;:d&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;  &lt;span class="nv"&gt;hl&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt; &lt;span class="nv"&gt;l&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;   &lt;span class="m"&gt;9&lt;/span&gt; prim: OBJECT            :rsaEncryption
    &lt;span class="m"&gt;20&lt;/span&gt;:d&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;  &lt;span class="nv"&gt;hl&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt; &lt;span class="nv"&gt;l&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;   &lt;span class="m"&gt;0&lt;/span&gt; prim: NULL              
    &lt;span class="m"&gt;22&lt;/span&gt;:d&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;  &lt;span class="nv"&gt;hl&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt; &lt;span class="nv"&gt;l&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1192&lt;/span&gt; prim: OCTET STRING      &lt;span class="o"&gt;[&lt;/span&gt;HEX DUMP&lt;span class="o"&gt;]&lt;/span&gt;:..
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;A normal key looks like:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;  openssl asn1parse &amp;lt; good_id 
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;  openssl asn1parse &amp;lt; good_id 
     &lt;span class="m"&gt;0&lt;/span&gt;:d&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;  &lt;span class="nv"&gt;hl&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt; &lt;span class="nv"&gt;l&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1189&lt;/span&gt; cons: SEQUENCE          
     &lt;span class="m"&gt;4&lt;/span&gt;:d&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;  &lt;span class="nv"&gt;hl&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt; &lt;span class="nv"&gt;l&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;   &lt;span class="m"&gt;1&lt;/span&gt; prim: INTEGER           :00
     &lt;span class="m"&gt;7&lt;/span&gt;:d&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;  &lt;span class="nv"&gt;hl&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt; &lt;span class="nv"&gt;l&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;257&lt;/span&gt; prim: INTEGER           :XXXYYYYY
   &lt;span class="m"&gt;268&lt;/span&gt;:d&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;  &lt;span class="nv"&gt;hl&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt; &lt;span class="nv"&gt;l&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;   &lt;span class="m"&gt;3&lt;/span&gt; prim: INTEGER           :010001
   &lt;span class="m"&gt;273&lt;/span&gt;:d&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;  &lt;span class="nv"&gt;hl&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt; &lt;span class="nv"&gt;l&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;256&lt;/span&gt; prim: INTEGER           :XXXXXYYY
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;In fact, this is not a simple key as you can generate with &lt;a href="http://man7.org/linux/man-pages/man1/ssh-keygen.1.html"&gt;ssh-keygen&lt;/a&gt;.
 This key contains extra information because it's a &lt;a href="https://en.wikipedia.org/wiki/PKCS_8"&gt;PKCS#8&lt;/a&gt;.
 By default, ssh-keygen generates a &lt;a href="https://en.wikipedia.org/wiki/PKCS_1"&gt;PKCS#1&lt;/a&gt;. So
 I try to convert the key:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;openssl rsa -in suspiciouskey -out newkey
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;openssl rsa -in suspiciouskey -out newkey
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;It works!!!
 Why the original key was in PKCS#8 format? Did the sysadmin use the ssh-keygen switch &lt;code&gt;-m PKCS8&lt;/code&gt;? 
-SCP is probably smart enough to extract the key from PKCS#8 but Filezilla can't (at least with 3.42.1)&lt;/p&gt;</content></entry><entry><title>M.2 speed on Intel H97</title><link href="https://romainjacquet.github.io/m2-speed-on-intel-h97.html" rel="alternate"></link><published>2019-05-04T19:11:00+02:00</published><updated>2019-05-04T19:11:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-05-04:/m2-speed-on-intel-h97.html</id><summary type="html">&lt;p&gt;discover the real speed of M2 interface whith H97&lt;/p&gt;</summary><content type="html">&lt;p&gt;I bought my personnal computer at the end of 2014. This is really old in the modern world and today
+SCP is probably smart enough to extract the key from PKCS#8 but Filezilla can't (at least with 3.42.1)&lt;/p&gt;</content><category term="sysadmin"></category></entry><entry><title>M.2 speed on Intel H97</title><link href="https://romainjacquet.github.io/m2-speed-on-intel-h97.html" rel="alternate"></link><published>2019-05-04T19:11:00+02:00</published><updated>2019-05-04T19:11:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-05-04:/m2-speed-on-intel-h97.html</id><summary type="html">&lt;p&gt;discover the real speed of M2 interface whith H97&lt;/p&gt;</summary><content type="html">&lt;p&gt;I bought my personnal computer at the end of 2014. This is really old in the modern world and today
 booting my Ubuntu is not fast.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;switch on the power button&lt;/li&gt;
@@ -259,12 +247,11 @@ any difficulty except that I had to upgrade the BIOS to install F7 version (&lt;
  Before the F6 version you can use nvme disk but you cannot boot it. I reinstalled my Ubuntu.
  I didn't record the installation time but it seems really fast.
 With the lspci option, I checked the speed:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# lspci |grep -i nvme&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="c1"&gt;# lspci |grep -i nvme&lt;/span&gt;
 &lt;span class="m"&gt;02&lt;/span&gt;:00.0 Non-Volatile memory controller: Samsung Electronics Co Ltd NVMe SSD Controller SM961/PM961
 lspci -vvv -s &lt;span class="m"&gt;02&lt;/span&gt;:00.0&lt;span class="p"&gt;|&lt;/span&gt;grep LnkCap
         LnkCap: Port &lt;span class="c1"&gt;#0, Speed 8GT/s, Width x4, ASPM L1, Exit Latency L0s unlimited, L1 &amp;lt;64us&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Great! I got four lanes (Width x4) for my new disk.&lt;/p&gt;
 &lt;h1&gt;Final benchmark&lt;/h1&gt;
@@ -274,7 +261,7 @@ lspci -vvv -s &lt;span class="m"&gt;02&lt;/span&gt;:00.0&lt;span class="p"&gt;|&
 &lt;li&gt;25s after I got the login screen (&lt;strong&gt;more than three time faster!&lt;/strong&gt;)&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;Now Ubuntu's desktop is really reactive. If you have the same mobo, or an H97-based mobo
-do not hesitate to upgrade.&lt;/p&gt;</content></entry><entry><title>Fix mixed-language UI in firefox</title><link href="https://romainjacquet.github.io/fix-mixed-language-ui-in-firefox.html" rel="alternate"></link><published>2019-04-17T21:50:00+02:00</published><updated>2019-04-17T21:50:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-04-17:/fix-mixed-language-ui-in-firefox.html</id><summary type="html">&lt;p&gt;firefox language problem&lt;/p&gt;</summary><content type="html">&lt;p&gt;My company is using an &lt;a href="https://en.wikipedia.org/wiki/Enterprise_resource_planning"&gt;ERP&lt;/a&gt;
+do not hesitate to upgrade.&lt;/p&gt;</content><category term="sysadmin"></category></entry><entry><title>Fix mixed-language UI in firefox</title><link href="https://romainjacquet.github.io/fix-mixed-language-ui-in-firefox.html" rel="alternate"></link><published>2019-04-17T21:50:00+02:00</published><updated>2019-04-17T21:50:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-04-17:/fix-mixed-language-ui-in-firefox.html</id><summary type="html">&lt;p&gt;firefox language problem&lt;/p&gt;</summary><content type="html">&lt;p&gt;My company is using an &lt;a href="https://en.wikipedia.org/wiki/Enterprise_resource_planning"&gt;ERP&lt;/a&gt;
  and everyone must use it to report monthly activity.
 Doing this report has always been a true non-user-friendly experience. It is a
 web portal written in &lt;a href="https://en.wikipedia.org/wiki/ASP.NET"&gt;ASP.net&lt;/a&gt; as the aspx
@@ -302,75 +289,69 @@ not a proper way of programming. Firefox version is &lt;a href="https://support.
 &lt;p&gt;Why do the IT guys provide a default installation with
 a locale EN-US? It is possible to customize the installer and provide
 a per locale installer. You just have to use the switch &lt;code&gt;lang=&lt;/code&gt; in  the 
-msi installer (&lt;a href="https://support.mozilla.org/en-US/kb/deploy-firefox-msi-installers#w_configuration-options"&gt;official documentation&lt;/a&gt;)...&lt;/p&gt;</content></entry><entry><title>DNS resolution with CentOS</title><link href="https://romainjacquet.github.io/dns-resolution-with-centos.html" rel="alternate"></link><published>2019-03-28T22:13:00+01:00</published><updated>2019-03-28T22:13:00+01:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-03-28:/dns-resolution-with-centos.html</id><summary type="html">&lt;p&gt;don't put more than three entries in your DNS&lt;/p&gt;</summary><content type="html">&lt;p&gt;I was trying to fix an issue on a server that use &lt;a href="https://mesosphere.github.io/mesos-dns/"&gt;mesos-dns&lt;/a&gt;.
+msi installer (&lt;a href="https://support.mozilla.org/en-US/kb/deploy-firefox-msi-installers#w_configuration-options"&gt;official documentation&lt;/a&gt;)...&lt;/p&gt;</content><category term="sysadmin"></category></entry><entry><title>DNS resolution with CentOS</title><link href="https://romainjacquet.github.io/dns-resolution-with-centos.html" rel="alternate"></link><published>2019-03-28T22:13:00+01:00</published><updated>2019-03-28T22:13:00+01:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-03-28:/dns-resolution-with-centos.html</id><summary type="html">&lt;p&gt;don't put more than three entries in your DNS&lt;/p&gt;</summary><content type="html">&lt;p&gt;I was trying to fix an issue on a server that use &lt;a href="https://mesosphere.github.io/mesos-dns/"&gt;mesos-dns&lt;/a&gt;.
 I discovered a CentOS host with this strange configuration in &lt;code&gt;/etc/resolv.conf&lt;/code&gt;:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;#&lt;/span&gt; &lt;span class="k"&gt;Generated&lt;/span&gt; &lt;span class="k"&gt;by&lt;/span&gt; &lt;span class="n"&gt;NetworkManager&lt;/span&gt;
-&lt;span class="k"&gt;search&lt;/span&gt; &lt;span class="n"&gt;mycorp&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;corp&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;# Generated by NetworkManager
+search mycorp.corp
 
-&lt;span class="o"&gt;#&lt;/span&gt; &lt;span class="n"&gt;handle&lt;/span&gt; &lt;span class="n"&gt;company&lt;/span&gt; &lt;span class="k"&gt;names&lt;/span&gt;
-&lt;span class="n"&gt;nameserver&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;
-&lt;span class="n"&gt;nameserver&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;11&lt;/span&gt;
-&lt;span class="o"&gt;#&lt;/span&gt; &lt;span class="n"&gt;handle&lt;/span&gt; &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;mesos&lt;/span&gt;
-&lt;span class="n"&gt;nameserver&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;100&lt;/span&gt;
-&lt;span class="n"&gt;nameserver&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;110&lt;/span&gt;
-&lt;span class="n"&gt;nameserver&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;120&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
+# handle company names
+nameserver 10.0.0.10
+nameserver 10.0.0.11
+# handle .mesos
+nameserver 10.0.0.100
+nameserver 10.0.0.110
+nameserver 10.0.0.120
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Wow many entries. I usually found only two entries. How does it works? How the OS will choose between the different entry? What is the alogrithm?
 As usual, I first read the manual with &lt;code&gt;man resolv.conf&lt;/code&gt;.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nv"&gt;Up&lt;/span&gt;  &lt;span class="nv"&gt;to&lt;/span&gt;  &lt;span class="nv"&gt;MAXNS&lt;/span&gt; &lt;span class="ss"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;currently&lt;/span&gt;  &lt;span class="mi"&gt;3&lt;/span&gt;,  &lt;span class="nv"&gt;see&lt;/span&gt;  &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nv"&gt;resolv&lt;/span&gt;.&lt;span class="nv"&gt;h&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="ss"&gt;)&lt;/span&gt; &lt;span class="nv"&gt;name&lt;/span&gt; &lt;span class="nv"&gt;servers&lt;/span&gt; &lt;span class="nv"&gt;may&lt;/span&gt; &lt;span class="nv"&gt;be&lt;/span&gt; &lt;span class="nv"&gt;listed&lt;/span&gt;, &lt;span class="nv"&gt;one&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="nv"&gt;Up&lt;/span&gt;  &lt;span class="nv"&gt;to&lt;/span&gt;  &lt;span class="nv"&gt;MAXNS&lt;/span&gt; &lt;span class="ss"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;currently&lt;/span&gt;  &lt;span class="mi"&gt;3&lt;/span&gt;,  &lt;span class="nv"&gt;see&lt;/span&gt;  &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nv"&gt;resolv&lt;/span&gt;.&lt;span class="nv"&gt;h&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="ss"&gt;)&lt;/span&gt; &lt;span class="nv"&gt;name&lt;/span&gt; &lt;span class="nv"&gt;servers&lt;/span&gt; &lt;span class="nv"&gt;may&lt;/span&gt; &lt;span class="nv"&gt;be&lt;/span&gt; &lt;span class="nv"&gt;listed&lt;/span&gt;, &lt;span class="nv"&gt;one&lt;/span&gt;
 &lt;span class="nv"&gt;per&lt;/span&gt; &lt;span class="nv"&gt;keyword&lt;/span&gt;.  &lt;span class="k"&gt;If&lt;/span&gt; &lt;span class="nv"&gt;there&lt;/span&gt; &lt;span class="nv"&gt;are&lt;/span&gt; &lt;span class="nv"&gt;multiple&lt;/span&gt; &lt;span class="nv"&gt;servers&lt;/span&gt;, &lt;span class="nv"&gt;the&lt;/span&gt; &lt;span class="nv"&gt;resolver&lt;/span&gt; &lt;span class="nv"&gt;library&lt;/span&gt; &lt;span class="nv"&gt;queries&lt;/span&gt; &lt;span class="nv"&gt;them&lt;/span&gt;
 &lt;span class="nv"&gt;in&lt;/span&gt; &lt;span class="nv"&gt;the&lt;/span&gt;  &lt;span class="nv"&gt;order&lt;/span&gt;  &lt;span class="nv"&gt;listed&lt;/span&gt;.
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;I checked in the resolver header file:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="nv"&gt;egrep&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="s"&gt;define MAXNS&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nv"&gt;usr&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="k"&gt;include&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nv"&gt;resolv&lt;/span&gt;.&lt;span class="nv"&gt;h&lt;/span&gt;
-# &lt;span class="nv"&gt;define&lt;/span&gt; &lt;span class="nv"&gt;MAXNS&lt;/span&gt;          &lt;span class="mi"&gt;3&lt;/span&gt;   &lt;span class="cm"&gt;/* max # name servers we&amp;#39;ll track */&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="c"&gt;% egrep &amp;quot;define MAXNS&amp;quot; /usr/include/resolv.h&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+#&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;MAXNS&lt;/span&gt;&lt;span class="w"&gt;          &lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="w"&gt;   &lt;/span&gt;&lt;span class="o"&gt;/*&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;max&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;#&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;servers&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;we&lt;/span&gt;&lt;span class="o"&gt;&amp;#39;&lt;/span&gt;&lt;span class="n"&gt;ll&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;track&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*/&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Same result. So it useless to put more than three entry in your resolv.conf.
 The code source of the resolver in glibc 2.12.2 show also many loop with an upper limit of MAXNS.
 For exemple in res_send.c line 392:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ns&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;ns&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;MAXNS&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;ns&lt;/span&gt;&lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ns&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;ns&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;MAXNS&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;ns&lt;/span&gt;&lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;So take care with /etc/resolv.conf if you put more than three nameserver, extra entries will be silently ignored.
-And &lt;a href="https://en.wikipedia.org/wiki/RTFM"&gt;RTFM&lt;/a&gt; :-)&lt;/p&gt;</content></entry><entry><title>Zabbix Agent on centos 7.3 (2/2)</title><link href="https://romainjacquet.github.io/zabbix-agent-on-centos-73-22.html" rel="alternate"></link><published>2019-03-11T19:00:00+01:00</published><updated>2019-03-11T19:00:00+01:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-03-11:/zabbix-agent-on-centos-73-22.html</id><summary type="html">&lt;p&gt;installing zabbix on CentOS 7.3 (2/2)&lt;/p&gt;</summary><content type="html">&lt;p&gt;I finished the previous post with a catastrophic situation: the VM didn't boot.
+And &lt;a href="https://en.wikipedia.org/wiki/RTFM"&gt;RTFM&lt;/a&gt; :-)&lt;/p&gt;</content><category term="sysadmin"></category></entry><entry><title>Zabbix Agent on centos 7.3 (2/2)</title><link href="https://romainjacquet.github.io/zabbix-agent-on-centos-73-22.html" rel="alternate"></link><published>2019-03-11T19:00:00+01:00</published><updated>2019-03-11T19:00:00+01:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-03-11:/zabbix-agent-on-centos-73-22.html</id><summary type="html">&lt;p&gt;installing zabbix on CentOS 7.3 (2/2)&lt;/p&gt;</summary><content type="html">&lt;p&gt;I finished the previous post with a catastrophic situation: the VM didn't boot.
 I read on the internet that adding "selinux=0" on the kernel command line could fix it.
 Disabling SELinux from the kernel command line is interesting because SELinux is disabled
 at the early beginning of the boot process. So event if you have a broken configuration of
 SELinux, you can bypass it and boot.
 Below is the official definition of the kernel argument:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt; &lt;span class="nv"&gt;selinux&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;        [&lt;span class="nv"&gt;SELINUX&lt;/span&gt;] &lt;span class="nv"&gt;Disable&lt;/span&gt; &lt;span class="nv"&gt;or&lt;/span&gt; &lt;span class="nv"&gt;enable&lt;/span&gt; &lt;span class="nv"&gt;SELinux&lt;/span&gt; &lt;span class="nv"&gt;at&lt;/span&gt; &lt;span class="nv"&gt;boot&lt;/span&gt; &lt;span class="nv"&gt;time&lt;/span&gt;.
-                        &lt;span class="nv"&gt;Format&lt;/span&gt;: { &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="s"&gt;0&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="s"&gt;1&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; }
-                        &lt;span class="nv"&gt;See&lt;/span&gt; &lt;span class="nv"&gt;security&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nv"&gt;selinux&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nv"&gt;Kconfig&lt;/span&gt; &lt;span class="nv"&gt;help&lt;/span&gt; &lt;span class="nv"&gt;text&lt;/span&gt;.
-                        &lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="o"&gt;--&lt;/span&gt; &lt;span class="nv"&gt;disable&lt;/span&gt;.
-                        &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;--&lt;/span&gt; &lt;span class="nv"&gt;enable&lt;/span&gt;.
-                        &lt;span class="nv"&gt;Default&lt;/span&gt; &lt;span class="nv"&gt;value&lt;/span&gt; &lt;span class="nv"&gt;is&lt;/span&gt; &lt;span class="nv"&gt;set&lt;/span&gt; &lt;span class="nv"&gt;via&lt;/span&gt; &lt;span class="nv"&gt;kernel&lt;/span&gt; &lt;span class="nv"&gt;config&lt;/span&gt; &lt;span class="nv"&gt;option&lt;/span&gt;.
-                        &lt;span class="k"&gt;If&lt;/span&gt; &lt;span class="nv"&gt;enabled&lt;/span&gt; &lt;span class="nv"&gt;at&lt;/span&gt; &lt;span class="nv"&gt;boot&lt;/span&gt; &lt;span class="nv"&gt;time&lt;/span&gt;, &lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nv"&gt;selinux&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nv"&gt;disable&lt;/span&gt; &lt;span class="nv"&gt;can&lt;/span&gt; &lt;span class="nv"&gt;be&lt;/span&gt; &lt;span class="nv"&gt;used&lt;/span&gt;
-                        &lt;span class="nv"&gt;later&lt;/span&gt; &lt;span class="nv"&gt;to&lt;/span&gt; &lt;span class="nv"&gt;disable&lt;/span&gt; &lt;span class="nv"&gt;prior&lt;/span&gt; &lt;span class="nv"&gt;to&lt;/span&gt; &lt;span class="nv"&gt;initial&lt;/span&gt; &lt;span class="nv"&gt;policy&lt;/span&gt; &lt;span class="nv"&gt;load&lt;/span&gt;.
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;selinux&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt;        &lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;SELINUX&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Disable&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="ow"&gt;or&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;enable&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;SELinux&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;at&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;boot&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nc"&gt;time&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;                        &lt;/span&gt;&lt;span class="nf"&gt;Format&lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;{&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="ss"&gt;&amp;quot;0&amp;quot;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="ss"&gt;&amp;quot;1&amp;quot;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;}&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;                        &lt;/span&gt;&lt;span class="n"&gt;See&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;security&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;selinux&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;Kconfig&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;help&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nc"&gt;text&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;                        &lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;--&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;disable&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;                        &lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;--&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;enable&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;                        &lt;/span&gt;&lt;span class="k"&gt;Default&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;value&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;is&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;set&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;via&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;kernel&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;config&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;option&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;                        &lt;/span&gt;&lt;span class="k"&gt;If&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;enabled&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;at&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;boot&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nc"&gt;time&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;selinux&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;disable&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;can&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;be&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;used&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;                        &lt;/span&gt;&lt;span class="n"&gt;later&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;to&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;disable&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;prior&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;to&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;initial&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;policy&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;load&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;I reboot the server and edit the command line to append "selinux=0".
 I checked the content of /etc/selinux.config:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;#&lt;/span&gt; &lt;span class="n"&gt;This&lt;/span&gt; &lt;span class="n"&gt;file&lt;/span&gt; &lt;span class="n"&gt;controls&lt;/span&gt; &lt;span class="n"&gt;the&lt;/span&gt; &lt;span class="k"&gt;state&lt;/span&gt; &lt;span class="k"&gt;of&lt;/span&gt; &lt;span class="n"&gt;SELinux&lt;/span&gt; &lt;span class="k"&gt;on&lt;/span&gt; &lt;span class="n"&gt;the&lt;/span&gt; &lt;span class="k"&gt;system&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;
-&lt;span class="o"&gt;#&lt;/span&gt; &lt;span class="n"&gt;SELINUX&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;can&lt;/span&gt; &lt;span class="n"&gt;take&lt;/span&gt; &lt;span class="n"&gt;one&lt;/span&gt; &lt;span class="k"&gt;of&lt;/span&gt; &lt;span class="n"&gt;these&lt;/span&gt; &lt;span class="n"&gt;three&lt;/span&gt; &lt;span class="k"&gt;values&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-&lt;span class="o"&gt;#&lt;/span&gt;     &lt;span class="n"&gt;enforcing&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;SELinux&lt;/span&gt; &lt;span class="k"&gt;security&lt;/span&gt; &lt;span class="n"&gt;policy&lt;/span&gt; &lt;span class="k"&gt;is&lt;/span&gt; &lt;span class="n"&gt;enforced&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;
-&lt;span class="o"&gt;#&lt;/span&gt;     &lt;span class="n"&gt;permissive&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;SELinux&lt;/span&gt; &lt;span class="n"&gt;prints&lt;/span&gt; &lt;span class="n"&gt;warnings&lt;/span&gt; &lt;span class="k"&gt;instead&lt;/span&gt; &lt;span class="k"&gt;of&lt;/span&gt; &lt;span class="n"&gt;enforcing&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;
-&lt;span class="o"&gt;#&lt;/span&gt;     &lt;span class="n"&gt;disabled&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="k"&gt;No&lt;/span&gt; &lt;span class="n"&gt;SELinux&lt;/span&gt; &lt;span class="n"&gt;policy&lt;/span&gt; &lt;span class="k"&gt;is&lt;/span&gt; &lt;span class="n"&gt;loaded&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="c1"&gt;# This file controls the state of SELinux on the system.&lt;/span&gt;
+&lt;span class="c1"&gt;# SELINUX= can take one of these three values:&lt;/span&gt;
+&lt;span class="c1"&gt;#     enforcing - SELinux security policy is enforced.&lt;/span&gt;
+&lt;span class="c1"&gt;#     permissive - SELinux prints warnings instead of enforcing.&lt;/span&gt;
+&lt;span class="c1"&gt;#     disabled - No SELinux policy is loaded.&lt;/span&gt;
 &lt;span class="n"&gt;SELINUX&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;enforcing&lt;/span&gt;
-&lt;span class="o"&gt;#&lt;/span&gt; &lt;span class="n"&gt;SELINUXTYPE&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;can&lt;/span&gt; &lt;span class="n"&gt;take&lt;/span&gt; &lt;span class="n"&gt;one&lt;/span&gt; &lt;span class="k"&gt;of&lt;/span&gt; &lt;span class="n"&gt;three&lt;/span&gt; &lt;span class="n"&gt;two&lt;/span&gt; &lt;span class="k"&gt;values&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-&lt;span class="o"&gt;#&lt;/span&gt;     &lt;span class="n"&gt;targeted&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;Targeted&lt;/span&gt; &lt;span class="n"&gt;processes&lt;/span&gt; &lt;span class="k"&gt;are&lt;/span&gt; &lt;span class="n"&gt;protected&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-&lt;span class="o"&gt;#&lt;/span&gt;     &lt;span class="n"&gt;minimum&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;Modification&lt;/span&gt; &lt;span class="k"&gt;of&lt;/span&gt; &lt;span class="n"&gt;targeted&lt;/span&gt; &lt;span class="n"&gt;policy&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt; &lt;span class="k"&gt;Only&lt;/span&gt; &lt;span class="n"&gt;selected&lt;/span&gt; &lt;span class="n"&gt;processes&lt;/span&gt; &lt;span class="k"&gt;are&lt;/span&gt; &lt;span class="n"&gt;protected&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;
-&lt;span class="o"&gt;#&lt;/span&gt;     &lt;span class="n"&gt;mls&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;Multi&lt;/span&gt; &lt;span class="k"&gt;Level&lt;/span&gt; &lt;span class="k"&gt;Security&lt;/span&gt; &lt;span class="n"&gt;protection&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;
+&lt;span class="c1"&gt;# SELINUXTYPE= can take one of three two values:&lt;/span&gt;
+&lt;span class="c1"&gt;#     targeted - Targeted processes are protected,&lt;/span&gt;
+&lt;span class="c1"&gt;#     minimum - Modification of targeted policy. Only selected processes are protected.&lt;/span&gt;
+&lt;span class="c1"&gt;#     mls - Multi Level Security protection.&lt;/span&gt;
 &lt;span class="n"&gt;SELINUXTYPE&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;disabled&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Damn it! SELINUXTYPE contains invalid value. This is the cause of the boot failure. After
 replacing SELINUX=enforcing by SELINUX=disabled and SELINUXTYPE=disabled by SELINUXTYPE=targeted, boot is fine.&lt;/p&gt;
@@ -379,54 +360,49 @@ replacing SELINUX=enforcing by SELINUX=disabled and SELINUXTYPE=disabled by SELI
 &lt;a href="https://www.mangeek.com/2017/03/using-zabbix-3-2-with-centos-and-selinux/"&gt;Man geek Zabbix and SeLinux&lt;/a&gt;
 It uses the python utils &lt;a href="https://github.com/SELinuxProject/selinux/tree/master/python/audit2allow"&gt;audit2allow&lt;/a&gt;
 which is part of the SELinux project. Other people says that just upgrading the SELinux policy solved the problem
-but I didn't take the risk.&lt;/p&gt;</content></entry><entry><title>Zabbix Agent on centos 7.3 (1/2)</title><link href="https://romainjacquet.github.io/zabbix-agent-on-centos-73-12.html" rel="alternate"></link><published>2019-03-08T16:00:00+01:00</published><updated>2019-03-08T16:00:00+01:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-03-08:/zabbix-agent-on-centos-73-12.html</id><summary type="html">&lt;p&gt;installing zabbix on CentOS 7.3&lt;/p&gt;</summary><content type="html">&lt;p&gt;I was working on a simple and unrisky admin task: connecting a server to our
+but I didn't take the risk.&lt;/p&gt;</content><category term="sysadmin"></category></entry><entry><title>Zabbix Agent on centos 7.3 (1/2)</title><link href="https://romainjacquet.github.io/zabbix-agent-on-centos-73-12.html" rel="alternate"></link><published>2019-03-08T16:00:00+01:00</published><updated>2019-03-08T16:00:00+01:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2019-03-08:/zabbix-agent-on-centos-73-12.html</id><summary type="html">&lt;p&gt;installing zabbix on CentOS 7.3&lt;/p&gt;</summary><content type="html">&lt;p&gt;I was working on a simple and unrisky admin task: connecting a server to our
 monitoring system (&lt;a href="https://www.zabbix.com/"&gt;zabbix&lt;/a&gt;). A perfect no-brainer to
 finish the week. The server is a CentOS 7.3 and has been installed in old-style
 with no configuration management :-(. I grab  the last version of the Zabbix
 agent on the Internet and install it.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;wget https://repo.zabbix.com/zabbix/4.0/rhel/7/x86_64/zabbix-agent-4.0.3-1.el7.x86_64.rpm
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;wget https://repo.zabbix.com/zabbix/4.0/rhel/7/x86_64/zabbix-agent-4.0.3-1.el7.x86_64.rpm
 rpm -i zabbix-agent-4.0.3-1.el7.x86_64.rpm
 systemctl daemon-reload
 systemctl start zabbix-agent
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Things didn't go as expected. Zabbix agent was not running. I discover a mismatch between pid file declared in Zabbix configuration and the one .&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt; egrep pid /etc/zabbix/zabbix_agentd.conf
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt; egrep pid /etc/zabbix/zabbix_agentd.conf
 &lt;span class="c1"&gt;# PidFile=/tmp/zabbix_agentd.pid&lt;/span&gt;
 &lt;span class="nv"&gt;PidFile&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/var/run/zabbix/zabbix_agentd.pid
  egrep pid /usr/lib/systemd/system/zabbix-agent.service
 &lt;span class="nv"&gt;PIDFile&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/run/zabbix/zabbix_agentd.pid
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;I fix it by customizing the systemd unit and set the correct path for the PID file.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;cp /usr/lib/systemd/system/zabbix-agent.service /etc/systemd/system
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;cp /usr/lib/systemd/system/zabbix-agent.service /etc/systemd/system
 sed -i s&lt;span class="p"&gt;|&lt;/span&gt;/run&lt;span class="p"&gt;|&lt;/span&gt;/var/run&lt;span class="p"&gt;|&lt;/span&gt; /etc/systemd/system/zabbix-agent.service
 systemctl restart zabbix-agent
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Arg! It still do not work.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;journalctl -u zabbix-agent
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;journalctl -u zabbix-agent
 &lt;span class="o"&gt;[&lt;/span&gt;...&lt;span class="o"&gt;]&lt;/span&gt;
 &lt;span class="m"&gt;24518&lt;/span&gt;:20190308:160332.924 using configuration file: /etc/zabbix/zabbix_agentd.conf
  &lt;span class="m"&gt;24518&lt;/span&gt;:20190308:160332.924 cannot &lt;span class="nb"&gt;set&lt;/span&gt; resource limit: &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;13&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; Permission denied
  &lt;span class="m"&gt;24518&lt;/span&gt;:20190308:160332.924 cannot disable core dump, exiting...
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;What? Why Zabbix want disable the core dump. Are they so confident that the
 software never crashed? :-) Anyway. I checked ulimit: fine. I finally found a
 relevant entry in the SELinux log:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nv"&gt;type&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;AVC &lt;span class="nv"&gt;msg&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;audit&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1552057474&lt;/span&gt;.427:23308&lt;span class="o"&gt;)&lt;/span&gt;: avc:  denied  &lt;span class="o"&gt;{&lt;/span&gt; setrlimit &lt;span class="o"&gt;}&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt;  &lt;span class="nv"&gt;pid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;24560&lt;/span&gt; &lt;span class="nv"&gt;comm&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;zabbix_agentd&amp;quot;&lt;/span&gt; &lt;span class="nv"&gt;scontext&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;system_u:system_r:zabbix_agent_t:s0 &lt;span class="nv"&gt;tcontext&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;system_u:system_r:zabbix_agent_t:s0 &lt;span class="nv"&gt;tclass&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;process
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="nv"&gt;type&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;AVC &lt;span class="nv"&gt;msg&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;audit&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1552057474&lt;/span&gt;.427:23308&lt;span class="o"&gt;)&lt;/span&gt;: avc:  denied  &lt;span class="o"&gt;{&lt;/span&gt; setrlimit &lt;span class="o"&gt;}&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt;  &lt;span class="nv"&gt;pid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;24560&lt;/span&gt; &lt;span class="nv"&gt;comm&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;zabbix_agentd&amp;quot;&lt;/span&gt; &lt;span class="nv"&gt;scontext&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;system_u:system_r:zabbix_agent_t:s0 &lt;span class="nv"&gt;tcontext&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;system_u:system_r:zabbix_agent_t:s0 &lt;span class="nv"&gt;tclass&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;process
 &lt;span class="nv"&gt;type&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;SYSCALL &lt;span class="nv"&gt;msg&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;audit&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1552057474&lt;/span&gt;.427:23308&lt;span class="o"&gt;)&lt;/span&gt;: &lt;span class="nv"&gt;arch&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;c000003e &lt;span class="nv"&gt;syscall&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;160&lt;/span&gt; &lt;span class="nv"&gt;success&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;no &lt;span class="nv"&gt;exit&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;-13 &lt;span class="nv"&gt;a0&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt; &lt;span class="nv"&gt;a1&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;7ffc3c5ff9b0 &lt;span class="nv"&gt;a2&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="nv"&gt;a3&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;8&lt;/span&gt; &lt;span class="nv"&gt;items&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="nv"&gt;ppid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;24559&lt;/span&gt; &lt;span class="nv"&gt;pid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;24560&lt;/span&gt; &lt;span class="nv"&gt;auid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4294967295&lt;/span&gt; &lt;span class="nv"&gt;uid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;996&lt;/span&gt; &lt;span class="nv"&gt;gid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;992&lt;/span&gt; &lt;span class="nv"&gt;euid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;996&lt;/span&gt; &lt;span class="nv"&gt;suid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;996&lt;/span&gt; &lt;span class="nv"&gt;fsuid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;996&lt;/span&gt; &lt;span class="nv"&gt;egid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;992&lt;/span&gt; &lt;span class="nv"&gt;sgid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;992&lt;/span&gt; &lt;span class="nv"&gt;fsgid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;992&lt;/span&gt; &lt;span class="nv"&gt;tty&lt;/span&gt;&lt;span class="o"&gt;=(&lt;/span&gt;none&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="nv"&gt;ses&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4294967295&lt;/span&gt; &lt;span class="nv"&gt;comm&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;zabbix_agentd&amp;quot;&lt;/span&gt; &lt;span class="nv"&gt;exe&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/usr/sbin/zabbix_agentd&amp;quot;&lt;/span&gt; &lt;span class="nv"&gt;subj&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;system_u:system_r:zabbix_agent_t:s0 &lt;span class="nv"&gt;key&lt;/span&gt;&lt;span class="o"&gt;=(&lt;/span&gt;null&lt;span class="o"&gt;)&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;SELinux rules are not known as readable and user friendly. So I choose to
 disabled SELinux. It is acceptable for an internal server. I edit the file in
 /etc and reboot. It took a very long time that alert me that something goes
 wrong. I went to the WMWare console and discovered the failure:
 &lt;img alt="Alt Text" src="https://romainjacquet.github.io/images/SELinuxfailed.PNG"&gt;&lt;/p&gt;
-&lt;p&gt;It was supposed to be a no-brainer, not a &lt;strong&gt;complete&lt;/strong&gt; failure! Solution at the next post.&lt;/p&gt;</content></entry></feed>
+&lt;p&gt;It was supposed to be a no-brainer, not a &lt;strong&gt;complete&lt;/strong&gt; failure! Solution at the next post.&lt;/p&gt;</content><category term="sysadmin"></category></entry></feed>

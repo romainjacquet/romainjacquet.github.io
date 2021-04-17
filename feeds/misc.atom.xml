@@ -1,5 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Deep in the system - misc</title><link href="https://romainjacquet.github.io/" rel="alternate"></link><link href="https://romainjacquet.github.io/feeds/misc.atom.xml" rel="self"></link><id>https://romainjacquet.github.io/</id><updated>2020-05-01T14:48:00+02:00</updated><entry><title>Desktop chair of 2006 VS gaming chair of 2020</title><link href="https://romainjacquet.github.io/desktop-chair-of-2006-vs-gaming-chair-of-2020.html" rel="alternate"></link><published>2020-05-01T14:48:00+02:00</published><updated>2020-05-01T14:48:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2020-05-01:/desktop-chair-of-2006-vs-gaming-chair-of-2020.html</id><summary type="html">&lt;p&gt;dxracer formula08 review&lt;/p&gt;</summary><content type="html">&lt;p&gt;Just after the beginning of the lockdown in France, I started homeworking full time.
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Deep in the system - misc</title><link href="https://romainjacquet.github.io/" rel="alternate"></link><link href="https://romainjacquet.github.io/feeds/misc.atom.xml" rel="self"></link><id>https://romainjacquet.github.io/</id><updated>2021-04-17T14:14:00+02:00</updated><entry><title>The limitation of mounting google drive with nautilus</title><link href="https://romainjacquet.github.io/the-limitation-of-mounting-google-drive-with-nautilus.html" rel="alternate"></link><published>2021-04-17T14:14:00+02:00</published><updated>2021-04-17T14:14:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2021-04-17:/the-limitation-of-mounting-google-drive-with-nautilus.html</id><summary type="html">&lt;p&gt;using google drive with nautilus mount have some serious limitations&lt;/p&gt;</summary><content type="html">&lt;p&gt;The generalization of the cloud storage comes with a lot of promises and
+I really like the possibility to access to my personnal files from everywhere:
+web, laptop, personnal computer, ...
+With my Android smartphone, it's a native feature. With my Ubuntu the feature is
+recent and there are serious limitations.&lt;/p&gt;
+&lt;h1&gt;Mounting google drive with Nautilus&lt;/h1&gt;
+&lt;p&gt;Years ago I was using &lt;a href="https://rclone.org/"&gt;rclone&lt;/a&gt; to access to my google drive 
+files. Rclone have really nice 
+&lt;a href="https://rclone.org/commands/rclone_mount/"&gt;mount&lt;/a&gt; feature. But I finally
+give up because there is no simple way to automate the login. You always
+have difficulties to renew the token.
+Here come the nautilus feature that allow you to set oneline account. It's
+available from the gnome-control-center.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="nautilus_browser" src="https://romainjacquet.github.io/images/oneline_accounts.png"&gt;
+&lt;img alt="nautilus_config" src="https://romainjacquet.github.io/images/nautilus_oneline.png"&gt;&lt;/p&gt;
+&lt;p&gt;Once configured you can access to your google drive files. But I quicky realized that a lot of 
+applications didn't work if the files are located on the drive. Gnumeric, gedit are
+working but &lt;a href="https://keepassxc.org/"&gt;keepassxc&lt;/a&gt; or &lt;a href="https://www.vim.org/"&gt;vim&lt;/a&gt; 
+doesn't work at all. With keepassxc it sometimes results in data corruption! With vim
+the file is correctly displayed but saving the file failed. Even if the &lt;code&gt;nobackup&lt;/code&gt; option,
+some strange errors appeared.
+&lt;img alt="nautilus_config" src="https://romainjacquet.github.io/images/vim_error.png"&gt;&lt;/p&gt;
+&lt;h1&gt;Under the hood&lt;/h1&gt;
+&lt;p&gt;Nautilus is using a dedicated library named &lt;a href="https://developer.gnome.org/gio/"&gt;gio&lt;/a&gt; that 
+provide all the features to
+access to remote drives like google. The official gio description tells 
+&lt;strong&gt;provide an API that is so good that developers prefer it over raw POSIX calls&lt;/strong&gt;! I was a little bit surprized 
+when I read this :-).
+The &lt;a href="https://developer.gnome.org/gio/stable/gio.html"&gt;gio command&lt;/a&gt; allows us 
+to manipulate the filesystem from the command line using the gio primitives. Comparing the output
+of gio's commands to the standard unix commands (ls, cat) is meaningfull. 
+We can understand how gio transform I/O to display the content in nautilus.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$ ls 
+17lXzXGnhfA89w39PitPdtblkoOW8t8rA  1HnbYPHAwbchlu1pCMnRS-qxRQtfs4ULO  1LJ9W3ZzmfVMyzE09abGOIswXwdjwI8x2
+$ gio list -d
+mytext2.txt
+kpwd
+simpsons
+$ gio cat mytext2.txt
+toto
+titi
+tata
+tutu
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h1&gt;Why some applications work and other don't work&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;If the application use the standard POSIX functions like &lt;code&gt;open&lt;/code&gt;, &lt;code&gt;read&lt;/code&gt;, &lt;code&gt;write&lt;/code&gt; and manipulate files through
+plain-old file descriptors it will not work.&lt;/li&gt;
+&lt;li&gt;If the application use the gio library and the gio abstractions like &lt;code&gt;GFile&lt;/code&gt;, &lt;code&gt;GFileInfo&lt;/code&gt;, &lt;code&gt;GInputStream&lt;/code&gt; it will
+work. When using &lt;code&gt;open&lt;/code&gt; directly on the file exposed by gio mount it will break the file because open is not 
+aware that it is a network share. And some attributes like 'standard::display-name' are lost when performing IOs.
+&lt;strong&gt;From Nautilus, if you open a file with an application that don't use gio you could corrupt or lost the file&lt;/strong&gt;!&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1&gt;the future?&lt;/h1&gt;
+&lt;p&gt;I can't imagine that all applications will use gio in the future. Gio is intended for Gnome application not for
+all the application. &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Is it possible to have a native support for Google Drive in the future? I mean that you can access without any
+additionnal library like gio or KIO.&lt;/li&gt;
+&lt;li&gt;Is it possible for gio to intercept POSIX calls and transform them into GIO call?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Not sure because this is complex. But it could be a better user experience.&lt;/p&gt;</content><category term="misc"></category></entry><entry><title>Desktop chair of 2006 VS gaming chair of 2020</title><link href="https://romainjacquet.github.io/desktop-chair-of-2006-vs-gaming-chair-of-2020.html" rel="alternate"></link><published>2020-05-01T14:48:00+02:00</published><updated>2020-05-01T14:48:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2020-05-01:/desktop-chair-of-2006-vs-gaming-chair-of-2020.html</id><summary type="html">&lt;p&gt;dxracer formula08 review&lt;/p&gt;</summary><content type="html">&lt;p&gt;Just after the beginning of the lockdown in France, I started homeworking full time.
 I quickly realized that my old computer chair of 2005 was not good enough
 to sit from eigth to ten hours per day in front of my computer.&lt;/p&gt;
 &lt;p&gt;I bougth this chair sixteen years ago when I was a student. It was
@@ -51,4 +113,4 @@ I finally discovered a &lt;a href="https://www.reddit.com/r/pcmasterrace/comment
 describing the same feeling with the lumbar pillow.
 I will probably customize it by removing extra foam inside. There is a zipper and
 the foam is easily accessible.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="angle comparaison" src="https://romainjacquet.github.io/images/pillar_foam.jpg"&gt;&lt;/p&gt;</content></entry></feed>
+&lt;p&gt;&lt;img alt="angle comparaison" src="https://romainjacquet.github.io/images/pillar_foam.jpg"&gt;&lt;/p&gt;</content><category term="misc"></category></entry></feed>

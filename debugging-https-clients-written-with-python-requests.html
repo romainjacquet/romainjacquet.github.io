@@ -117,12 +117,11 @@ client side</strong>.</p>
 <p>Python <a href="https://2.python-requests.org/en/master/">requests</a> is a nice http 
 library, but there is no simple way to activate
 debugging. Internet provide many advice to activate debugging. It is always like this:</p>
-<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">http.client</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">http.client</span>
 <span class="c1"># logging stuffs</span>
 <span class="n">http</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">HTTPConnection</span><span class="o">.</span><span class="n">debuglevel</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;https://myurl/path/myrsr&quot;</span><span class="p">)</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>In my opinion it is just a dirty hack that use an hidden feature of http.client,
 the low-level http library of Python.
@@ -137,10 +136,10 @@ are trying to debug POST requests. You terminal will be filled with tons of bina
 <h1>A better solution</h1>
 <p>The solution is to use the headers provide by the requests object and adapt it to your need.
 Here is an example for the GET request:</p>
-<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 
-<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s1">&#39; </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39; </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">)</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;myclient&#39;</span><span class="p">)</span>
 <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
@@ -149,18 +148,17 @@ Here is an example for the GET request:</p>
     <span class="s2">&quot; do the get and print debug info &quot;</span>
     <span class="n">r</span><span class="o">=</span><span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">kw</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">h</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot; &gt; {}: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">h</span> <span class="p">,</span><span class="n">v</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot; &gt; </span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">h</span> <span class="p">,</span><span class="n">v</span><span class="p">))</span>
     <span class="k">for</span> <span class="n">h</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot; &lt; {}: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="n">h</span> <span class="p">,</span><span class="n">v</span><span class="p">))</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Size of the response: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span> <span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot; &lt; </span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="n">h</span> <span class="p">,</span><span class="n">v</span><span class="p">))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Size of the response: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span> <span class="p">))</span>
     <span class="k">return</span> <span class="n">r</span>
 
 <span class="n">get_and_debug</span><span class="p">(</span><span class="s2">&quot;https://docs.python.org/3/_static/py.png&quot;</span><span class="p">)</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>The output is:</p>
-<div class="highlight"><pre><span></span>Starting new HTTPS connection <span class="o">(</span><span class="m">1</span><span class="o">)</span>: docs.python.org
+<div class="highlight"><pre><span></span><code>Starting new HTTPS connection <span class="o">(</span><span class="m">1</span><span class="o">)</span>: docs.python.org
  https://docs.python.org:443 <span class="s2">&quot;GET /3/_static/py.png HTTP/1.1&quot;</span> <span class="m">200</span> <span class="m">695</span>
   &gt; User-Agent: python-requests/2.18.4
   &gt; Accept-Encoding: gzip, deflate
@@ -183,8 +181,7 @@ Here is an example for the GET request:</p>
   &lt; X-Cache-Hits: <span class="m">649</span>, <span class="m">184</span>
   &lt; X-Timer: S1580327667.914627,VS0,VE0
  Size of the response: <span class="m">695</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>You can use this method to wrap any top-level methods of requests you need to debug.
 If you still cannot debug HTTPS with this blog post, your last chance is to use

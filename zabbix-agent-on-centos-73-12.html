@@ -108,45 +108,40 @@ monitoring system (<a href="https://www.zabbix.com/">zabbix</a>). A perfect no-b
 finish the week. The server is a CentOS 7.3 and has been installed in old-style
 with no configuration management :-(. I grab  the last version of the Zabbix
 agent on the Internet and install it.</p>
-<div class="highlight"><pre><span></span>wget https://repo.zabbix.com/zabbix/4.0/rhel/7/x86_64/zabbix-agent-4.0.3-1.el7.x86_64.rpm
+<div class="highlight"><pre><span></span><code>wget https://repo.zabbix.com/zabbix/4.0/rhel/7/x86_64/zabbix-agent-4.0.3-1.el7.x86_64.rpm
 rpm -i zabbix-agent-4.0.3-1.el7.x86_64.rpm
 systemctl daemon-reload
 systemctl start zabbix-agent
-</pre></div>
-
+</code></pre></div>
 
 <p>Things didn't go as expected. Zabbix agent was not running. I discover a mismatch between pid file declared in Zabbix configuration and the one .</p>
-<div class="highlight"><pre><span></span> egrep pid /etc/zabbix/zabbix_agentd.conf
+<div class="highlight"><pre><span></span><code> egrep pid /etc/zabbix/zabbix_agentd.conf
 <span class="c1"># PidFile=/tmp/zabbix_agentd.pid</span>
 <span class="nv">PidFile</span><span class="o">=</span>/var/run/zabbix/zabbix_agentd.pid
  egrep pid /usr/lib/systemd/system/zabbix-agent.service
 <span class="nv">PIDFile</span><span class="o">=</span>/run/zabbix/zabbix_agentd.pid
-</pre></div>
-
+</code></pre></div>
 
 <p>I fix it by customizing the systemd unit and set the correct path for the PID file.</p>
-<div class="highlight"><pre><span></span>cp /usr/lib/systemd/system/zabbix-agent.service /etc/systemd/system
+<div class="highlight"><pre><span></span><code>cp /usr/lib/systemd/system/zabbix-agent.service /etc/systemd/system
 sed -i s<span class="p">|</span>/run<span class="p">|</span>/var/run<span class="p">|</span> /etc/systemd/system/zabbix-agent.service
 systemctl restart zabbix-agent
-</pre></div>
-
+</code></pre></div>
 
 <p>Arg! It still do not work.</p>
-<div class="highlight"><pre><span></span>journalctl -u zabbix-agent
+<div class="highlight"><pre><span></span><code>journalctl -u zabbix-agent
 <span class="o">[</span>...<span class="o">]</span>
 <span class="m">24518</span>:20190308:160332.924 using configuration file: /etc/zabbix/zabbix_agentd.conf
  <span class="m">24518</span>:20190308:160332.924 cannot <span class="nb">set</span> resource limit: <span class="o">[</span><span class="m">13</span><span class="o">]</span> Permission denied
  <span class="m">24518</span>:20190308:160332.924 cannot disable core dump, exiting...
-</pre></div>
-
+</code></pre></div>
 
 <p>What? Why Zabbix want disable the core dump. Are they so confident that the
 software never crashed? :-) Anyway. I checked ulimit: fine. I finally found a
 relevant entry in the SELinux log:</p>
-<div class="highlight"><pre><span></span><span class="nv">type</span><span class="o">=</span>AVC <span class="nv">msg</span><span class="o">=</span>audit<span class="o">(</span><span class="m">1552057474</span>.427:23308<span class="o">)</span>: avc:  denied  <span class="o">{</span> setrlimit <span class="o">}</span> <span class="k">for</span>  <span class="nv">pid</span><span class="o">=</span><span class="m">24560</span> <span class="nv">comm</span><span class="o">=</span><span class="s2">&quot;zabbix_agentd&quot;</span> <span class="nv">scontext</span><span class="o">=</span>system_u:system_r:zabbix_agent_t:s0 <span class="nv">tcontext</span><span class="o">=</span>system_u:system_r:zabbix_agent_t:s0 <span class="nv">tclass</span><span class="o">=</span>process
+<div class="highlight"><pre><span></span><code><span class="nv">type</span><span class="o">=</span>AVC <span class="nv">msg</span><span class="o">=</span>audit<span class="o">(</span><span class="m">1552057474</span>.427:23308<span class="o">)</span>: avc:  denied  <span class="o">{</span> setrlimit <span class="o">}</span> <span class="k">for</span>  <span class="nv">pid</span><span class="o">=</span><span class="m">24560</span> <span class="nv">comm</span><span class="o">=</span><span class="s2">&quot;zabbix_agentd&quot;</span> <span class="nv">scontext</span><span class="o">=</span>system_u:system_r:zabbix_agent_t:s0 <span class="nv">tcontext</span><span class="o">=</span>system_u:system_r:zabbix_agent_t:s0 <span class="nv">tclass</span><span class="o">=</span>process
 <span class="nv">type</span><span class="o">=</span>SYSCALL <span class="nv">msg</span><span class="o">=</span>audit<span class="o">(</span><span class="m">1552057474</span>.427:23308<span class="o">)</span>: <span class="nv">arch</span><span class="o">=</span>c000003e <span class="nv">syscall</span><span class="o">=</span><span class="m">160</span> <span class="nv">success</span><span class="o">=</span>no <span class="nv">exit</span><span class="o">=</span>-13 <span class="nv">a0</span><span class="o">=</span><span class="m">4</span> <span class="nv">a1</span><span class="o">=</span>7ffc3c5ff9b0 <span class="nv">a2</span><span class="o">=</span><span class="m">0</span> <span class="nv">a3</span><span class="o">=</span><span class="m">8</span> <span class="nv">items</span><span class="o">=</span><span class="m">0</span> <span class="nv">ppid</span><span class="o">=</span><span class="m">24559</span> <span class="nv">pid</span><span class="o">=</span><span class="m">24560</span> <span class="nv">auid</span><span class="o">=</span><span class="m">4294967295</span> <span class="nv">uid</span><span class="o">=</span><span class="m">996</span> <span class="nv">gid</span><span class="o">=</span><span class="m">992</span> <span class="nv">euid</span><span class="o">=</span><span class="m">996</span> <span class="nv">suid</span><span class="o">=</span><span class="m">996</span> <span class="nv">fsuid</span><span class="o">=</span><span class="m">996</span> <span class="nv">egid</span><span class="o">=</span><span class="m">992</span> <span class="nv">sgid</span><span class="o">=</span><span class="m">992</span> <span class="nv">fsgid</span><span class="o">=</span><span class="m">992</span> <span class="nv">tty</span><span class="o">=(</span>none<span class="o">)</span> <span class="nv">ses</span><span class="o">=</span><span class="m">4294967295</span> <span class="nv">comm</span><span class="o">=</span><span class="s2">&quot;zabbix_agentd&quot;</span> <span class="nv">exe</span><span class="o">=</span><span class="s2">&quot;/usr/sbin/zabbix_agentd&quot;</span> <span class="nv">subj</span><span class="o">=</span>system_u:system_r:zabbix_agent_t:s0 <span class="nv">key</span><span class="o">=(</span>null<span class="o">)</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>SELinux rules are not known as readable and user friendly. So I choose to
 disabled SELinux. It is acceptable for an internal server. I edit the file in

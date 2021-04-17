@@ -8,26 +8,25 @@ all image along the swath. Nasa page quotes that it is "one of the most complex 
 &lt;h1&gt;Explanation&lt;/h1&gt;
 &lt;p&gt;&lt;a href="https://gdal.org/"&gt;GDAL&lt;/a&gt; is the standard library for projection and the &lt;a href="https://gdal.org/programs/gdalwarp.html"&gt;&lt;code&gt;gdalwarp&lt;/code&gt;&lt;/a&gt; utility is usefull. It's really powerfull but you often
 have very complex case with unusual usage. Here it's the proj4 definition of lsat that doesn't work.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;% gdalwarp -s_srs &lt;span class="s2"&gt;&amp;quot;EPSG:32630&amp;quot;&lt;/span&gt; -t_srs &lt;span class="s1"&gt;&amp;#39;+proj=lsat +lsat=5 +path=201&amp;#39;&lt;/span&gt; 24_mosaic_8bB08.sca.tif toto.tif
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;% gdalwarp -s_srs &lt;span class="s2"&gt;&amp;quot;EPSG:32630&amp;quot;&lt;/span&gt; -t_srs &lt;span class="s1"&gt;&amp;#39;+proj=lsat +lsat=5 +path=201&amp;#39;&lt;/span&gt; 24_mosaic_8bB08.sca.tif toto.tif
 ERROR &lt;span class="m"&gt;1&lt;/span&gt;: Translating &lt;span class="nb"&gt;source&lt;/span&gt; or target SRS failed:
 +proj&lt;span class="o"&gt;=&lt;/span&gt;lsat +lsat&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;5&lt;/span&gt; +path&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;201&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;According to the maintainer of Gdal, there is a parsing limitation in GDal! And the
 proj.4 string using lsat can't be converto to WKT format. He advises to uses WKT and extension and
 after testing it works! Thank Even Rouault to suggest the tip on the &lt;a href="http://osgeo-org.1560.x6.nabble.com/gdalwarp-proj4-and-Space-Oblique-Mercator-problem-td3752278.html"&gt;osgeo forum&lt;/a&gt;.&lt;/p&gt;
 &lt;h1&gt;Final result&lt;/h1&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;function&lt;/span&gt; get_srs &lt;span class="o"&gt;()&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="k"&gt;function&lt;/span&gt; get_srs &lt;span class="o"&gt;()&lt;/span&gt;
 &lt;span class="o"&gt;{&lt;/span&gt;
     &lt;span class="nv"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nv"&gt;$1&lt;/span&gt;
     gdalinfo &lt;span class="nv"&gt;$1&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; grep &lt;span class="s1"&gt;&amp;#39;AUTHORITY\[&amp;quot;EPSG&amp;quot;,&amp;quot;326&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; cut -d &lt;span class="s1"&gt;&amp;#39;&amp;quot;&amp;#39;&lt;/span&gt; -f &lt;span class="m"&gt;4&lt;/span&gt;
 &lt;span class="o"&gt;}&lt;/span&gt;
 
-&lt;span class="k"&gt;for&lt;/span&gt; f in &lt;span class="k"&gt;$(&lt;/span&gt;ls *tif&lt;span class="k"&gt;)&lt;/span&gt; &lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="k"&gt;for&lt;/span&gt; f &lt;span class="k"&gt;in&lt;/span&gt; &lt;span class="k"&gt;$(&lt;/span&gt;ls *tif&lt;span class="k"&gt;)&lt;/span&gt; &lt;span class="p"&gt;;&lt;/span&gt;
 &lt;span class="k"&gt;do&lt;/span&gt;
     &lt;span class="nv"&gt;epsg_code&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;get_srs &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="nv"&gt;$f&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="k"&gt;)&lt;/span&gt;
     &lt;span class="nv"&gt;basic_name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;basename &lt;span class="nv"&gt;$f&lt;/span&gt;&lt;span class="k"&gt;)&lt;/span&gt;
     gdalwarp -s_srs &lt;span class="s2"&gt;&amp;quot;EPSG:&lt;/span&gt;&lt;span class="nv"&gt;$epsg_code&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; -t_srs &lt;span class="s1"&gt;&amp;#39;LOCAL_CS[&amp;quot;lsat0&amp;quot;,EXTENSION[&amp;quot;PROJ4&amp;quot;,&amp;quot;+proj=lsat +lsat=5 +path=201 +wktext&amp;quot;]]&amp;#39;&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="nv"&gt;$f&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;reprojected/&lt;/span&gt;&lt;span class="nv"&gt;$f&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
 &lt;span class="k"&gt;done&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;</content></entry></feed>
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</content><category term="gis"></category></entry></feed>
