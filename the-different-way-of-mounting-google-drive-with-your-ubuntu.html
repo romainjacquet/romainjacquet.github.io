@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en" itemscope itemtype="http://schema.org/Person">
+<head>
+            <meta charset="utf-8">
+        <!-- Site Meta Data -->
+        <title>the different way of mounting Google drive with your Ubuntu</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="Romain JACQUET">
+
+        <link rel="shortcut icon" href="">
+
+        <!-- schema.org -->
+        <meta itemprop="name" content="Deep in the system">
+        <meta itemprop="image" content="">
+        <meta itemprop="description" content="">
+
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel='stylesheet' type='text/css'>
+        <!-- Style Meta Data -->
+        <link rel="stylesheet" href="https://romainjacquet.github.io/theme/css/style.css" type="text/css"/>
+        <link rel="stylesheet" href="https://romainjacquet.github.io/theme/css/pygments.css" type="text/css"/>
+
+        <!-- Feed Meta Data -->
+            <link href="https://romainjacquet.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate"
+                  title="Deep in the system ATOM Feed"/>
+
+        <!-- Twitter Feed -->
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:image" content="">
+
+    <meta name="twitter:creator" content="">
+    <meta name="twitter:url" content="https://romainjacquet.github.io/the-different-way-of-mounting-google-drive-with-your-ubuntu.html">
+    <meta name="twitter:title" content="Deep in the system ~ the different way of mounting Google drive with your Ubuntu">
+    <meta name="twitter:description" content="be a little disappointed with Google drive mount">
+
+    <!-- Facebook Meta Data -->
+    <meta property="og:title" content="Deep in the system ~ the different way of mounting Google drive with your Ubuntu"/>
+    <meta property="og:description" content="be a little disappointed with Google drive mount"/>
+    <meta property="og:image" content=""/>
+</head>
+
+<body>
+<!-- Sidebar -->
+<aside>
+    <!--<center><a href="https://romainjacquet.github.io"><img id="avatar" src=""></a></center>-->
+    <h1>Deep in the system</h1>
+        <p>Unix, sysadmin, devops, CI/CD</p>
+    <br>
+
+
+    <nav class="nav">
+        <ul class="list-bare">
+
+                <li><a class="nav__link" href="/">Blog entry</a></li>
+
+                <li><a class="nav__link" href="https://romainjacquet.github.io/pages/about.html">About</a></li>
+                <li><a class="nav__link" href="https://romainjacquet.github.io/pages/links.html">Links</a></li>
+
+        </ul>
+    </nav>
+
+    <p class="social">
+                <a href="https://www.linkedin.com/in/jacquet-romain-493049141/?locale=en_US" target="_blank"><img
+                        src="https://romainjacquet.github.io/theme/images/icons/linkedin.png"></a>
+                <a href="https://github.com/romainjacquet" target="_blank"><img
+                        src="https://romainjacquet.github.io/theme/images/icons/github.png"></a>
+                <a href="mailto:romainjacquet@free.fr" target="_blank"><img
+                        src="https://romainjacquet.github.io/theme/images/icons/mail.png"></a>
+            <a href="https://romainjacquet.github.io/feeds/all.atom.xml" rel="alternate">
+                <img src="https://romainjacquet.github.io/theme/images/icons/rss.png"></a>
+    </p>
+
+        <h2>Categories</h2>
+        <ul class="navbar">
+                <li><a
+                        href="https://romainjacquet.github.io/category/business.html">business</a></li>
+                <li><a
+                        href="https://romainjacquet.github.io/category/cicd.html">ci/cd</a></li>
+                <li><a
+                        href="https://romainjacquet.github.io/category/development.html">development</a></li>
+                <li><a
+                        href="https://romainjacquet.github.io/category/gis.html">gis</a></li>
+                <li class="active"><a
+                        href="https://romainjacquet.github.io/category/misc.html">misc</a></li>
+                <li><a
+                        href="https://romainjacquet.github.io/category/sysadmin.html">sysadmin</a></li>
+        </ul>
+
+        <h2 class="blog_roll_link"><br/>BLOGROLLS</h2>
+        <ul class="navbar">
+                <li><a href="http://getpelican.com/">Pelican</a></li>
+                <li><a href="http://python.org/">Python.org</a></li>
+                <li><a href="http://jinja.pocoo.org/">Jinja2</a></li>
+        </ul>
+
+</aside>
+
+<!-- Content -->
+<article>
+    <section id="content">
+        <article>
+            <h2 class="post_title post_detail"><a href="https://romainjacquet.github.io/the-different-way-of-mounting-google-drive-with-your-ubuntu.html" rel="bookmark"
+                                                  title="Permalink to the different way of mounting Google drive with your Ubuntu">the different way of mounting Google drive with your Ubuntu</a></h2>
+            <div class="entry-content blog-post">
+                <p>As I explained it in my <a href="https://romainjacquet.github.io/the-limitation-of-mounting-google-drive-with-nautilus.html">previous blog post</a>, using 
+the built-in feature of gnome to mount Google drive have some serious limitations. Here
+I describe all the solutions I have tried. </p>
+<h1>Context</h1>
+<p>The native solution provided by the GNOME and KDE environments rely on dedicated libraries to wrap the <code>I/Os</code>.</p>
+<ul>
+<li><a href="https://github.com/KDE/kio">KIO</a>  for KDE</li>
+<li><a href="https://developer.gnome.org/gio/">gio</a> for GNOME</li>
+</ul>
+<p>This is the same idea for the two libraries, it provides a superset of <code>I/Os</code> functions that make easier <code>I/Os</code> on
+remote target accessible via HTTP/FTP. Or any other protocols if you write the corresponding extension. The 
+goal is to display remote file storage in your window manager, transparent for the end-user.</p>
+<p>The main drawback is that if your application don't use the file dialog of the window manager it don't work.
+And there is a lot of case when apps don't use the dialog of the file manager. Examples:</p>
+<ul>
+<li>Qt or KDE pass running on classical Ubuntu</li>
+<li>Other graphical toolkits like <a href="https://www.tcl.tk/">Tk</a> or <a href="https://docs.oracle.com/javase/10/docs/api/java/awt/package-summary.html">AWT</a> for java apps</li>
+</ul>
+<p><img alt="nautilus_config" src="https://romainjacquet.github.io/images/kio-gio-app.png"></p>
+<p>To be clear if your application doesn't linked on GIO or KIO, it don't work.</p>
+<div class="highlight"><pre><span></span><code>$ ldd <span class="k">$(</span>which gnumeric<span class="k">)</span> <span class="p">|</span>grep gio
+    libgio-2.0.so.0 <span class="o">=</span>&gt; /usr/lib/x86_64-linux-gnu/libgio-2.0.so.0 <span class="o">(</span>0x00007f6fffcb7000<span class="o">)</span>
+$ ldd <span class="k">$(</span>which vim<span class="k">)</span> <span class="p">|</span>grep gio
+$ 
+</code></pre></div>
+
+<p><strong>Warning</strong>: the google drive slave for KIO does not work with Ubuntu 20, 
+see <a href="https://bugs.launchpad.net/ubuntu/+source/kaccounts-integration/+bug/1864627">https://bugs.launchpad.net/ubuntu/+source/kaccounts-integration/+bug/1864627</a></p>
+<h1>The rclone problem</h1>
+<p>Rclone is a tool that is used for all cloud operations. It supports a wide variety
+of cloud providers and have a lot of really cools features like <a href="https://rclone.org/commands/rclone_mount/">mount</a>.
+The approach is very different from KIO/GIO. This is based 
+on <a href="https://www.kernel.org/doc/html/latest/filesystems/fuse.html">FUSE</a> a
+feature of the linux kernel. This is really powerfull compared to the KIO/GIO approach because
+you don't need to change the code source of your application. It's just a standard Unix mount. </p>
+<p><img alt="nautilus_config" src="https://romainjacquet.github.io/images/rclone_mount.png"></p>
+<h1>Rclone token renewal</h1>
+<p>Okay, it sounds great but what's the problem with rclone? 
+I used rclone in 2020 and I finally gave up because the mount was frequently break due to token expiration.
+The defaults of rclone are:</p>
+<ul>
+<li>it's a command line tool so it's not as user-friendly as clicking on the nautilus windows manager
+  to connect your drive. Rclone setup is done through a text-mode interface. </li>
+<li>Rclone is more a sysadmin tools than a end-user tools. Many gory details are visible and slow down
+  the usage</li>
+<li>all the low-level details of the Google storage API are visible. So you have to create and declare rclone
+  as an application in the google Console API to have your own <code>client id</code>. Having your own client id is 
+  not required by it is a good practice. It means you have to be familiar
+  with Oauth2, Google apps and things like this (even if there is 
+  an <a href="https://rclone.org/drive/#making-your-own-client-id">official documentation for doing it</a>)</li>
+<li>to automate the mount you have to create your own systemd user units</li>
+<li>I never succeed to  automate the token renewal. It means that
+  each time the token expires, I had to re-run the config in text mode :-(. This a <a href="https://forum.rclone.org/t/rclone-google-drive-token-expires-every-week/22502/18">known problem</a>. It's the most annoying problem</li>
+</ul>
+<p>I hope that Rclone will improve all this things because it's so frustating to see that the mount is working very
+  well and it is broken one week after. I don't understand why it's so simple to connect with Gnome and why it's 
+  complex with Rclone. Maybe future posts for the blog? :-) :-)</p>
+            </div>
+            <div class="post_list">
+                <span>By </span>
+                <a href="https://romainjacquet.github.io/author/romain-jacquet.html">@Romain JACQUET</a>
+                <span> in </span>
+                <span class="post_category"><a href="https://romainjacquet.github.io/category/misc.html" rel="bookmark"
+                                               title="Permalink to misc">[ misc ]</a></span>
+                <span class="post_date">sam. 24 avril 2021</span>
+                <div><span>Tags : </span>
+                </div>
+
+                <div class="entry-social">
+                    <span class="twitter"><a target="_blank" rel="nofollow"
+                                             onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=400,width=700');return false;"
+                                             title="Twitter"
+                                             href="https://twitter.com/share?url=https://romainjacquet.github.io/the-different-way-of-mounting-google-drive-with-your-ubuntu.html&text=the different way of mounting Google drive with your Ubuntu&via="><img
+                            src="https://romainjacquet.github.io/theme/images/icons/twitter-s.png"></a></span>
+
+                    <span class="gplus"><a target="_blank" title="Google +"
+                                           href="https://plus.google.com/share?url=https://romainjacquet.github.io/the-different-way-of-mounting-google-drive-with-your-ubuntu.html&hl=fr"
+                                           rel="nofollow"
+                                           onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=650');return false;"><img
+                            src="https://romainjacquet.github.io/theme/images/icons/google-s.png"></a></span>
+
+                    <span class="facebook"><a target="_blank" title="Facebook" rel="nofollow"
+                                              onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=500,width=700');return false;"
+                                              href="https://www.facebook.com/sharer.php?u=https://romainjacquet.github.io/the-different-way-of-mounting-google-drive-with-your-ubuntu.html&t=the different way of mounting Google drive with your Ubuntu"><img
+                            src="https://romainjacquet.github.io/theme/images/icons/facebook-s.png"></a></span>
+
+                    <a target="_blank" title="Linkedin"
+                       href="https://www.linkedin.com/shareArticle?mini=true&url=https://romainjacquet.github.io/the-different-way-of-mounting-google-drive-with-your-ubuntu.html&title=the different way of mounting Google drive with your Ubuntu"
+                       rel="nofollow"
+                       onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=650');return false;"><img
+                            src="https://romainjacquet.github.io/theme/images/icons/linkedin-s.png"></a>
+
+                    <span class="mail"><a
+                            href="mailto:?subject=the different way of mounting Google drive with your Ubuntu&amp;body=Viens découvrir un article à propos de [the different way of mounting Google drive with your Ubuntu] sur le site de Romain JACQUET. https://romainjacquet.github.io/the-different-way-of-mounting-google-drive-with-your-ubuntu.html"
+                            title="Share by Email" target="_blank"><img
+                            src="https://romainjacquet.github.io/theme/images/icons/mail-s.png"></a></span>
+                </div>
+            </div>
+        </article>
+    </section>
+</article>
+
+<!-- Footer -->
+    <footer>
+        <p>
+            <a href="http://getpelican.com/">Pelican</a> theme
+            based on <a href="https://github.com/parbhat/pelican-blue">Pelican-Blue</a> by <a
+                href="https://parbhatpuri.com/">@parbhat</a> with minor changes.
+        </p>
+    </footer>
+
+
+</body>
+</html>
