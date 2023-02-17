@@ -108,9 +108,9 @@ need to read the DVB card status to find if the acquisition is fine. The status
 is provided by the DVB driver which is a set a of kernel modules. The DVB Card
 status could be read using the <a href="https://www.linuxtv.org/docs/dvbapi/DVB_Frontend_API.html">DVB API</a> of the kernel. Using old-style C and
 <a href="https://linux.die.net/man/2/ioctl">ioctl</a> function , this could be achieved using this lines:</p>
-<div class="highlight"><pre><span></span><code><span class="n">fe_status_t</span> <span class="n">my_status</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><span class="n">fe_status_t</span><span class="w"> </span><span class="n">my_status</span><span class="p">;</span>
 
-<span class="kt">int</span> <span class="n">ret</span> <span class="o">=</span> <span class="n">ioctl</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">FE_READ_STATUS</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">my_status</span><span class="p">);</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">ret</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ioctl</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span><span class="w"> </span><span class="n">FE_READ_STATUS</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">my_status</span><span class="p">);</span>
 </code></pre></div>
 
 <p>It works. But my software is written in Python and I don't want to write a
@@ -130,7 +130,7 @@ Python:</p>
 </code></pre></div>
 
 <p>_IOR is a macro in the kernel to create unique IOCTL number. I didn't understand all the logic behind. Using a C program I successfully display the real number of the IOCTL FE_READ_STATUS.</p>
-<div class="highlight"><pre><span></span><code><span class="n">printf</span><span class="p">(</span><span class="s">&quot;REAL VALUE %08x</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">FE_READ_STATUS</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><span class="n">printf</span><span class="p">(</span><span class="s">&quot;REAL VALUE %08x</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">FE_READ_STATUS</span><span class="p">);</span>
 </code></pre></div>
 
 <p>And the final function to get status is now easy:</p>

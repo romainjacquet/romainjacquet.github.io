@@ -110,44 +110,44 @@ Filezilla refuses the key without any warning.
 I try to use Filezilla with a newly-generated key and I successfully connect to a test server.
 So the problem comes from the key.
 Let's have a look to the keys. Both keys looks correct and contains correct header and footer:</p>
-<div class="highlight"><pre><span></span><code>-----BEGIN RSA PRIVATE KEY-----
+<div class="highlight"><pre><span></span><code>-----BEGIN<span class="w"> </span>RSA<span class="w"> </span>PRIVATE<span class="w"> </span>KEY-----
 <span class="o">[</span>...<span class="o">]</span>
------END RSA PRIVATE KEY-----
+-----END<span class="w"> </span>RSA<span class="w"> </span>PRIVATE<span class="w"> </span>KEY-----
 </code></pre></div>
 
 <p>But openssl failed to check to suspicious key:</p>
-<div class="highlight"><pre><span></span><code>% openssl rsa -check -in suspiciouskey_id                               
-RSA key ok
-<span class="m">140634506504080</span>:error:0D0680A8:asn1 encoding routines:ASN1_CHECK_TLEN:wrong tag:tasn_dec.c:1199:
-<span class="m">140634506504080</span>:error:0D06C03A:asn1 encoding routines:ASN1_D2I_EX_PRIMITIVE:nested asn1 error:tasn_dec.c:767:
-<span class="m">140634506504080</span>:error:0D08303A:asn1 encoding routines:ASN1_TEMPLATE_NOEXP_D2I:nested asn1 error:tasn_dec.c:699:Field<span class="o">=</span>n, <span class="nv">Type</span><span class="o">=</span>RSA
-<span class="m">140634506504080</span>:error:04093004:rsa routines:OLD_RSA_PRIV_DECODE:RSA lib:rsa_ameth.c:121:
+<div class="highlight"><pre><span></span><code>%<span class="w"> </span>openssl<span class="w"> </span>rsa<span class="w"> </span>-check<span class="w"> </span>-in<span class="w"> </span>suspiciouskey_id<span class="w">                               </span>
+RSA<span class="w"> </span>key<span class="w"> </span>ok
+<span class="m">140634506504080</span>:error:0D0680A8:asn1<span class="w"> </span>encoding<span class="w"> </span>routines:ASN1_CHECK_TLEN:wrong<span class="w"> </span>tag:tasn_dec.c:1199:
+<span class="m">140634506504080</span>:error:0D06C03A:asn1<span class="w"> </span>encoding<span class="w"> </span>routines:ASN1_D2I_EX_PRIMITIVE:nested<span class="w"> </span>asn1<span class="w"> </span>error:tasn_dec.c:767:
+<span class="m">140634506504080</span>:error:0D08303A:asn1<span class="w"> </span>encoding<span class="w"> </span>routines:ASN1_TEMPLATE_NOEXP_D2I:nested<span class="w"> </span>asn1<span class="w"> </span>error:tasn_dec.c:699:Field<span class="o">=</span>n,<span class="w"> </span><span class="nv">Type</span><span class="o">=</span>RSA
+<span class="m">140634506504080</span>:error:04093004:rsa<span class="w"> </span>routines:OLD_RSA_PRIV_DECODE:RSA<span class="w"> </span>lib:rsa_ameth.c:121:
 </code></pre></div>
 
 <p>A deeper inspection show that the key contains extra data:</p>
-<div class="highlight"><pre><span></span><code>% openssl asn1parse &lt; suspiciouskey_id 
-    <span class="m">0</span>:d<span class="o">=</span><span class="m">0</span>  <span class="nv">hl</span><span class="o">=</span><span class="m">4</span> <span class="nv">l</span><span class="o">=</span><span class="m">1214</span> cons: SEQUENCE          
-    <span class="m">4</span>:d<span class="o">=</span><span class="m">1</span>  <span class="nv">hl</span><span class="o">=</span><span class="m">2</span> <span class="nv">l</span><span class="o">=</span>   <span class="m">1</span> prim: INTEGER           :00
-    <span class="m">7</span>:d<span class="o">=</span><span class="m">1</span>  <span class="nv">hl</span><span class="o">=</span><span class="m">2</span> <span class="nv">l</span><span class="o">=</span>  <span class="m">13</span> cons: SEQUENCE          
-    <span class="m">9</span>:d<span class="o">=</span><span class="m">2</span>  <span class="nv">hl</span><span class="o">=</span><span class="m">2</span> <span class="nv">l</span><span class="o">=</span>   <span class="m">9</span> prim: OBJECT            :rsaEncryption
-   <span class="m">20</span>:d<span class="o">=</span><span class="m">2</span>  <span class="nv">hl</span><span class="o">=</span><span class="m">2</span> <span class="nv">l</span><span class="o">=</span>   <span class="m">0</span> prim: NULL              
-   <span class="m">22</span>:d<span class="o">=</span><span class="m">1</span>  <span class="nv">hl</span><span class="o">=</span><span class="m">4</span> <span class="nv">l</span><span class="o">=</span><span class="m">1192</span> prim: OCTET STRING      <span class="o">[</span>HEX DUMP<span class="o">]</span>:..
+<div class="highlight"><pre><span></span><code>%<span class="w"> </span>openssl<span class="w"> </span>asn1parse<span class="w"> </span>&lt;<span class="w"> </span>suspiciouskey_id<span class="w"> </span>
+<span class="w">    </span><span class="m">0</span>:d<span class="o">=</span><span class="m">0</span><span class="w">  </span><span class="nv">hl</span><span class="o">=</span><span class="m">4</span><span class="w"> </span><span class="nv">l</span><span class="o">=</span><span class="m">1214</span><span class="w"> </span>cons:<span class="w"> </span>SEQUENCE<span class="w">          </span>
+<span class="w">    </span><span class="m">4</span>:d<span class="o">=</span><span class="m">1</span><span class="w">  </span><span class="nv">hl</span><span class="o">=</span><span class="m">2</span><span class="w"> </span><span class="nv">l</span><span class="o">=</span><span class="w">   </span><span class="m">1</span><span class="w"> </span>prim:<span class="w"> </span>INTEGER<span class="w">           </span>:00
+<span class="w">    </span><span class="m">7</span>:d<span class="o">=</span><span class="m">1</span><span class="w">  </span><span class="nv">hl</span><span class="o">=</span><span class="m">2</span><span class="w"> </span><span class="nv">l</span><span class="o">=</span><span class="w">  </span><span class="m">13</span><span class="w"> </span>cons:<span class="w"> </span>SEQUENCE<span class="w">          </span>
+<span class="w">    </span><span class="m">9</span>:d<span class="o">=</span><span class="m">2</span><span class="w">  </span><span class="nv">hl</span><span class="o">=</span><span class="m">2</span><span class="w"> </span><span class="nv">l</span><span class="o">=</span><span class="w">   </span><span class="m">9</span><span class="w"> </span>prim:<span class="w"> </span>OBJECT<span class="w">            </span>:rsaEncryption
+<span class="w">   </span><span class="m">20</span>:d<span class="o">=</span><span class="m">2</span><span class="w">  </span><span class="nv">hl</span><span class="o">=</span><span class="m">2</span><span class="w"> </span><span class="nv">l</span><span class="o">=</span><span class="w">   </span><span class="m">0</span><span class="w"> </span>prim:<span class="w"> </span>NULL<span class="w">              </span>
+<span class="w">   </span><span class="m">22</span>:d<span class="o">=</span><span class="m">1</span><span class="w">  </span><span class="nv">hl</span><span class="o">=</span><span class="m">4</span><span class="w"> </span><span class="nv">l</span><span class="o">=</span><span class="m">1192</span><span class="w"> </span>prim:<span class="w"> </span>OCTET<span class="w"> </span>STRING<span class="w">      </span><span class="o">[</span>HEX<span class="w"> </span>DUMP<span class="o">]</span>:..
 </code></pre></div>
 
 <p>A normal key looks like:</p>
-<div class="highlight"><pre><span></span><code>  openssl asn1parse &lt; good_id 
-    <span class="m">0</span>:d<span class="o">=</span><span class="m">0</span>  <span class="nv">hl</span><span class="o">=</span><span class="m">4</span> <span class="nv">l</span><span class="o">=</span><span class="m">1189</span> cons: SEQUENCE          
-    <span class="m">4</span>:d<span class="o">=</span><span class="m">1</span>  <span class="nv">hl</span><span class="o">=</span><span class="m">2</span> <span class="nv">l</span><span class="o">=</span>   <span class="m">1</span> prim: INTEGER           :00
-    <span class="m">7</span>:d<span class="o">=</span><span class="m">1</span>  <span class="nv">hl</span><span class="o">=</span><span class="m">4</span> <span class="nv">l</span><span class="o">=</span> <span class="m">257</span> prim: INTEGER           :XXXYYYYY
-  <span class="m">268</span>:d<span class="o">=</span><span class="m">1</span>  <span class="nv">hl</span><span class="o">=</span><span class="m">2</span> <span class="nv">l</span><span class="o">=</span>   <span class="m">3</span> prim: INTEGER           :010001
-  <span class="m">273</span>:d<span class="o">=</span><span class="m">1</span>  <span class="nv">hl</span><span class="o">=</span><span class="m">4</span> <span class="nv">l</span><span class="o">=</span> <span class="m">256</span> prim: INTEGER           :XXXXXYYY
+<div class="highlight"><pre><span></span><code><span class="w">  </span>openssl<span class="w"> </span>asn1parse<span class="w"> </span>&lt;<span class="w"> </span>good_id<span class="w"> </span>
+<span class="w">    </span><span class="m">0</span>:d<span class="o">=</span><span class="m">0</span><span class="w">  </span><span class="nv">hl</span><span class="o">=</span><span class="m">4</span><span class="w"> </span><span class="nv">l</span><span class="o">=</span><span class="m">1189</span><span class="w"> </span>cons:<span class="w"> </span>SEQUENCE<span class="w">          </span>
+<span class="w">    </span><span class="m">4</span>:d<span class="o">=</span><span class="m">1</span><span class="w">  </span><span class="nv">hl</span><span class="o">=</span><span class="m">2</span><span class="w"> </span><span class="nv">l</span><span class="o">=</span><span class="w">   </span><span class="m">1</span><span class="w"> </span>prim:<span class="w"> </span>INTEGER<span class="w">           </span>:00
+<span class="w">    </span><span class="m">7</span>:d<span class="o">=</span><span class="m">1</span><span class="w">  </span><span class="nv">hl</span><span class="o">=</span><span class="m">4</span><span class="w"> </span><span class="nv">l</span><span class="o">=</span><span class="w"> </span><span class="m">257</span><span class="w"> </span>prim:<span class="w"> </span>INTEGER<span class="w">           </span>:XXXYYYYY
+<span class="w">  </span><span class="m">268</span>:d<span class="o">=</span><span class="m">1</span><span class="w">  </span><span class="nv">hl</span><span class="o">=</span><span class="m">2</span><span class="w"> </span><span class="nv">l</span><span class="o">=</span><span class="w">   </span><span class="m">3</span><span class="w"> </span>prim:<span class="w"> </span>INTEGER<span class="w">           </span>:010001
+<span class="w">  </span><span class="m">273</span>:d<span class="o">=</span><span class="m">1</span><span class="w">  </span><span class="nv">hl</span><span class="o">=</span><span class="m">4</span><span class="w"> </span><span class="nv">l</span><span class="o">=</span><span class="w"> </span><span class="m">256</span><span class="w"> </span>prim:<span class="w"> </span>INTEGER<span class="w">           </span>:XXXXXYYY
 </code></pre></div>
 
 <p>In fact, this is not a simple key as you can generate with <a href="http://man7.org/linux/man-pages/man1/ssh-keygen.1.html">ssh-keygen</a>.
 This key contains extra information because it's a <a href="https://en.wikipedia.org/wiki/PKCS_8">PKCS#8</a>.
 By default, ssh-keygen generates a <a href="https://en.wikipedia.org/wiki/PKCS_1">PKCS#1</a>. So
 I try to convert the key:</p>
-<div class="highlight"><pre><span></span><code>openssl rsa -in suspiciouskey -out newkey
+<div class="highlight"><pre><span></span><code>openssl<span class="w"> </span>rsa<span class="w"> </span>-in<span class="w"> </span>suspiciouskey<span class="w"> </span>-out<span class="w"> </span>newkey
 </code></pre></div>
 
 <p>It works!!!

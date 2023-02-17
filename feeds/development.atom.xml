@@ -18,7 +18,7 @@ query it using an REST API or using maven command: &lt;code&gt;mvn&lt;/code&gt;.
 &lt;p&gt;Here is the command that I use to upload non-java artifact. In case
 of error nexus will answer with an HTTP header containing a string describing the problem.
 It is &lt;strong&gt;easy to use and easy to troobleshoot&lt;/strong&gt;.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;curl -v --upload-file vim-enhanced-7.4.873-2.el7.psychotic.x86_64.rpm.html -u foo:bar http://localhost:8081/repository/MyRpms/vim-enhanced-7.4.873-2.el7.psychotic.x86_64.rpm.html
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;curl&lt;span class="w"&gt; &lt;/span&gt;-v&lt;span class="w"&gt; &lt;/span&gt;--upload-file&lt;span class="w"&gt; &lt;/span&gt;vim-enhanced-7.4.873-2.el7.psychotic.x86_64.rpm.html&lt;span class="w"&gt; &lt;/span&gt;-u&lt;span class="w"&gt; &lt;/span&gt;foo:bar&lt;span class="w"&gt; &lt;/span&gt;http://localhost:8081/repository/MyRpms/vim-enhanced-7.4.873-2.el7.psychotic.x86_64.rpm.html
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;This the way I recommand to upload on nexus.&lt;/p&gt;
@@ -26,33 +26,33 @@ It is &lt;strong&gt;easy to use and easy to troobleshoot&lt;/strong&gt;.&lt;/p&g
 &lt;p&gt;Here is the way to do the same thing wih maven. Maven uses plugin to do everything, it is a plugin execution framework.
 To deploy in a similar way of curl we have to use the goal &lt;code&gt;deploy-file&lt;/code&gt; 
 of the &lt;a href="https://maven.apache.org/plugins/maven-deploy-plugin/"&gt;deploy&lt;/a&gt; plugin.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;mvn deploy:deploy-file --settings&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nv"&gt;$PWD&lt;/span&gt;/settings.xml -Dfile&lt;span class="o"&gt;=&lt;/span&gt;vim-common-7.4.629-6.el7.x86_64.rpm -DgroupId&lt;span class="o"&gt;=&lt;/span&gt;molnar.vim -DartifactId&lt;span class="o"&gt;=&lt;/span&gt;vimrpm -Dversion&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.0 -DrepositoryId&lt;span class="o"&gt;=&lt;/span&gt;localnexus -Durl&lt;span class="o"&gt;=&lt;/span&gt;http://localhost:8081/repository/MyRpms/ 
-WARNING: An illegal reflective access operation has occurred
-WARNING: Illegal reflective access by com.google.inject.internal.cglib.core.&lt;span class="nv"&gt;$ReflectUtils$1&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;file:/usr/share/maven/lib/guice.jar&lt;span class="o"&gt;)&lt;/span&gt; to method java.lang.ClassLoader.defineClass&lt;span class="o"&gt;(&lt;/span&gt;java.lang.String,byte&lt;span class="o"&gt;[]&lt;/span&gt;,int,int,java.security.ProtectionDomain&lt;span class="o"&gt;)&lt;/span&gt;
-WARNING: Please consider reporting this to the maintainers of com.google.inject.internal.cglib.core.&lt;span class="nv"&gt;$ReflectUtils$1&lt;/span&gt;
-WARNING: Use --illegal-access&lt;span class="o"&gt;=&lt;/span&gt;warn to &lt;span class="nb"&gt;enable&lt;/span&gt; warnings of further illegal reflective access operations
-WARNING: All illegal access operations will be denied &lt;span class="k"&gt;in&lt;/span&gt; a future release
-&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt; Scanning &lt;span class="k"&gt;for&lt;/span&gt; projects...
-&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt; 
-&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt; ------------------&amp;lt; org.apache.maven:standalone-pom &amp;gt;-------------------
-&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt; Building Maven Stub Project &lt;span class="o"&gt;(&lt;/span&gt;No POM&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="m"&gt;1&lt;/span&gt;
-&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt; --------------------------------&lt;span class="o"&gt;[&lt;/span&gt; pom &lt;span class="o"&gt;]&lt;/span&gt;---------------------------------
-&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt; 
-&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt; --- maven-deploy-plugin:2.7:deploy-file &lt;span class="o"&gt;(&lt;/span&gt;default-cli&lt;span class="o"&gt;)&lt;/span&gt; @ standalone-pom ---
-Uploading to localnexus: http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/1.0/vimrpm-1.0.rpm
-Uploaded to localnexus: http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/1.0/vimrpm-1.0.rpm &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;6&lt;/span&gt;.2 MB at &lt;span class="m"&gt;17&lt;/span&gt; MB/s&lt;span class="o"&gt;)&lt;/span&gt;
-Uploading to localnexus: http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/1.0/vimrpm-1.0.pom
-Uploaded to localnexus: http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/1.0/vimrpm-1.0.pom &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;416&lt;/span&gt; B at &lt;span class="m"&gt;5&lt;/span&gt;.5 kB/s&lt;span class="o"&gt;)&lt;/span&gt;
-Downloading from localnexus: http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/maven-metadata.xml
-Downloaded from localnexus: http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/maven-metadata.xml &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;292&lt;/span&gt; B at &lt;span class="m"&gt;7&lt;/span&gt;.5 kB/s&lt;span class="o"&gt;)&lt;/span&gt;
-Uploading to localnexus: http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/maven-metadata.xml
-Uploaded to localnexus: http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/maven-metadata.xml &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;292&lt;/span&gt; B at &lt;span class="m"&gt;4&lt;/span&gt;.8 kB/s&lt;span class="o"&gt;)&lt;/span&gt;
-&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt; ------------------------------------------------------------------------
-&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt; BUILD SUCCESS
-&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt; ------------------------------------------------------------------------
-&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt; Total time:  &lt;span class="m"&gt;1&lt;/span&gt;.007 s
-&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt; Finished at: &lt;span class="m"&gt;2020&lt;/span&gt;-02-24T22:15:08+01:00
-&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt; ------------------------------------------------------------------------
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;mvn&lt;span class="w"&gt; &lt;/span&gt;deploy:deploy-file&lt;span class="w"&gt; &lt;/span&gt;--settings&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nv"&gt;$PWD&lt;/span&gt;/settings.xml&lt;span class="w"&gt; &lt;/span&gt;-Dfile&lt;span class="o"&gt;=&lt;/span&gt;vim-common-7.4.629-6.el7.x86_64.rpm&lt;span class="w"&gt; &lt;/span&gt;-DgroupId&lt;span class="o"&gt;=&lt;/span&gt;molnar.vim&lt;span class="w"&gt; &lt;/span&gt;-DartifactId&lt;span class="o"&gt;=&lt;/span&gt;vimrpm&lt;span class="w"&gt; &lt;/span&gt;-Dversion&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.0&lt;span class="w"&gt; &lt;/span&gt;-DrepositoryId&lt;span class="o"&gt;=&lt;/span&gt;localnexus&lt;span class="w"&gt; &lt;/span&gt;-Durl&lt;span class="o"&gt;=&lt;/span&gt;http://localhost:8081/repository/MyRpms/&lt;span class="w"&gt; &lt;/span&gt;
+WARNING:&lt;span class="w"&gt; &lt;/span&gt;An&lt;span class="w"&gt; &lt;/span&gt;illegal&lt;span class="w"&gt; &lt;/span&gt;reflective&lt;span class="w"&gt; &lt;/span&gt;access&lt;span class="w"&gt; &lt;/span&gt;operation&lt;span class="w"&gt; &lt;/span&gt;has&lt;span class="w"&gt; &lt;/span&gt;occurred
+WARNING:&lt;span class="w"&gt; &lt;/span&gt;Illegal&lt;span class="w"&gt; &lt;/span&gt;reflective&lt;span class="w"&gt; &lt;/span&gt;access&lt;span class="w"&gt; &lt;/span&gt;by&lt;span class="w"&gt; &lt;/span&gt;com.google.inject.internal.cglib.core.&lt;span class="nv"&gt;$ReflectUtils$1&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;file:/usr/share/maven/lib/guice.jar&lt;span class="o"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;to&lt;span class="w"&gt; &lt;/span&gt;method&lt;span class="w"&gt; &lt;/span&gt;java.lang.ClassLoader.defineClass&lt;span class="o"&gt;(&lt;/span&gt;java.lang.String,byte&lt;span class="o"&gt;[]&lt;/span&gt;,int,int,java.security.ProtectionDomain&lt;span class="o"&gt;)&lt;/span&gt;
+WARNING:&lt;span class="w"&gt; &lt;/span&gt;Please&lt;span class="w"&gt; &lt;/span&gt;consider&lt;span class="w"&gt; &lt;/span&gt;reporting&lt;span class="w"&gt; &lt;/span&gt;this&lt;span class="w"&gt; &lt;/span&gt;to&lt;span class="w"&gt; &lt;/span&gt;the&lt;span class="w"&gt; &lt;/span&gt;maintainers&lt;span class="w"&gt; &lt;/span&gt;of&lt;span class="w"&gt; &lt;/span&gt;com.google.inject.internal.cglib.core.&lt;span class="nv"&gt;$ReflectUtils$1&lt;/span&gt;
+WARNING:&lt;span class="w"&gt; &lt;/span&gt;Use&lt;span class="w"&gt; &lt;/span&gt;--illegal-access&lt;span class="o"&gt;=&lt;/span&gt;warn&lt;span class="w"&gt; &lt;/span&gt;to&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;enable&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;warnings&lt;span class="w"&gt; &lt;/span&gt;of&lt;span class="w"&gt; &lt;/span&gt;further&lt;span class="w"&gt; &lt;/span&gt;illegal&lt;span class="w"&gt; &lt;/span&gt;reflective&lt;span class="w"&gt; &lt;/span&gt;access&lt;span class="w"&gt; &lt;/span&gt;operations
+WARNING:&lt;span class="w"&gt; &lt;/span&gt;All&lt;span class="w"&gt; &lt;/span&gt;illegal&lt;span class="w"&gt; &lt;/span&gt;access&lt;span class="w"&gt; &lt;/span&gt;operations&lt;span class="w"&gt; &lt;/span&gt;will&lt;span class="w"&gt; &lt;/span&gt;be&lt;span class="w"&gt; &lt;/span&gt;denied&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;in&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;a&lt;span class="w"&gt; &lt;/span&gt;future&lt;span class="w"&gt; &lt;/span&gt;release
+&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;Scanning&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;for&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;projects...
+&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;------------------&amp;lt;&lt;span class="w"&gt; &lt;/span&gt;org.apache.maven:standalone-pom&lt;span class="w"&gt; &lt;/span&gt;&amp;gt;-------------------
+&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;Building&lt;span class="w"&gt; &lt;/span&gt;Maven&lt;span class="w"&gt; &lt;/span&gt;Stub&lt;span class="w"&gt; &lt;/span&gt;Project&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;No&lt;span class="w"&gt; &lt;/span&gt;POM&lt;span class="o"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;--------------------------------&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;pom&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;---------------------------------
+&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;---&lt;span class="w"&gt; &lt;/span&gt;maven-deploy-plugin:2.7:deploy-file&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;default-cli&lt;span class="o"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;@&lt;span class="w"&gt; &lt;/span&gt;standalone-pom&lt;span class="w"&gt; &lt;/span&gt;---
+Uploading&lt;span class="w"&gt; &lt;/span&gt;to&lt;span class="w"&gt; &lt;/span&gt;localnexus:&lt;span class="w"&gt; &lt;/span&gt;http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/1.0/vimrpm-1.0.rpm
+Uploaded&lt;span class="w"&gt; &lt;/span&gt;to&lt;span class="w"&gt; &lt;/span&gt;localnexus:&lt;span class="w"&gt; &lt;/span&gt;http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/1.0/vimrpm-1.0.rpm&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;6&lt;/span&gt;.2&lt;span class="w"&gt; &lt;/span&gt;MB&lt;span class="w"&gt; &lt;/span&gt;at&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;17&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;MB/s&lt;span class="o"&gt;)&lt;/span&gt;
+Uploading&lt;span class="w"&gt; &lt;/span&gt;to&lt;span class="w"&gt; &lt;/span&gt;localnexus:&lt;span class="w"&gt; &lt;/span&gt;http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/1.0/vimrpm-1.0.pom
+Uploaded&lt;span class="w"&gt; &lt;/span&gt;to&lt;span class="w"&gt; &lt;/span&gt;localnexus:&lt;span class="w"&gt; &lt;/span&gt;http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/1.0/vimrpm-1.0.pom&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;416&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;B&lt;span class="w"&gt; &lt;/span&gt;at&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;5&lt;/span&gt;.5&lt;span class="w"&gt; &lt;/span&gt;kB/s&lt;span class="o"&gt;)&lt;/span&gt;
+Downloading&lt;span class="w"&gt; &lt;/span&gt;from&lt;span class="w"&gt; &lt;/span&gt;localnexus:&lt;span class="w"&gt; &lt;/span&gt;http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/maven-metadata.xml
+Downloaded&lt;span class="w"&gt; &lt;/span&gt;from&lt;span class="w"&gt; &lt;/span&gt;localnexus:&lt;span class="w"&gt; &lt;/span&gt;http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/maven-metadata.xml&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;292&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;B&lt;span class="w"&gt; &lt;/span&gt;at&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;7&lt;/span&gt;.5&lt;span class="w"&gt; &lt;/span&gt;kB/s&lt;span class="o"&gt;)&lt;/span&gt;
+Uploading&lt;span class="w"&gt; &lt;/span&gt;to&lt;span class="w"&gt; &lt;/span&gt;localnexus:&lt;span class="w"&gt; &lt;/span&gt;http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/maven-metadata.xml
+Uploaded&lt;span class="w"&gt; &lt;/span&gt;to&lt;span class="w"&gt; &lt;/span&gt;localnexus:&lt;span class="w"&gt; &lt;/span&gt;http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/maven-metadata.xml&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;292&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;B&lt;span class="w"&gt; &lt;/span&gt;at&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt;.8&lt;span class="w"&gt; &lt;/span&gt;kB/s&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;------------------------------------------------------------------------
+&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;BUILD&lt;span class="w"&gt; &lt;/span&gt;SUCCESS
+&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;------------------------------------------------------------------------
+&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;Total&lt;span class="w"&gt; &lt;/span&gt;time:&lt;span class="w"&gt;  &lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.007&lt;span class="w"&gt; &lt;/span&gt;s
+&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;Finished&lt;span class="w"&gt; &lt;/span&gt;at:&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;2020&lt;/span&gt;-02-24T22:15:08+01:00
+&lt;span class="o"&gt;[&lt;/span&gt;INFO&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;------------------------------------------------------------------------
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Few remarks about this command:&lt;/p&gt;
@@ -128,29 +128,29 @@ Here is an example for the GET request:&lt;/p&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;The output is:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;Starting new HTTPS connection &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;: docs.python.org
- https://docs.python.org:443 &lt;span class="s2"&gt;&amp;quot;GET /3/_static/py.png HTTP/1.1&amp;quot;&lt;/span&gt; &lt;span class="m"&gt;200&lt;/span&gt; &lt;span class="m"&gt;695&lt;/span&gt;
-  &amp;gt; User-Agent: python-requests/2.18.4
-  &amp;gt; Accept-Encoding: gzip, deflate
-  &amp;gt; Accept: */*
-  &amp;gt; Connection: keep-alive
-  &amp;lt; Connection: keep-alive
-  &amp;lt; Content-Length: &lt;span class="m"&gt;695&lt;/span&gt;
-  &amp;lt; Server: nginx
-  &amp;lt; Content-Type: image/png
-  &amp;lt; Last-Modified: Thu, &lt;span class="m"&gt;14&lt;/span&gt; Feb &lt;span class="m"&gt;2019&lt;/span&gt; &lt;span class="m"&gt;11&lt;/span&gt;:40:31 GMT
-  &amp;lt; ETag: &lt;span class="s2"&gt;&amp;quot;5c6553af-2b7&amp;quot;&lt;/span&gt;
-  &amp;lt; X-Clacks-Overhead: GNU Terry Pratchett
-  &amp;lt; Strict-Transport-Security: max-age&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;315360000&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; includeSubDomains&lt;span class="p"&gt;;&lt;/span&gt; preload
-  &amp;lt; Via: &lt;span class="m"&gt;1&lt;/span&gt;.1 varnish, &lt;span class="m"&gt;1&lt;/span&gt;.1 varnish
-  &amp;lt; Accept-Ranges: bytes
-  &amp;lt; Date: Wed, &lt;span class="m"&gt;29&lt;/span&gt; Jan &lt;span class="m"&gt;2020&lt;/span&gt; &lt;span class="m"&gt;19&lt;/span&gt;:54:26 GMT
-  &amp;lt; Age: &lt;span class="m"&gt;398453&lt;/span&gt;
-  &amp;lt; X-Served-By: cache-jfk8144-JFK, cache-cdg20740-CDG
-  &amp;lt; X-Cache: HIT, HIT
-  &amp;lt; X-Cache-Hits: &lt;span class="m"&gt;649&lt;/span&gt;, &lt;span class="m"&gt;184&lt;/span&gt;
-  &amp;lt; X-Timer: S1580327667.914627,VS0,VE0
- Size of the response: &lt;span class="m"&gt;695&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;Starting&lt;span class="w"&gt; &lt;/span&gt;new&lt;span class="w"&gt; &lt;/span&gt;HTTPS&lt;span class="w"&gt; &lt;/span&gt;connection&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;:&lt;span class="w"&gt; &lt;/span&gt;docs.python.org
+&lt;span class="w"&gt; &lt;/span&gt;https://docs.python.org:443&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;GET /3/_static/py.png HTTP/1.1&amp;quot;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;200&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;695&lt;/span&gt;
+&lt;span class="w"&gt;  &lt;/span&gt;&amp;gt;&lt;span class="w"&gt; &lt;/span&gt;User-Agent:&lt;span class="w"&gt; &lt;/span&gt;python-requests/2.18.4
+&lt;span class="w"&gt;  &lt;/span&gt;&amp;gt;&lt;span class="w"&gt; &lt;/span&gt;Accept-Encoding:&lt;span class="w"&gt; &lt;/span&gt;gzip,&lt;span class="w"&gt; &lt;/span&gt;deflate
+&lt;span class="w"&gt;  &lt;/span&gt;&amp;gt;&lt;span class="w"&gt; &lt;/span&gt;Accept:&lt;span class="w"&gt; &lt;/span&gt;*/*
+&lt;span class="w"&gt;  &lt;/span&gt;&amp;gt;&lt;span class="w"&gt; &lt;/span&gt;Connection:&lt;span class="w"&gt; &lt;/span&gt;keep-alive
+&lt;span class="w"&gt;  &lt;/span&gt;&amp;lt;&lt;span class="w"&gt; &lt;/span&gt;Connection:&lt;span class="w"&gt; &lt;/span&gt;keep-alive
+&lt;span class="w"&gt;  &lt;/span&gt;&amp;lt;&lt;span class="w"&gt; &lt;/span&gt;Content-Length:&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;695&lt;/span&gt;
+&lt;span class="w"&gt;  &lt;/span&gt;&amp;lt;&lt;span class="w"&gt; &lt;/span&gt;Server:&lt;span class="w"&gt; &lt;/span&gt;nginx
+&lt;span class="w"&gt;  &lt;/span&gt;&amp;lt;&lt;span class="w"&gt; &lt;/span&gt;Content-Type:&lt;span class="w"&gt; &lt;/span&gt;image/png
+&lt;span class="w"&gt;  &lt;/span&gt;&amp;lt;&lt;span class="w"&gt; &lt;/span&gt;Last-Modified:&lt;span class="w"&gt; &lt;/span&gt;Thu,&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;14&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;Feb&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;2019&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;11&lt;/span&gt;:40:31&lt;span class="w"&gt; &lt;/span&gt;GMT
+&lt;span class="w"&gt;  &lt;/span&gt;&amp;lt;&lt;span class="w"&gt; &lt;/span&gt;ETag:&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;5c6553af-2b7&amp;quot;&lt;/span&gt;
+&lt;span class="w"&gt;  &lt;/span&gt;&amp;lt;&lt;span class="w"&gt; &lt;/span&gt;X-Clacks-Overhead:&lt;span class="w"&gt; &lt;/span&gt;GNU&lt;span class="w"&gt; &lt;/span&gt;Terry&lt;span class="w"&gt; &lt;/span&gt;Pratchett
+&lt;span class="w"&gt;  &lt;/span&gt;&amp;lt;&lt;span class="w"&gt; &lt;/span&gt;Strict-Transport-Security:&lt;span class="w"&gt; &lt;/span&gt;max-age&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;315360000&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;includeSubDomains&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;preload
+&lt;span class="w"&gt;  &lt;/span&gt;&amp;lt;&lt;span class="w"&gt; &lt;/span&gt;Via:&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.1&lt;span class="w"&gt; &lt;/span&gt;varnish,&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.1&lt;span class="w"&gt; &lt;/span&gt;varnish
+&lt;span class="w"&gt;  &lt;/span&gt;&amp;lt;&lt;span class="w"&gt; &lt;/span&gt;Accept-Ranges:&lt;span class="w"&gt; &lt;/span&gt;bytes
+&lt;span class="w"&gt;  &lt;/span&gt;&amp;lt;&lt;span class="w"&gt; &lt;/span&gt;Date:&lt;span class="w"&gt; &lt;/span&gt;Wed,&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;29&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;Jan&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;2020&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;19&lt;/span&gt;:54:26&lt;span class="w"&gt; &lt;/span&gt;GMT
+&lt;span class="w"&gt;  &lt;/span&gt;&amp;lt;&lt;span class="w"&gt; &lt;/span&gt;Age:&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;398453&lt;/span&gt;
+&lt;span class="w"&gt;  &lt;/span&gt;&amp;lt;&lt;span class="w"&gt; &lt;/span&gt;X-Served-By:&lt;span class="w"&gt; &lt;/span&gt;cache-jfk8144-JFK,&lt;span class="w"&gt; &lt;/span&gt;cache-cdg20740-CDG
+&lt;span class="w"&gt;  &lt;/span&gt;&amp;lt;&lt;span class="w"&gt; &lt;/span&gt;X-Cache:&lt;span class="w"&gt; &lt;/span&gt;HIT,&lt;span class="w"&gt; &lt;/span&gt;HIT
+&lt;span class="w"&gt;  &lt;/span&gt;&amp;lt;&lt;span class="w"&gt; &lt;/span&gt;X-Cache-Hits:&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;649&lt;/span&gt;,&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;184&lt;/span&gt;
+&lt;span class="w"&gt;  &lt;/span&gt;&amp;lt;&lt;span class="w"&gt; &lt;/span&gt;X-Timer:&lt;span class="w"&gt; &lt;/span&gt;S1580327667.914627,VS0,VE0
+&lt;span class="w"&gt; &lt;/span&gt;Size&lt;span class="w"&gt; &lt;/span&gt;of&lt;span class="w"&gt; &lt;/span&gt;the&lt;span class="w"&gt; &lt;/span&gt;response:&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;695&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;You can use this method to wrap any top-level methods of requests you need to debug.
@@ -182,7 +182,7 @@ Python philosophy &lt;a href="https://www.python.org/dev/peps/pep-0206/#id3"&gt;
 &lt;p&gt;Beginners often look for a simple way to run command, capture the output
 in a variable and check the return code. They want an equivalent of the 
 following bash statements:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="nv"&gt;my_output&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;mycmd arg1 arg2&lt;span class="k"&gt;)&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="nv"&gt;my_output&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;mycmd&lt;span class="w"&gt; &lt;/span&gt;arg1&lt;span class="w"&gt; &lt;/span&gt;arg2&lt;span class="k"&gt;)&lt;/span&gt;
 &lt;span class="nv"&gt;return_code&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nv"&gt;$?&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
@@ -191,7 +191,7 @@ following bash statements:&lt;/p&gt;
 &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;subprocess&lt;/span&gt;
 
 &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;execute_shell&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cmd&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-    &lt;span class="sd"&gt;&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="sd"&gt;&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
 &lt;span class="sd"&gt;    @param name of the command, should be accessible from path&lt;/span&gt;
 &lt;span class="sd"&gt;    @param list of the arguments&lt;/span&gt;
 &lt;span class="sd"&gt;    Run the command and return a tuple (code, output)&lt;/span&gt;
@@ -212,9 +212,9 @@ for a Python user like me. I have a basic level in Java.
 I can write Java code but I'm still thinking as it was Java 1.4.
 While browsing a modern source code, I discovered the 
 &lt;a href="https://docs.oracle.com/javase/1.5.0/docs/guide/language/static-import.html"&gt;&lt;code&gt;import static&lt;/code&gt; keyword&lt;/a&gt;.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="kn"&gt;import static&lt;/span&gt; &lt;span class="nn"&gt;java.lang.Math.E&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="kn"&gt;import static&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nn"&gt;java.lang.Math.E&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
 
-&lt;span class="kt"&gt;double&lt;/span&gt; &lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;E&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="mf"&gt;0.1&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="kt"&gt;double&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;E&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mf"&gt;0.1&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Before Java 1.5 and &lt;code&gt;import static&lt;/code&gt;, Java could only import packages or class. Now Java can import static members: functions or constants. 
@@ -242,9 +242,9 @@ need to read the DVB card status to find if the acquisition is fine. The status
 is provided by the DVB driver which is a set a of kernel modules. The DVB Card
 status could be read using the &lt;a href="https://www.linuxtv.org/docs/dvbapi/DVB_Frontend_API.html"&gt;DVB API&lt;/a&gt; of the kernel. Using old-style C and
 &lt;a href="https://linux.die.net/man/2/ioctl"&gt;ioctl&lt;/a&gt; function , this could be achieved using this lines:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;fe_status_t&lt;/span&gt; &lt;span class="n"&gt;my_status&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;fe_status_t&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;my_status&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
 
-&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;ret&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;ioctl&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fd&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;FE_READ_STATUS&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;my_status&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ret&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ioctl&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fd&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;FE_READ_STATUS&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;my_status&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;It works. But my software is written in Python and I don't want to write a
@@ -264,7 +264,7 @@ Python:&lt;/p&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;_IOR is a macro in the kernel to create unique IOCTL number. I didn't understand all the logic behind. Using a C program I successfully display the real number of the IOCTL FE_READ_STATUS.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;printf&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;REAL VALUE %08x&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;FE_READ_STATUS&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;printf&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;REAL VALUE %08x&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;FE_READ_STATUS&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;And the final function to get status is now easy:&lt;/p&gt;

@@ -131,16 +131,16 @@ repo init -u https://android.googlesource.com/platform/manifest -b android-5.1.1
 </code></pre></div>
 
 <p>Uncomment the scanning statement line 321 in fastboot/usb_linux.c:</p>
-<div class="highlight"><pre><span></span><code>        <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">convert_to_devfs_name</span><span class="p">(</span><span class="n">de</span><span class="o">-&gt;</span><span class="n">d_name</span><span class="p">,</span> <span class="n">devname</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">devname</span><span class="p">)))</span> <span class="p">{</span>
+<div class="highlight"><pre><span></span><code><span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">convert_to_devfs_name</span><span class="p">(</span><span class="n">de</span><span class="o">-&gt;</span><span class="n">d_name</span><span class="p">,</span><span class="w"> </span><span class="n">devname</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">devname</span><span class="p">)))</span><span class="w"> </span><span class="p">{</span>
 
-            <span class="n">DBG</span><span class="p">(</span><span class="s">&quot;[ scanning %s ]</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">devname</span><span class="p">);</span>
-            <span class="n">writable</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-            <span class="k">if</span><span class="p">((</span><span class="n">fd</span> <span class="o">=</span> <span class="n">open</span><span class="p">(</span><span class="n">devname</span><span class="p">,</span> <span class="n">O_RDWR</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-                <span class="c1">// Check if we have read-only access</span>
+<span class="w">            </span><span class="n">DBG</span><span class="p">(</span><span class="s">&quot;[ scanning %s ]</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">devname</span><span class="p">);</span>
+<span class="w">            </span><span class="n">writable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">            </span><span class="k">if</span><span class="p">((</span><span class="n">fd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">open</span><span class="p">(</span><span class="n">devname</span><span class="p">,</span><span class="w"> </span><span class="n">O_RDWR</span><span class="p">))</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="c1">// Check if we have read-only access</span>
 </code></pre></div>
 
 <p>Finally, do the compilation:</p>
-<div class="highlight"><pre><span></span><code>make fastboot
+<div class="highlight"><pre><span></span><code>make<span class="w"> </span>fastboot
 </code></pre></div>
 
 <p>You can now use your fastboot with a better verbosity.</p>

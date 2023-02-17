@@ -1,5 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Deep in the system - misc</title><link href="https://romainjacquet.github.io/" rel="alternate"></link><link href="https://romainjacquet.github.io/feeds/misc.atom.xml" rel="self"></link><id>https://romainjacquet.github.io/</id><updated>2021-04-24T22:13:00+02:00</updated><entry><title>the different way of mounting Google drive with your Ubuntu</title><link href="https://romainjacquet.github.io/the-different-way-of-mounting-google-drive-with-your-ubuntu.html" rel="alternate"></link><published>2021-04-24T22:13:00+02:00</published><updated>2021-04-24T22:13:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2021-04-24:/the-different-way-of-mounting-google-drive-with-your-ubuntu.html</id><summary type="html">&lt;p&gt;be a little disappointed with Google drive mount&lt;/p&gt;</summary><content type="html">&lt;p&gt;As I explained it in my &lt;a href="https://romainjacquet.github.io/the-limitation-of-mounting-google-drive-with-nautilus.html"&gt;previous blog post&lt;/a&gt;, using 
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Deep in the system - misc</title><link href="https://romainjacquet.github.io/" rel="alternate"></link><link href="https://romainjacquet.github.io/feeds/misc.atom.xml" rel="self"></link><id>https://romainjacquet.github.io/</id><updated>2023-02-16T17:34:00+01:00</updated><entry><title>Color comparison with gimp</title><link href="https://romainjacquet.github.io/color-comparison-with-gimp.html" rel="alternate"></link><published>2023-02-16T17:34:00+01:00</published><updated>2023-02-16T17:34:00+01:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2023-02-16:/color-comparison-with-gimp.html</id><summary type="html">&lt;p&gt;Infra-as-code required a stable environment&lt;/p&gt;</summary><content type="html">&lt;p&gt;Many times I have been confronted to the problem of finding the closest color in
+a color chart. It happened to me recently to order painting for leather. 
+Here I give you my approach with &lt;a href="https://www.gimp.org/"&gt;gimp&lt;/a&gt;. You need to be familiar with gimp
+and layer usage.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;In gimp open the reference image as a background (Ctrl + O)&lt;/li&gt;
+&lt;li&gt;Open your color chart as a Layer (Alt + Ctrl + O)&lt;/li&gt;
+&lt;li&gt;If required resize you layer with the color char using the scale tool
+&lt;img alt="EN color chart as layer" src="https://romainjacquet.github.io/images/gimp_step1.jpg"&gt;&lt;/li&gt;
+&lt;li&gt;Remove the white background of the color chart. Select by color, and adjust the threshold to keep all the colors. 
+I had good result with a threshold of 30. 
+&lt;img alt="EN color chart as layer 2" src="https://romainjacquet.github.io/images/gimp_step2.jpg"&gt;&lt;/li&gt;
+&lt;li&gt;Remove all color that clearly don't match. Juste make a rectangular selection on the layer and cut it (Ctrl + X). We are now
+having only color color to the reference.
+&lt;img alt="EN color chart as layer 2" src="https://romainjacquet.github.io/images/gimp_step3.jpg"&gt;&lt;/li&gt;
+&lt;li&gt;Here come the tricky part to filter the last color: use the color picker and choose a color in the color chart. Once
+you have validate the color become your current color in the color picker.
+&lt;img alt="EN color chart as layer 2" src="https://romainjacquet.github.io/images/gimp_step4.png"&gt;&lt;/li&gt;
+&lt;li&gt;Open again the color picker and select a representative part of the image. In my case it's really hard because leather creates
+reflexion. So the real color is darker. You can now easily visualize the color difference in the color picker that show the difference
+of previous and current color. If you reference color is not clear, like my leather seat, you will have to stroll the color picker on
+the reference area to be sure that you have the closest color.
+&lt;img alt="EN color difference" src="https://romainjacquet.github.io/images/gimp_step5.png"&gt;&lt;/li&gt;
+&lt;li&gt;If you still have doubt between two or three colors, you can use the RGB number to select the closest color.
+&lt;img alt="EN RGB number" src="https://romainjacquet.github.io/images/gimp_step6.png"&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I admit that the process is a little bit sketchy. Feel to contact me if you have a better solution.
+Particulary to fix the light problem.&lt;/p&gt;</content><category term="misc"></category></entry><entry><title>the different way of mounting Google drive with your Ubuntu</title><link href="https://romainjacquet.github.io/the-different-way-of-mounting-google-drive-with-your-ubuntu.html" rel="alternate"></link><published>2021-04-24T22:13:00+02:00</published><updated>2021-04-24T22:13:00+02:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2021-04-24:/the-different-way-of-mounting-google-drive-with-your-ubuntu.html</id><summary type="html">&lt;p&gt;be a little disappointed with Google drive mount&lt;/p&gt;</summary><content type="html">&lt;p&gt;As I explained it in my &lt;a href="https://romainjacquet.github.io/the-limitation-of-mounting-google-drive-with-nautilus.html"&gt;previous blog post&lt;/a&gt;, using 
 the built-in feature of gnome to mount Google drive have some serious limitations. Here
 I describe all the solutions I have tried. &lt;/p&gt;
 &lt;h1&gt;Context&lt;/h1&gt;
@@ -19,10 +46,10 @@ And there is a lot of case when apps don't use the dialog of the file manager. E
 &lt;/ul&gt;
 &lt;p&gt;&lt;img alt="nautilus_config" src="https://romainjacquet.github.io/images/kio-gio-app.png"&gt;&lt;/p&gt;
 &lt;p&gt;To be clear if your application doesn't linked on GIO or KIO, it don't work.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$ ldd &lt;span class="k"&gt;$(&lt;/span&gt;which gnumeric&lt;span class="k"&gt;)&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt;grep gio
-    libgio-2.0.so.0 &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; /usr/lib/x86_64-linux-gnu/libgio-2.0.so.0 &lt;span class="o"&gt;(&lt;/span&gt;0x00007f6fffcb7000&lt;span class="o"&gt;)&lt;/span&gt;
-$ ldd &lt;span class="k"&gt;$(&lt;/span&gt;which vim&lt;span class="k"&gt;)&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt;grep gio
-$ 
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$&lt;span class="w"&gt; &lt;/span&gt;ldd&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;which&lt;span class="w"&gt; &lt;/span&gt;gnumeric&lt;span class="k"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;|&lt;/span&gt;grep&lt;span class="w"&gt; &lt;/span&gt;gio
+&lt;span class="w"&gt;    &lt;/span&gt;libgio-2.0.so.0&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&amp;gt;&lt;span class="w"&gt; &lt;/span&gt;/usr/lib/x86_64-linux-gnu/libgio-2.0.so.0&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;0x00007f6fffcb7000&lt;span class="o"&gt;)&lt;/span&gt;
+$&lt;span class="w"&gt; &lt;/span&gt;ldd&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;which&lt;span class="w"&gt; &lt;/span&gt;vim&lt;span class="k"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;|&lt;/span&gt;grep&lt;span class="w"&gt; &lt;/span&gt;gio
+$&lt;span class="w"&gt; &lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;: the google drive slave for KIO does not work with Ubuntu 20, 
@@ -87,13 +114,13 @@ The &lt;a href="https://developer.gnome.org/gio/stable/gio.html"&gt;gio command&
 to manipulate the filesystem from the command line using the gio primitives. Comparing the output
 of gio's commands to the standard unix commands (ls, cat) is meaningfull. 
 We can understand how gio transform I/O to display the content in nautilus.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$ ls 
-17lXzXGnhfA89w39PitPdtblkoOW8t8rA  1HnbYPHAwbchlu1pCMnRS-qxRQtfs4ULO  1LJ9W3ZzmfVMyzE09abGOIswXwdjwI8x2
-$ gio list -d
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$&lt;span class="w"&gt; &lt;/span&gt;ls&lt;span class="w"&gt; &lt;/span&gt;
+17lXzXGnhfA89w39PitPdtblkoOW8t8rA&lt;span class="w"&gt;  &lt;/span&gt;1HnbYPHAwbchlu1pCMnRS-qxRQtfs4ULO&lt;span class="w"&gt;  &lt;/span&gt;1LJ9W3ZzmfVMyzE09abGOIswXwdjwI8x2
+$&lt;span class="w"&gt; &lt;/span&gt;gio&lt;span class="w"&gt; &lt;/span&gt;list&lt;span class="w"&gt; &lt;/span&gt;-d
 mytext2.txt
 kpwd
 simpsons
-$ gio cat mytext2.txt
+$&lt;span class="w"&gt; &lt;/span&gt;gio&lt;span class="w"&gt; &lt;/span&gt;cat&lt;span class="w"&gt; &lt;/span&gt;mytext2.txt
 toto
 titi
 tata

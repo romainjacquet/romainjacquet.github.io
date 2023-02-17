@@ -122,7 +122,7 @@ query it using an REST API or using maven command: <code>mvn</code>.</p>
 <p>Here is the command that I use to upload non-java artifact. In case
 of error nexus will answer with an HTTP header containing a string describing the problem.
 It is <strong>easy to use and easy to troobleshoot</strong>.</p>
-<div class="highlight"><pre><span></span><code>curl -v --upload-file vim-enhanced-7.4.873-2.el7.psychotic.x86_64.rpm.html -u foo:bar http://localhost:8081/repository/MyRpms/vim-enhanced-7.4.873-2.el7.psychotic.x86_64.rpm.html
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-v<span class="w"> </span>--upload-file<span class="w"> </span>vim-enhanced-7.4.873-2.el7.psychotic.x86_64.rpm.html<span class="w"> </span>-u<span class="w"> </span>foo:bar<span class="w"> </span>http://localhost:8081/repository/MyRpms/vim-enhanced-7.4.873-2.el7.psychotic.x86_64.rpm.html
 </code></pre></div>
 
 <p>This the way I recommand to upload on nexus.</p>
@@ -130,33 +130,33 @@ It is <strong>easy to use and easy to troobleshoot</strong>.</p>
 <p>Here is the way to do the same thing wih maven. Maven uses plugin to do everything, it is a plugin execution framework.
 To deploy in a similar way of curl we have to use the goal <code>deploy-file</code> 
 of the <a href="https://maven.apache.org/plugins/maven-deploy-plugin/">deploy</a> plugin.</p>
-<div class="highlight"><pre><span></span><code>mvn deploy:deploy-file --settings<span class="o">=</span><span class="nv">$PWD</span>/settings.xml -Dfile<span class="o">=</span>vim-common-7.4.629-6.el7.x86_64.rpm -DgroupId<span class="o">=</span>molnar.vim -DartifactId<span class="o">=</span>vimrpm -Dversion<span class="o">=</span><span class="m">1</span>.0 -DrepositoryId<span class="o">=</span>localnexus -Durl<span class="o">=</span>http://localhost:8081/repository/MyRpms/ 
-WARNING: An illegal reflective access operation has occurred
-WARNING: Illegal reflective access by com.google.inject.internal.cglib.core.<span class="nv">$ReflectUtils$1</span> <span class="o">(</span>file:/usr/share/maven/lib/guice.jar<span class="o">)</span> to method java.lang.ClassLoader.defineClass<span class="o">(</span>java.lang.String,byte<span class="o">[]</span>,int,int,java.security.ProtectionDomain<span class="o">)</span>
-WARNING: Please consider reporting this to the maintainers of com.google.inject.internal.cglib.core.<span class="nv">$ReflectUtils$1</span>
-WARNING: Use --illegal-access<span class="o">=</span>warn to <span class="nb">enable</span> warnings of further illegal reflective access operations
-WARNING: All illegal access operations will be denied <span class="k">in</span> a future release
-<span class="o">[</span>INFO<span class="o">]</span> Scanning <span class="k">for</span> projects...
-<span class="o">[</span>INFO<span class="o">]</span> 
-<span class="o">[</span>INFO<span class="o">]</span> ------------------&lt; org.apache.maven:standalone-pom &gt;-------------------
-<span class="o">[</span>INFO<span class="o">]</span> Building Maven Stub Project <span class="o">(</span>No POM<span class="o">)</span> <span class="m">1</span>
-<span class="o">[</span>INFO<span class="o">]</span> --------------------------------<span class="o">[</span> pom <span class="o">]</span>---------------------------------
-<span class="o">[</span>INFO<span class="o">]</span> 
-<span class="o">[</span>INFO<span class="o">]</span> --- maven-deploy-plugin:2.7:deploy-file <span class="o">(</span>default-cli<span class="o">)</span> @ standalone-pom ---
-Uploading to localnexus: http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/1.0/vimrpm-1.0.rpm
-Uploaded to localnexus: http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/1.0/vimrpm-1.0.rpm <span class="o">(</span><span class="m">6</span>.2 MB at <span class="m">17</span> MB/s<span class="o">)</span>
-Uploading to localnexus: http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/1.0/vimrpm-1.0.pom
-Uploaded to localnexus: http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/1.0/vimrpm-1.0.pom <span class="o">(</span><span class="m">416</span> B at <span class="m">5</span>.5 kB/s<span class="o">)</span>
-Downloading from localnexus: http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/maven-metadata.xml
-Downloaded from localnexus: http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/maven-metadata.xml <span class="o">(</span><span class="m">292</span> B at <span class="m">7</span>.5 kB/s<span class="o">)</span>
-Uploading to localnexus: http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/maven-metadata.xml
-Uploaded to localnexus: http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/maven-metadata.xml <span class="o">(</span><span class="m">292</span> B at <span class="m">4</span>.8 kB/s<span class="o">)</span>
-<span class="o">[</span>INFO<span class="o">]</span> ------------------------------------------------------------------------
-<span class="o">[</span>INFO<span class="o">]</span> BUILD SUCCESS
-<span class="o">[</span>INFO<span class="o">]</span> ------------------------------------------------------------------------
-<span class="o">[</span>INFO<span class="o">]</span> Total time:  <span class="m">1</span>.007 s
-<span class="o">[</span>INFO<span class="o">]</span> Finished at: <span class="m">2020</span>-02-24T22:15:08+01:00
-<span class="o">[</span>INFO<span class="o">]</span> ------------------------------------------------------------------------
+<div class="highlight"><pre><span></span><code>mvn<span class="w"> </span>deploy:deploy-file<span class="w"> </span>--settings<span class="o">=</span><span class="nv">$PWD</span>/settings.xml<span class="w"> </span>-Dfile<span class="o">=</span>vim-common-7.4.629-6.el7.x86_64.rpm<span class="w"> </span>-DgroupId<span class="o">=</span>molnar.vim<span class="w"> </span>-DartifactId<span class="o">=</span>vimrpm<span class="w"> </span>-Dversion<span class="o">=</span><span class="m">1</span>.0<span class="w"> </span>-DrepositoryId<span class="o">=</span>localnexus<span class="w"> </span>-Durl<span class="o">=</span>http://localhost:8081/repository/MyRpms/<span class="w"> </span>
+WARNING:<span class="w"> </span>An<span class="w"> </span>illegal<span class="w"> </span>reflective<span class="w"> </span>access<span class="w"> </span>operation<span class="w"> </span>has<span class="w"> </span>occurred
+WARNING:<span class="w"> </span>Illegal<span class="w"> </span>reflective<span class="w"> </span>access<span class="w"> </span>by<span class="w"> </span>com.google.inject.internal.cglib.core.<span class="nv">$ReflectUtils$1</span><span class="w"> </span><span class="o">(</span>file:/usr/share/maven/lib/guice.jar<span class="o">)</span><span class="w"> </span>to<span class="w"> </span>method<span class="w"> </span>java.lang.ClassLoader.defineClass<span class="o">(</span>java.lang.String,byte<span class="o">[]</span>,int,int,java.security.ProtectionDomain<span class="o">)</span>
+WARNING:<span class="w"> </span>Please<span class="w"> </span>consider<span class="w"> </span>reporting<span class="w"> </span>this<span class="w"> </span>to<span class="w"> </span>the<span class="w"> </span>maintainers<span class="w"> </span>of<span class="w"> </span>com.google.inject.internal.cglib.core.<span class="nv">$ReflectUtils$1</span>
+WARNING:<span class="w"> </span>Use<span class="w"> </span>--illegal-access<span class="o">=</span>warn<span class="w"> </span>to<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>warnings<span class="w"> </span>of<span class="w"> </span>further<span class="w"> </span>illegal<span class="w"> </span>reflective<span class="w"> </span>access<span class="w"> </span>operations
+WARNING:<span class="w"> </span>All<span class="w"> </span>illegal<span class="w"> </span>access<span class="w"> </span>operations<span class="w"> </span>will<span class="w"> </span>be<span class="w"> </span>denied<span class="w"> </span><span class="k">in</span><span class="w"> </span>a<span class="w"> </span>future<span class="w"> </span>release
+<span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>Scanning<span class="w"> </span><span class="k">for</span><span class="w"> </span>projects...
+<span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>
+<span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>------------------&lt;<span class="w"> </span>org.apache.maven:standalone-pom<span class="w"> </span>&gt;-------------------
+<span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>Building<span class="w"> </span>Maven<span class="w"> </span>Stub<span class="w"> </span>Project<span class="w"> </span><span class="o">(</span>No<span class="w"> </span>POM<span class="o">)</span><span class="w"> </span><span class="m">1</span>
+<span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>--------------------------------<span class="o">[</span><span class="w"> </span>pom<span class="w"> </span><span class="o">]</span>---------------------------------
+<span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>
+<span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>---<span class="w"> </span>maven-deploy-plugin:2.7:deploy-file<span class="w"> </span><span class="o">(</span>default-cli<span class="o">)</span><span class="w"> </span>@<span class="w"> </span>standalone-pom<span class="w"> </span>---
+Uploading<span class="w"> </span>to<span class="w"> </span>localnexus:<span class="w"> </span>http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/1.0/vimrpm-1.0.rpm
+Uploaded<span class="w"> </span>to<span class="w"> </span>localnexus:<span class="w"> </span>http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/1.0/vimrpm-1.0.rpm<span class="w"> </span><span class="o">(</span><span class="m">6</span>.2<span class="w"> </span>MB<span class="w"> </span>at<span class="w"> </span><span class="m">17</span><span class="w"> </span>MB/s<span class="o">)</span>
+Uploading<span class="w"> </span>to<span class="w"> </span>localnexus:<span class="w"> </span>http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/1.0/vimrpm-1.0.pom
+Uploaded<span class="w"> </span>to<span class="w"> </span>localnexus:<span class="w"> </span>http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/1.0/vimrpm-1.0.pom<span class="w"> </span><span class="o">(</span><span class="m">416</span><span class="w"> </span>B<span class="w"> </span>at<span class="w"> </span><span class="m">5</span>.5<span class="w"> </span>kB/s<span class="o">)</span>
+Downloading<span class="w"> </span>from<span class="w"> </span>localnexus:<span class="w"> </span>http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/maven-metadata.xml
+Downloaded<span class="w"> </span>from<span class="w"> </span>localnexus:<span class="w"> </span>http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/maven-metadata.xml<span class="w"> </span><span class="o">(</span><span class="m">292</span><span class="w"> </span>B<span class="w"> </span>at<span class="w"> </span><span class="m">7</span>.5<span class="w"> </span>kB/s<span class="o">)</span>
+Uploading<span class="w"> </span>to<span class="w"> </span>localnexus:<span class="w"> </span>http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/maven-metadata.xml
+Uploaded<span class="w"> </span>to<span class="w"> </span>localnexus:<span class="w"> </span>http://localhost:8081/repository/MyRpms/molnar/vim/vimrpm/maven-metadata.xml<span class="w"> </span><span class="o">(</span><span class="m">292</span><span class="w"> </span>B<span class="w"> </span>at<span class="w"> </span><span class="m">4</span>.8<span class="w"> </span>kB/s<span class="o">)</span>
+<span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>------------------------------------------------------------------------
+<span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>BUILD<span class="w"> </span>SUCCESS
+<span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>------------------------------------------------------------------------
+<span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>Total<span class="w"> </span>time:<span class="w">  </span><span class="m">1</span>.007<span class="w"> </span>s
+<span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>Finished<span class="w"> </span>at:<span class="w"> </span><span class="m">2020</span>-02-24T22:15:08+01:00
+<span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>------------------------------------------------------------------------
 </code></pre></div>
 
 <p>Few remarks about this command:</p>

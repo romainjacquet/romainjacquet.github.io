@@ -123,10 +123,10 @@ And there is a lot of case when apps don't use the dialog of the file manager. E
 </ul>
 <p><img alt="nautilus_config" src="https://romainjacquet.github.io/images/kio-gio-app.png"></p>
 <p>To be clear if your application doesn't linked on GIO or KIO, it don't work.</p>
-<div class="highlight"><pre><span></span><code>$ ldd <span class="k">$(</span>which gnumeric<span class="k">)</span> <span class="p">|</span>grep gio
-    libgio-2.0.so.0 <span class="o">=</span>&gt; /usr/lib/x86_64-linux-gnu/libgio-2.0.so.0 <span class="o">(</span>0x00007f6fffcb7000<span class="o">)</span>
-$ ldd <span class="k">$(</span>which vim<span class="k">)</span> <span class="p">|</span>grep gio
-$ 
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>ldd<span class="w"> </span><span class="k">$(</span>which<span class="w"> </span>gnumeric<span class="k">)</span><span class="w"> </span><span class="p">|</span>grep<span class="w"> </span>gio
+<span class="w">    </span>libgio-2.0.so.0<span class="w"> </span><span class="o">=</span>&gt;<span class="w"> </span>/usr/lib/x86_64-linux-gnu/libgio-2.0.so.0<span class="w"> </span><span class="o">(</span>0x00007f6fffcb7000<span class="o">)</span>
+$<span class="w"> </span>ldd<span class="w"> </span><span class="k">$(</span>which<span class="w"> </span>vim<span class="k">)</span><span class="w"> </span><span class="p">|</span>grep<span class="w"> </span>gio
+$<span class="w"> </span>
 </code></pre></div>
 
 <p><strong>Warning</strong>: the google drive slave for KIO does not work with Ubuntu 20, 

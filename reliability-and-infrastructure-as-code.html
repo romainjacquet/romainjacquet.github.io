@@ -113,18 +113,18 @@ The ansible playbook failed with this type of errors:</p>
 <li>Impossible to download some jenkins' plugin. <code>Failed to connect to updates.jenkins-ci.org at port 443: [Errno 104]</code></li>
 </ul>
 <p>It is a network problem that could be reproduced by a simple oneliner:</p>
-<div class="highlight"><pre><span></span><code><span class="o">[</span>root@vmt-jenkins ~<span class="o">]</span><span class="c1"># LANG= curl -XGET -v -L https://jenkins-ci.org/redhat/jenkins-ci.org.key</span>
-* About to connect<span class="o">()</span> to jenkins-ci.org port <span class="m">443</span> <span class="o">(</span><span class="c1">#0)</span>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>root@vmt-jenkins<span class="w"> </span>~<span class="o">]</span><span class="c1"># LANG= curl -XGET -v -L https://jenkins-ci.org/redhat/jenkins-ci.org.key</span>
+*<span class="w"> </span>About<span class="w"> </span>to<span class="w"> </span>connect<span class="o">()</span><span class="w"> </span>to<span class="w"> </span>jenkins-ci.org<span class="w"> </span>port<span class="w"> </span><span class="m">443</span><span class="w"> </span><span class="o">(</span><span class="c1">#0)</span>
 <span class="o">[</span>...<span class="o">]</span>
-* Ignoring the response-body
-* Connection <span class="c1">#2 to host jenkins.io left intact</span>
-* Issue another request to this URL: <span class="s1">&#39;https://pkg.jenkins.io/redhat/jenkins-ci.org.key&#39;</span>
-* About to connect<span class="o">()</span> to pkg.jenkins.io port <span class="m">443</span> <span class="o">(</span><span class="c1">#3)</span>
-*   Trying <span class="m">52</span>.202.51.185...
-* Connection timed out
-* Failed connect to pkg.jenkins.io:443<span class="p">;</span> Connection timed out
-* Closing connection <span class="m">3</span>
-curl: <span class="o">(</span><span class="m">7</span><span class="o">)</span> Failed connect to pkg.jenkins.io:443<span class="p">;</span> Connection timed out
+*<span class="w"> </span>Ignoring<span class="w"> </span>the<span class="w"> </span>response-body
+*<span class="w"> </span>Connection<span class="w"> </span><span class="c1">#2 to host jenkins.io left intact</span>
+*<span class="w"> </span>Issue<span class="w"> </span>another<span class="w"> </span>request<span class="w"> </span>to<span class="w"> </span>this<span class="w"> </span>URL:<span class="w"> </span><span class="s1">&#39;https://pkg.jenkins.io/redhat/jenkins-ci.org.key&#39;</span>
+*<span class="w"> </span>About<span class="w"> </span>to<span class="w"> </span>connect<span class="o">()</span><span class="w"> </span>to<span class="w"> </span>pkg.jenkins.io<span class="w"> </span>port<span class="w"> </span><span class="m">443</span><span class="w"> </span><span class="o">(</span><span class="c1">#3)</span>
+*<span class="w">   </span>Trying<span class="w"> </span><span class="m">52</span>.202.51.185...
+*<span class="w"> </span>Connection<span class="w"> </span>timed<span class="w"> </span>out
+*<span class="w"> </span>Failed<span class="w"> </span>connect<span class="w"> </span>to<span class="w"> </span>pkg.jenkins.io:443<span class="p">;</span><span class="w"> </span>Connection<span class="w"> </span>timed<span class="w"> </span>out
+*<span class="w"> </span>Closing<span class="w"> </span>connection<span class="w"> </span><span class="m">3</span>
+curl:<span class="w"> </span><span class="o">(</span><span class="m">7</span><span class="o">)</span><span class="w"> </span>Failed<span class="w"> </span>connect<span class="w"> </span>to<span class="w"> </span>pkg.jenkins.io:443<span class="p">;</span><span class="w"> </span>Connection<span class="w"> </span>timed<span class="w"> </span>out
 </code></pre></div>
 
 <p>I first believed it was a network issue on our company network. But same error occured on

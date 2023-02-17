@@ -107,24 +107,24 @@
 from different networks or different countries. My usage of Tor is very rare. The last 
 time I try, TOR have never started. To troubleshoot I ended up to launch it from
  the console and same problem occurs.</p>
-<div class="highlight"><pre><span></span><code>rja@SBox:~/tmp/$ torbrowser-launcher 
-Gtk-Message: <span class="m">15</span>:56:44.321: Failed to load module <span class="s2">&quot;canberra-gtk-module&quot;</span>
-Tor Browser Launcher
-By Micah Lee, licensed under MIT
-version <span class="m">0</span>.2.9
+<div class="highlight"><pre><span></span><code>rja@SBox:~/tmp/$<span class="w"> </span>torbrowser-launcher<span class="w"> </span>
+Gtk-Message:<span class="w"> </span><span class="m">15</span>:56:44.321:<span class="w"> </span>Failed<span class="w"> </span>to<span class="w"> </span>load<span class="w"> </span>module<span class="w"> </span><span class="s2">&quot;canberra-gtk-module&quot;</span>
+Tor<span class="w"> </span>Browser<span class="w"> </span>Launcher
+By<span class="w"> </span>Micah<span class="w"> </span>Lee,<span class="w"> </span>licensed<span class="w"> </span>under<span class="w"> </span>MIT
+version<span class="w"> </span><span class="m">0</span>.2.9
 https://github.com/micahflee/torbrowser-launcher
-Refreshing <span class="nb">local</span> keyring...
+Refreshing<span class="w"> </span><span class="nb">local</span><span class="w"> </span>keyring...
 </code></pre></div>
 
 <h1>diagnosis</h1>
 <p>What is this thing? Local keyring? I found more details with the pstree and ps commands.</p>
-<div class="highlight"><pre><span></span><code>rja@SBox:~/tmp/$ pstree -l -p <span class="m">4517</span>
+<div class="highlight"><pre><span></span><code>rja@SBox:~/tmp/$<span class="w"> </span>pstree<span class="w"> </span>-l<span class="w"> </span>-p<span class="w"> </span><span class="m">4517</span>
 bash<span class="o">(</span><span class="m">4517</span><span class="o">)</span>───torbrowser-laun<span class="o">(</span><span class="m">6295</span><span class="o">)</span>───gpg<span class="o">(</span><span class="m">6300</span><span class="o">)</span>
-rja@SBox:~/tmp/$ ps auwx <span class="p">|</span>grep gpg
-rja  <span class="m">3941</span>  <span class="m">0</span>.0  <span class="m">0</span>.0 <span class="m">100472</span>  <span class="m">3656</span> ?        SLs  <span class="m">15</span>:27   <span class="m">0</span>:00 /usr/bin/gpg-agent --supervised
-rja  <span class="m">4974</span>  <span class="m">0</span>.0  <span class="m">0</span>.1  <span class="m">54808</span> <span class="m">16280</span> tty2     SL+  <span class="m">15</span>:31   <span class="m">0</span>:00 /usr/bin/gpg --status-fd <span class="m">2</span> --homedir /home/rja/.local/share/torbrowser/gnupg_homedir --keyserver hkps://hkps.pool.sks-keyservers.net --keyserver-options ca-cert-file /usr/share/torbrowser-launcher/sks-keyservers.netCA.pem include-revoked no-honor-keyserver-url no-honor-pka-record --refresh-keys
-rja  <span class="m">5075</span>  <span class="m">0</span>.0  <span class="m">0</span>.1  <span class="m">54104</span> <span class="m">15660</span> tty2     SL+  <span class="m">15</span>:34   <span class="m">0</span>:00 /usr/bin/gpg --status-fd <span class="m">2</span> --homedir /home/rja/.local/share/torbrowser/gnupg_homedir --keyserver hkps://hkps.pool.sks-keyservers.net --keyserver-options ca-cert-file /usr/share/torbrowser-launcher/sks-keyservers.netCA.pem include-revoked no-honor-keyserver-url no-honor-pka-record --refresh-keys
-rja  <span class="m">6300</span>  <span class="m">0</span>.0  <span class="m">0</span>.0  <span class="m">46584</span>  <span class="m">8180</span> pts/0    SL+  <span class="m">15</span>:56   <span class="m">0</span>:00 /usr/bin/gpg --status-fd <span class="m">2</span> --homedir /home/rja/.local/share/torbrowser/gnupg_homedir --keyserver hkps://hkps.pool.sks-keyservers.net --keyserver-options ca-cert-file /usr/share/torbrowser-launcher/sks-keyservers.netCA.pem include-revoked no-honor-keyserver-url no-honor-pka-record --refresh-keys
+rja@SBox:~/tmp/$<span class="w"> </span>ps<span class="w"> </span>auwx<span class="w"> </span><span class="p">|</span>grep<span class="w"> </span>gpg
+rja<span class="w">  </span><span class="m">3941</span><span class="w">  </span><span class="m">0</span>.0<span class="w">  </span><span class="m">0</span>.0<span class="w"> </span><span class="m">100472</span><span class="w">  </span><span class="m">3656</span><span class="w"> </span>?<span class="w">        </span>SLs<span class="w">  </span><span class="m">15</span>:27<span class="w">   </span><span class="m">0</span>:00<span class="w"> </span>/usr/bin/gpg-agent<span class="w"> </span>--supervised
+rja<span class="w">  </span><span class="m">4974</span><span class="w">  </span><span class="m">0</span>.0<span class="w">  </span><span class="m">0</span>.1<span class="w">  </span><span class="m">54808</span><span class="w"> </span><span class="m">16280</span><span class="w"> </span>tty2<span class="w">     </span>SL+<span class="w">  </span><span class="m">15</span>:31<span class="w">   </span><span class="m">0</span>:00<span class="w"> </span>/usr/bin/gpg<span class="w"> </span>--status-fd<span class="w"> </span><span class="m">2</span><span class="w"> </span>--homedir<span class="w"> </span>/home/rja/.local/share/torbrowser/gnupg_homedir<span class="w"> </span>--keyserver<span class="w"> </span>hkps://hkps.pool.sks-keyservers.net<span class="w"> </span>--keyserver-options<span class="w"> </span>ca-cert-file<span class="w"> </span>/usr/share/torbrowser-launcher/sks-keyservers.netCA.pem<span class="w"> </span>include-revoked<span class="w"> </span>no-honor-keyserver-url<span class="w"> </span>no-honor-pka-record<span class="w"> </span>--refresh-keys
+rja<span class="w">  </span><span class="m">5075</span><span class="w">  </span><span class="m">0</span>.0<span class="w">  </span><span class="m">0</span>.1<span class="w">  </span><span class="m">54104</span><span class="w"> </span><span class="m">15660</span><span class="w"> </span>tty2<span class="w">     </span>SL+<span class="w">  </span><span class="m">15</span>:34<span class="w">   </span><span class="m">0</span>:00<span class="w"> </span>/usr/bin/gpg<span class="w"> </span>--status-fd<span class="w"> </span><span class="m">2</span><span class="w"> </span>--homedir<span class="w"> </span>/home/rja/.local/share/torbrowser/gnupg_homedir<span class="w"> </span>--keyserver<span class="w"> </span>hkps://hkps.pool.sks-keyservers.net<span class="w"> </span>--keyserver-options<span class="w"> </span>ca-cert-file<span class="w"> </span>/usr/share/torbrowser-launcher/sks-keyservers.netCA.pem<span class="w"> </span>include-revoked<span class="w"> </span>no-honor-keyserver-url<span class="w"> </span>no-honor-pka-record<span class="w"> </span>--refresh-keys
+rja<span class="w">  </span><span class="m">6300</span><span class="w">  </span><span class="m">0</span>.0<span class="w">  </span><span class="m">0</span>.0<span class="w">  </span><span class="m">46584</span><span class="w">  </span><span class="m">8180</span><span class="w"> </span>pts/0<span class="w">    </span>SL+<span class="w">  </span><span class="m">15</span>:56<span class="w">   </span><span class="m">0</span>:00<span class="w"> </span>/usr/bin/gpg<span class="w"> </span>--status-fd<span class="w"> </span><span class="m">2</span><span class="w"> </span>--homedir<span class="w"> </span>/home/rja/.local/share/torbrowser/gnupg_homedir<span class="w"> </span>--keyserver<span class="w"> </span>hkps://hkps.pool.sks-keyservers.net<span class="w"> </span>--keyserver-options<span class="w"> </span>ca-cert-file<span class="w"> </span>/usr/share/torbrowser-launcher/sks-keyservers.netCA.pem<span class="w"> </span>include-revoked<span class="w"> </span>no-honor-keyserver-url<span class="w"> </span>no-honor-pka-record<span class="w"> </span>--refresh-keys
 </code></pre></div>
 
 <p>We can see that the <a href="https://gnupg.org/documentation/manpage.html">GPG</a> command is used to refresh 
@@ -133,30 +133,30 @@ Multiple GPG commands come from multiple Tor browser launching. Because
 it doesn't make sense to run more than one gpg command at the same time on the same keyring.<br>
 Gpg told us that the key is associated with the email torbrowser@torproject.org
 and that key is still valid.</p>
-<div class="highlight"><pre><span></span><code>$ <span class="nv">LANG</span><span class="o">=</span> gpg --homedir /home/rja/.local/share/torbrowser/gnupg_homedir --list-keys
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span><span class="nv">LANG</span><span class="o">=</span><span class="w"> </span>gpg<span class="w"> </span>--homedir<span class="w"> </span>/home/rja/.local/share/torbrowser/gnupg_homedir<span class="w"> </span>--list-keys
 /home/rjacquet/.local/share/torbrowser/gnupg_homedir/pubring.kbx
 ----------------------------------------------------------------
-pub   rsa4096 <span class="m">2014</span>-12-15 <span class="o">[</span>C<span class="o">]</span> <span class="o">[</span>expires: <span class="m">2020</span>-08-24<span class="o">]</span>
-      EF6E286DDA85EA2A4BA7DE684E2C6E8793298290
-uid           <span class="o">[</span> unknown<span class="o">]</span> Tor Browser Developers <span class="o">(</span>signing key<span class="o">)</span> &lt;torbrowser@torproject.org&gt;
-sub   rsa4096 <span class="m">2018</span>-05-26 <span class="o">[</span>S<span class="o">]</span> <span class="o">[</span>expires: <span class="m">2020</span>-09-12<span class="o">]</span>
+pub<span class="w">   </span>rsa4096<span class="w"> </span><span class="m">2014</span>-12-15<span class="w"> </span><span class="o">[</span>C<span class="o">]</span><span class="w"> </span><span class="o">[</span>expires:<span class="w"> </span><span class="m">2020</span>-08-24<span class="o">]</span>
+<span class="w">      </span>EF6E286DDA85EA2A4BA7DE684E2C6E8793298290
+uid<span class="w">           </span><span class="o">[</span><span class="w"> </span>unknown<span class="o">]</span><span class="w"> </span>Tor<span class="w"> </span>Browser<span class="w"> </span>Developers<span class="w"> </span><span class="o">(</span>signing<span class="w"> </span>key<span class="o">)</span><span class="w"> </span>&lt;torbrowser@torproject.org&gt;
+sub<span class="w">   </span>rsa4096<span class="w"> </span><span class="m">2018</span>-05-26<span class="w"> </span><span class="o">[</span>S<span class="o">]</span><span class="w"> </span><span class="o">[</span>expires:<span class="w"> </span><span class="m">2020</span>-09-12<span class="o">]</span>
 </code></pre></div>
 
 <p>So what's happenning? I get the clue when I ran the command in  the console:</p>
-<div class="highlight"><pre><span></span><code>$ <span class="nv">LANG</span><span class="o">=</span> /usr/bin/gpg --status-fd <span class="m">2</span> --homedir /home/rjacquet/.local/share/torbrowser/gnupg_homedir --keyserver hkps://hkps.pool.sks-keyservers.net --keyserver-options ca-cert-file /usr/share/torbrowser-launcher/sks-keyservers.netCA.pem include-revoked no-honor-keyserver-url no-honor-pka-record --refresh-keys
-gpg: keyserver option <span class="s1">&#39;ca-cert-file&#39;</span> is obsolete<span class="p">;</span> please use <span class="s1">&#39;hkp-cacert&#39;</span> <span class="k">in</span> dirmngr.conf
-gpg: Note: <span class="s1">&#39;--refresh-keys&#39;</span> is not considered an option
-gpg: WARNING: no <span class="nb">command</span> supplied.  Trying to guess what you mean ...
-usage: gpg <span class="o">[</span>options<span class="o">]</span> <span class="o">[</span>filename<span class="o">]</span>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span><span class="nv">LANG</span><span class="o">=</span><span class="w"> </span>/usr/bin/gpg<span class="w"> </span>--status-fd<span class="w"> </span><span class="m">2</span><span class="w"> </span>--homedir<span class="w"> </span>/home/rjacquet/.local/share/torbrowser/gnupg_homedir<span class="w"> </span>--keyserver<span class="w"> </span>hkps://hkps.pool.sks-keyservers.net<span class="w"> </span>--keyserver-options<span class="w"> </span>ca-cert-file<span class="w"> </span>/usr/share/torbrowser-launcher/sks-keyservers.netCA.pem<span class="w"> </span>include-revoked<span class="w"> </span>no-honor-keyserver-url<span class="w"> </span>no-honor-pka-record<span class="w"> </span>--refresh-keys
+gpg:<span class="w"> </span>keyserver<span class="w"> </span>option<span class="w"> </span><span class="s1">&#39;ca-cert-file&#39;</span><span class="w"> </span>is<span class="w"> </span>obsolete<span class="p">;</span><span class="w"> </span>please<span class="w"> </span>use<span class="w"> </span><span class="s1">&#39;hkp-cacert&#39;</span><span class="w"> </span><span class="k">in</span><span class="w"> </span>dirmngr.conf
+gpg:<span class="w"> </span>Note:<span class="w"> </span><span class="s1">&#39;--refresh-keys&#39;</span><span class="w"> </span>is<span class="w"> </span>not<span class="w"> </span>considered<span class="w"> </span>an<span class="w"> </span>option
+gpg:<span class="w"> </span>WARNING:<span class="w"> </span>no<span class="w"> </span><span class="nb">command</span><span class="w"> </span>supplied.<span class="w">  </span>Trying<span class="w"> </span>to<span class="w"> </span>guess<span class="w"> </span>what<span class="w"> </span>you<span class="w"> </span>mean<span class="w"> </span>...
+usage:<span class="w"> </span>gpg<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="o">[</span>filename<span class="o">]</span>
 </code></pre></div>
 
 <p>The syntax of the command is <em>not correct</em>! Problably the gpg command have been updated
 and it broke the torbrowser-launcher.</p>
 <h1>Looking for a solution</h1>
 <p>I try to find a potential update but nothing match gpg or tor.</p>
-<div class="highlight"><pre><span></span><code>apt list --upgradable <span class="p">|</span>egrep <span class="s1">&#39;gpg|tor&#39;</span>
+<div class="highlight"><pre><span></span><code>apt<span class="w"> </span>list<span class="w"> </span>--upgradable<span class="w"> </span><span class="p">|</span>egrep<span class="w"> </span><span class="s1">&#39;gpg|tor&#39;</span>
 
-WARNING: apt does not have a stable CLI interface. Use with caution <span class="k">in</span> scripts.
+WARNING:<span class="w"> </span>apt<span class="w"> </span>does<span class="w"> </span>not<span class="w"> </span>have<span class="w"> </span>a<span class="w"> </span>stable<span class="w"> </span>CLI<span class="w"> </span>interface.<span class="w"> </span>Use<span class="w"> </span>with<span class="w"> </span>caution<span class="w"> </span><span class="k">in</span><span class="w"> </span>scripts.
 </code></pre></div>
 
 <p>I decided to fix it in the source code.
@@ -173,10 +173,10 @@ around line 220:</p>
 
 <p>I decided to remove the keyserver options. There are really unclear for me. I also
 replace the server url like it is in the <a href="https://github.com/micahflee/torbrowser-launcher/blob/develop/torbrowser_launcher/common.py">last version of code source</a>.</p>
-<div class="highlight"><pre><span></span><code>$  <span class="nv">LANG</span><span class="o">=</span> gpg --homedir . --keyserver hkps://keys.openpgp.org --refresh-keys
-gpg: refreshing <span class="m">1</span> key from hkps://keys.openpgp.org
-gpg: key 4E2C6E8793298290: no user ID
-gpg: Total number processed: <span class="m">1</span>
+<div class="highlight"><pre><span></span><code>$<span class="w">  </span><span class="nv">LANG</span><span class="o">=</span><span class="w"> </span>gpg<span class="w"> </span>--homedir<span class="w"> </span>.<span class="w"> </span>--keyserver<span class="w"> </span>hkps://keys.openpgp.org<span class="w"> </span>--refresh-keys
+gpg:<span class="w"> </span>refreshing<span class="w"> </span><span class="m">1</span><span class="w"> </span>key<span class="w"> </span>from<span class="w"> </span>hkps://keys.openpgp.org
+gpg:<span class="w"> </span>key<span class="w"> </span>4E2C6E8793298290:<span class="w"> </span>no<span class="w"> </span>user<span class="w"> </span>ID
+gpg:<span class="w"> </span>Total<span class="w"> </span>number<span class="w"> </span>processed:<span class="w"> </span><span class="m">1</span>
 </code></pre></div>
 
 <p>The victory is near... 
