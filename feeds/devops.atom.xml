@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Deep in the system - devops</title><link href="https://romainjacquet.github.io/" rel="alternate"></link><link href="https://romainjacquet.github.io/feeds/devops.atom.xml" rel="self"></link><id>https://romainjacquet.github.io/</id><updated>2024-11-15T10:21:00+01:00</updated><entry><title>Validating applications with mail and https services on kubernetes</title><link href="https://romainjacquet.github.io/validating-applications-with-mail-and-https-services-on-kubernetes.html" rel="alternate"></link><published>2024-11-15T10:21:00+01:00</published><updated>2024-11-15T10:21:00+01:00</updated><author><name>Romain JACQUET</name></author><id>tag:romainjacquet.github.io,2024-11-15:/validating-applications-with-mail-and-https-services-on-kubernetes.html</id><summary type="html">&lt;p&gt;Using mkcert and mailhog to validate applications&lt;/p&gt;</summary><content type="html">&lt;p&gt;More than ten years ago, I was in charge of maintaining the web site www.isis-cnes.fr (owned by the spatial french agency).
+It was a frontend to sell satellites images and the ordering workflow for the images was a little bit complex. It consist in a lot of
+steps, interacting with different users, including waiting for email notifications.
+Thus testing this application was painfull. I finally implemented a bypass in the mail system. Instead
+of being sent by the &lt;a href="https://en.wikipedia.org/wiki/Message_transfer_agent"&gt;MTA&lt;/a&gt;, mails could be also written to the disk.
+I remember that we also had regressions, because the testing server do not use HTTPS, but a simple HTTP. :-/&lt;/p&gt;
+&lt;p&gt;Recently I encountered a very similar situation when prototyping an application including an instance of
+ &lt;a href="https://www.passbolt.com/"&gt;passbolt&lt;/a&gt;. Passbolt is a password manager, and the application
+ was deployed on kubernetes. &lt;strong&gt;Passbolt strongly relies on email&lt;/strong&gt;. Validate emails
+ means usually, deploying at least DNS server, STMP server and a webmail.&lt;/p&gt;
+&lt;p&gt;Good news, in 2024 there are now tools to setup https and mail transfert on kubernetes :-) :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://minikube.sigs.k8s.io/"&gt;minikube&lt;/a&gt; to have a small kubernetes environment on a laptop&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/FiloSottile/mkcert"&gt;mkcert&lt;/a&gt; to setup "true" HTTPS connexion&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/mailhog/MailHog"&gt;mailhog&lt;/a&gt; to receive the emails and give the possibility to read them&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1&gt;Properly configured HTTPS server with mkcert&lt;/h1&gt;
+&lt;p&gt;I really like mkcert because it allows to locally test configurations that include HTTPS protocol.
+Minikube documentation explains &lt;a href="https://minikube.sigs.k8s.io/docs/tutorials/custom_cert_ingress/"&gt;here&lt;/a&gt; how to configure a default
+certificate. The default certificated is used when you make a configuration error in your ingress.
+To serve a valid certificate for your application, you will need to generate additionnal certificates for the ingress:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;mkcert&lt;span class="w"&gt; &lt;/span&gt;-key-file&lt;span class="w"&gt; &lt;/span&gt;passbolt.test-key.pem&lt;span class="w"&gt; &lt;/span&gt;-cert-file&lt;span class="w"&gt; &lt;/span&gt;passbolt.test-cert.pem&lt;span class="w"&gt; &lt;/span&gt;passbolt.test
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;The command will generated two files: a private key (&lt;code&gt;passbolt.test-key.pem&lt;/code&gt;) and a
+ certicate (&lt;code&gt;passbolt.test-cert.pem&lt;/code&gt;). These files can be used in the tls section of the ingress.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Passbolt with a secured connexion" src="https://romainjacquet.github.io/images/passbolt-https.png"&gt;
+&lt;img alt="The certificate with mycert authority" src="https://romainjacquet.github.io/images/passbolt-ca-cert.png"&gt;&lt;/p&gt;
+&lt;h1&gt;Using mailhog&lt;/h1&gt;
+&lt;p&gt;Mailhog is very simple Web interface, that you can use to verify the email notification.
+It requires almost no configuration when deploying on Kubernetes, just an ingress if you
+want to avoid access with a port forward.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="The certificate with mycert authority" src="https://romainjacquet.github.io/images/mailbox-mailhog.png"&gt;&lt;/p&gt;
+&lt;p&gt;With the default configuration of the helm chart, you will &lt;strong&gt;loose the e-mails each time you restart minikube&lt;/strong&gt;.
+But it's possible to store mail in a maildir folder or in a mongodb database.
+Another limitation of &lt;code&gt;mailhog&lt;/code&gt; is the lack of support for TLS authentication for incoming SMTP connexion
+(see &lt;a href="https://github.com/mailhog/MailHog/issues/84"&gt;issues/84&lt;/a&gt;). So you need to configure your app
+to send email without TLS authentication.&lt;/p&gt;
+&lt;h1&gt;alternatives&lt;/h1&gt;
+&lt;p&gt;The combo minikube/mkcert/mailhob is perfect for me. But I know that there is others possibilities.
+Like using a staging environment on kubernetes or using a mail service in your favorite cloud provider.
+And you, what is your prefered method ?&lt;/p&gt;</content><category term="devops"></category></entry></feed>

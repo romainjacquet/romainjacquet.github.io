@@ -3,7 +3,7 @@
 <head>
             <meta charset="utf-8">
         <!-- Site Meta Data -->
-        <title>Color comparison with gimp</title>
+        <title>Validating applications with mail and https services on kubernetes</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="">
         <meta name="author" content="Romain JACQUET">
@@ -30,13 +30,13 @@
         <meta name="twitter:image" content="">
 
     <meta name="twitter:creator" content="">
-    <meta name="twitter:url" content="https://romainjacquet.github.io/color-comparison-with-gimp.html">
-    <meta name="twitter:title" content="Deep in the system ~ Color comparison with gimp">
-    <meta name="twitter:description" content="Infra-as-code required a stable environment">
+    <meta name="twitter:url" content="https://romainjacquet.github.io/validating-applications-with-mail-and-https-services-on-kubernetes.html">
+    <meta name="twitter:title" content="Deep in the system ~ Validating applications with mail and https services on kubernetes">
+    <meta name="twitter:description" content="Using mkcert and mailhog to validate applications">
 
     <!-- Facebook Meta Data -->
-    <meta property="og:title" content="Deep in the system ~ Color comparison with gimp"/>
-    <meta property="og:description" content="Infra-as-code required a stable environment"/>
+    <meta property="og:title" content="Deep in the system ~ Validating applications with mail and https services on kubernetes"/>
+    <meta property="og:description" content="Using mkcert and mailhog to validate applications"/>
     <meta property="og:image" content=""/>
 </head>
 
@@ -79,11 +79,11 @@
                         href="https://romainjacquet.github.io/category/cicd.html">ci/cd</a></li>
                 <li><a
                         href="https://romainjacquet.github.io/category/development.html">development</a></li>
-                <li><a
+                <li class="active"><a
                         href="https://romainjacquet.github.io/category/devops.html">devops</a></li>
                 <li><a
                         href="https://romainjacquet.github.io/category/gis.html">gis</a></li>
-                <li class="active"><a
+                <li><a
                         href="https://romainjacquet.github.io/category/misc.html">misc</a></li>
                 <li><a
                         href="https://romainjacquet.github.io/category/sysadmin.html">sysadmin</a></li>
@@ -102,45 +102,59 @@
 <article>
     <section id="content">
         <article>
-            <h2 class="post_title post_detail"><a href="https://romainjacquet.github.io/color-comparison-with-gimp.html" rel="bookmark"
-                                                  title="Permalink to Color comparison with gimp">Color comparison with gimp</a></h2>
+            <h2 class="post_title post_detail"><a href="https://romainjacquet.github.io/validating-applications-with-mail-and-https-services-on-kubernetes.html" rel="bookmark"
+                                                  title="Permalink to Validating applications with mail and https services on kubernetes">Validating applications with mail and https services on kubernetes</a></h2>
             <div class="entry-content blog-post">
-                <p>Many times I have been confronted to the problem of finding the closest color in
-a color chart. It happened to me recently to order painting for leather. 
-Here I give you my approach with <a href="https://www.gimp.org/">gimp</a>. You need to be familiar with gimp
-and layer usage.</p>
+                <p>More than ten years ago, I was in charge of maintaining the web site www.isis-cnes.fr (owned by the spatial french agency).
+It was a frontend to sell satellites images and the ordering workflow for the images was a little bit complex. It consist in a lot of
+steps, interacting with different users, including waiting for email notifications.
+Thus testing this application was painfull. I finally implemented a bypass in the mail system. Instead
+of being sent by the <a href="https://en.wikipedia.org/wiki/Message_transfer_agent">MTA</a>, mails could be also written to the disk.
+I remember that we also had regressions, because the testing server do not use HTTPS, but a simple HTTP. :-/</p>
+<p>Recently I encountered a very similar situation when prototyping an application including an instance of
+ <a href="https://www.passbolt.com/">passbolt</a>. Passbolt is a password manager, and the application
+ was deployed on kubernetes. <strong>Passbolt strongly relies on email</strong>. Validate emails
+ means usually, deploying at least DNS server, STMP server and a webmail.</p>
+<p>Good news, in 2024 there are now tools to setup https and mail transfert on kubernetes :-) :</p>
 <ul>
-<li>In gimp open the reference image as a background (Ctrl + O)</li>
-<li>Open your color chart as a Layer (Alt + Ctrl + O)</li>
-<li>If required resize you layer with the color char using the scale tool
-<img alt="EN color chart as layer" src="https://romainjacquet.github.io/images/gimp_step1.jpg"></li>
-<li>Remove the white background of the color chart. Select by color, and adjust the threshold to keep all the colors. 
-I had good result with a threshold of 30. 
-<img alt="EN color chart as layer 2" src="https://romainjacquet.github.io/images/gimp_step2.jpg"></li>
-<li>Remove all color that clearly don't match. Juste make a rectangular selection on the layer and cut it (Ctrl + X). We are now
-having only color color to the reference.
-<img alt="EN color chart as layer 2" src="https://romainjacquet.github.io/images/gimp_step3.jpg"></li>
-<li>Here come the tricky part to filter the last color: use the color picker and choose a color in the color chart. Once
-you have validate the color become your current color in the color picker.
-<img alt="EN color chart as layer 2" src="https://romainjacquet.github.io/images/gimp_step4.png"></li>
-<li>Open again the color picker and select a representative part of the image. In my case it's really hard because leather creates
-reflexion. So the real color is darker. You can now easily visualize the color difference in the color picker that show the difference
-of previous and current color. If you reference color is not clear, like my leather seat, you will have to stroll the color picker on
-the reference area to be sure that you have the closest color.
-<img alt="EN color difference" src="https://romainjacquet.github.io/images/gimp_step5.png"></li>
-<li>If you still have doubt between two or three colors, you can use the RGB number to select the closest color.
-<img alt="EN RGB number" src="https://romainjacquet.github.io/images/gimp_step6.png"></li>
+<li><a href="https://minikube.sigs.k8s.io/">minikube</a> to have a small kubernetes environment on a laptop</li>
+<li><a href="https://github.com/FiloSottile/mkcert">mkcert</a> to setup "true" HTTPS connexion</li>
+<li><a href="https://github.com/mailhog/MailHog">mailhog</a> to receive the emails and give the possibility to read them</li>
 </ul>
-<p>I admit that the process is a little bit sketchy. Feel to contact me if you have a better solution.
-Particulary to fix the light problem.</p>
+<h1>Properly configured HTTPS server with mkcert</h1>
+<p>I really like mkcert because it allows to locally test configurations that include HTTPS protocol.
+Minikube documentation explains <a href="https://minikube.sigs.k8s.io/docs/tutorials/custom_cert_ingress/">here</a> how to configure a default
+certificate. The default certificated is used when you make a configuration error in your ingress.
+To serve a valid certificate for your application, you will need to generate additionnal certificates for the ingress:</p>
+<div class="highlight"><pre><span></span><code>mkcert<span class="w"> </span>-key-file<span class="w"> </span>passbolt.test-key.pem<span class="w"> </span>-cert-file<span class="w"> </span>passbolt.test-cert.pem<span class="w"> </span>passbolt.test
+</code></pre></div>
+
+<p>The command will generated two files: a private key (<code>passbolt.test-key.pem</code>) and a
+ certicate (<code>passbolt.test-cert.pem</code>). These files can be used in the tls section of the ingress.</p>
+<p><img alt="Passbolt with a secured connexion" src="https://romainjacquet.github.io/images/passbolt-https.png">
+<img alt="The certificate with mycert authority" src="https://romainjacquet.github.io/images/passbolt-ca-cert.png"></p>
+<h1>Using mailhog</h1>
+<p>Mailhog is very simple Web interface, that you can use to verify the email notification.
+It requires almost no configuration when deploying on Kubernetes, just an ingress if you
+want to avoid access with a port forward.</p>
+<p><img alt="The certificate with mycert authority" src="https://romainjacquet.github.io/images/mailbox-mailhog.png"></p>
+<p>With the default configuration of the helm chart, you will <strong>loose the e-mails each time you restart minikube</strong>.
+But it's possible to store mail in a maildir folder or in a mongodb database.
+Another limitation of <code>mailhog</code> is the lack of support for TLS authentication for incoming SMTP connexion
+(see <a href="https://github.com/mailhog/MailHog/issues/84">issues/84</a>). So you need to configure your app
+to send email without TLS authentication.</p>
+<h1>alternatives</h1>
+<p>The combo minikube/mkcert/mailhob is perfect for me. But I know that there is others possibilities.
+Like using a staging environment on kubernetes or using a mail service in your favorite cloud provider.
+And you, what is your prefered method ?</p>
             </div>
             <div class="post_list">
                 <span>By </span>
                 <a href="https://romainjacquet.github.io/author/romain-jacquet.html">@Romain JACQUET</a>
                 <span> in </span>
-                <span class="post_category"><a href="https://romainjacquet.github.io/category/misc.html" rel="bookmark"
-                                               title="Permalink to misc">[ misc ]</a></span>
-                <span class="post_date">jeu. 16 février 2023</span>
+                <span class="post_category"><a href="https://romainjacquet.github.io/category/devops.html" rel="bookmark"
+                                               title="Permalink to devops">[ devops ]</a></span>
+                <span class="post_date">ven. 15 novembre 2024</span>
                 <div><span>Tags : </span>
                 </div>
 
@@ -148,28 +162,28 @@ Particulary to fix the light problem.</p>
                     <span class="twitter"><a target="_blank" rel="nofollow"
                                              onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=400,width=700');return false;"
                                              title="Twitter"
-                                             href="https://twitter.com/share?url=https://romainjacquet.github.io/color-comparison-with-gimp.html&text=Color comparison with gimp&via="><img
+                                             href="https://twitter.com/share?url=https://romainjacquet.github.io/validating-applications-with-mail-and-https-services-on-kubernetes.html&text=Validating applications with mail and https services on kubernetes&via="><img
                             src="https://romainjacquet.github.io/theme/images/icons/twitter-s.png"></a></span>
 
                     <span class="gplus"><a target="_blank" title="Google +"
-                                           href="https://plus.google.com/share?url=https://romainjacquet.github.io/color-comparison-with-gimp.html&hl=fr"
+                                           href="https://plus.google.com/share?url=https://romainjacquet.github.io/validating-applications-with-mail-and-https-services-on-kubernetes.html&hl=fr"
                                            rel="nofollow"
                                            onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=650');return false;"><img
                             src="https://romainjacquet.github.io/theme/images/icons/google-s.png"></a></span>
 
                     <span class="facebook"><a target="_blank" title="Facebook" rel="nofollow"
                                               onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=500,width=700');return false;"
-                                              href="https://www.facebook.com/sharer.php?u=https://romainjacquet.github.io/color-comparison-with-gimp.html&t=Color comparison with gimp"><img
+                                              href="https://www.facebook.com/sharer.php?u=https://romainjacquet.github.io/validating-applications-with-mail-and-https-services-on-kubernetes.html&t=Validating applications with mail and https services on kubernetes"><img
                             src="https://romainjacquet.github.io/theme/images/icons/facebook-s.png"></a></span>
 
                     <a target="_blank" title="Linkedin"
-                       href="https://www.linkedin.com/shareArticle?mini=true&url=https://romainjacquet.github.io/color-comparison-with-gimp.html&title=Color comparison with gimp"
+                       href="https://www.linkedin.com/shareArticle?mini=true&url=https://romainjacquet.github.io/validating-applications-with-mail-and-https-services-on-kubernetes.html&title=Validating applications with mail and https services on kubernetes"
                        rel="nofollow"
                        onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=650');return false;"><img
                             src="https://romainjacquet.github.io/theme/images/icons/linkedin-s.png"></a>
 
                     <span class="mail"><a
-                            href="mailto:?subject=Color comparison with gimp&amp;body=Viens découvrir un article à propos de [Color comparison with gimp] sur le site de Romain JACQUET. https://romainjacquet.github.io/color-comparison-with-gimp.html"
+                            href="mailto:?subject=Validating applications with mail and https services on kubernetes&amp;body=Viens découvrir un article à propos de [Validating applications with mail and https services on kubernetes] sur le site de Romain JACQUET. https://romainjacquet.github.io/validating-applications-with-mail-and-https-services-on-kubernetes.html"
                             title="Share by Email" target="_blank"><img
                             src="https://romainjacquet.github.io/theme/images/icons/mail-s.png"></a></span>
                 </div>
